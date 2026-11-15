@@ -95,7 +95,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
     }
   }, [laden, warteschlangeSenden])
 
-  // Jazz 2026-11-14: Alle Schülerseiten in der Leseschrift für LRS (OpenDyslexic), ohne Schalter. Die Lehrkraft-Ansicht bleibt in Nunito.
+  // Jazz 2026-11-14: Alle Schülerseiten in der Leseschrift für LRS (Andika), ohne Schalter. Die Lehrkraft-Ansicht bleibt in Nunito.
   useEffect(() => {
     document.documentElement.dataset.leseschrift = 'lrs'
     return () => {

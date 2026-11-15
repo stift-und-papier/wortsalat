@@ -69,7 +69,7 @@
   Markierte Wörter nehmen die Farbe an (`data-farbe`); ohne Farbe bleiben sie neutral (Antippen ohne Fachbegriff).
   Gestrichelt heißt immer „hier schreiben“ (Lücken) – gesperrte Knöpfe sind nur blasser.
 - Schriften: Fraunces (h1/h2), Nunito (Text und h3/Anweisungen). Keine Pixel-Schrift.
-- Leseschrift für LRS: OpenDyslexic (lokal, OFL), Umschalter `useLeseschrift` (`src/lib/leseschrift.ts`), gespeichert auf dem Gerät.
+- Leseschrift für LRS: Andika (lokal, OFL), auf allen Schülerseiten immer an (`SchuelerBereich.tsx` setzt `data-leseschrift`), Lehrkraft-Ansicht in Nunito.
 - Dunkler Modus: folgt dem Gerät, von Hand umschaltbar mit `useDunkel` (`src/lib/thema.ts`), gespeichert auf dem Gerät.
 - Prüfen: `node ~/.claude/skills/hallmark/scripts/sloplint.mjs src --genre playful --scope app`.
 
@@ -283,3 +283,6 @@
   Abschreiben: falsches Zeichen färbt den Cursor Pfirsich und sagt „Schau genau hin“. Erklärseite zeigt beim ersten Lesen „Gut gelesen! +5 Münzen“
   und wartet auf „Weiter“. Auswahl-Chips: Haken immer da (unsichtbar), nicht fett, damit nichts verrutscht; jede Auswahl-Gruppe auf hellem Feld.
   Halbe Münzen im 2. Versuch erklärt nur die Hilfe (kein Extra-Satz in der Rückmeldung).
+- 2026-11-15 (Lehrkraft): Leseschrift **Andika** statt OpenDyslexic (LRS-freundlich, passt besser zum Look; Dateien aus `@fontsource/andika`,
+  OpenDyslexic-Dateien entfernt). Lehrkraftseite wird auf Branch `lehrkraftseite` überarbeitet (sechs Teilaufgaben, `docs/umbau/STATUS.md`).
+  Eine Runde darf mehrere Sätze enthalten (schwerere Runden).

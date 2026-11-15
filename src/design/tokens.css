@@ -1,5 +1,5 @@
 /* Hallmark · shape: app screen · genre: playful · theme: custom · idea: "Ein Gartenheft auf der Wiese" · vibe: "warm, handgezeichnet, ruhig, freundlich, zum Anfassen" · scope: app
- * paper: Creme-Karten (--color-papier) auf Wiesengrün (--color-wiese) · ink: Holzbraun (--color-tinte) · accent: Holz = „hier kann man tippen“ (--color-aktion) · display: Fraunces 600 · body: Nunito 400/800, umschaltbar auf OpenDyslexic
+ * paper: Creme-Karten (--color-papier) auf Wiesengrün (--color-wiese) · ink: Holzbraun (--color-tinte) · accent: Holz = „hier kann man tippen“ (--color-aktion) · display: Fraunces 600 · body: Nunito 400/800, umschaltbar auf Andika
  * posture: Full palette, jede Farbe EINE Bedeutung (Holz bedienen, Himmelblau Hilfe, Grün richtig, Pfirsich nochmal, Sonne Sterne) · modes: hell, dunkel, mehr Kontrast
  * axes: light/soft-serif/chromatic-brown · contrast: pass (nachgerechnet je Modus, siehe Kommentare) · signature: die Aufgabenkarte als Heftseite mit Holzknöpfen und Pillen · hero: keiner (App-Ansicht) · v2.0.0 */
 /* Hallmark · pre-emit critique: P3 H3 E3 S2 R3 V3 · weakest: S, Creme auf Grün ist die Vorgabe der Lehrkraft (Referenzbilder), nicht frei gewählt */
@@ -24,8 +24,8 @@
 @font-face{font-family:'Fraunces';src:url('fonts/fraunces-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
 @font-face{font-family:'Nunito';src:url('fonts/nunito-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'Nunito';src:url('fonts/nunito-latin-800-normal.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
-@font-face{font-family:'OpenDyslexic';src:url('fonts/OpenDyslexic-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:'OpenDyslexic';src:url('fonts/OpenDyslexic-Bold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:'Andika';src:url('fonts/andika-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Andika';src:url('fonts/andika-latin-700-normal.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
 
 /* ===================== HELL (Standard) ===================== */
 :root {
@@ -221,8 +221,8 @@
 
 /* ===================== LESESCHRIFT für LRS: gilt auf allen Schülerseiten (Jazz 2026-11-14), SchuelerBereich setzt das Merkmal ===================== */
 :root[data-leseschrift='lrs'] {
-  --font-display: 'OpenDyslexic', 'Nunito', system-ui, sans-serif;
-  --font-body: 'OpenDyslexic', 'Nunito', system-ui, sans-serif;
+  --font-display: 'Andika', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Andika', 'Nunito', system-ui, sans-serif;
   --zeilenhoehe: 1.8;
   --buchstabenabstand: 0;
 }

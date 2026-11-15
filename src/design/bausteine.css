@@ -812,7 +812,7 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 /* ---------- Farm: Titel, Knöpfe und Hinweis in einer Textbox ---------- */
 .farm-meldung p { margin-inline: auto; }
 
-/* ---------- Leseschrift (OpenDyslexic) auf allen Schülerseiten: Überschriften brauchen mehr Zeilenabstand und die volle Breite,
+/* ---------- Leseschrift (Andika) auf allen Schülerseiten: Überschriften brauchen mehr Zeilenabstand und die volle Breite,
    sonst stoßen umbrochene Zeilen aneinander ---------- */
 :root[data-leseschrift='lrs'] :is(h1, h2, h3) { line-height: 1.4; max-width: none; }
 a.knopf { text-decoration: none; }

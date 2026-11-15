@@ -15,7 +15,7 @@ export interface Schueler {
   pseudonym: string
   token: string
   stufe_manuell: 1 | 2 | 3 | null
-  /** Übungsumbau: Leseschrift (OpenDyslexic) von der Lehrkraft eingeschaltet */
+  /** Übungsumbau: Leseschrift (Andika) von der Lehrkraft eingeschaltet */
   leseschrift?: boolean
 }
 
