@@ -8,17 +8,18 @@ import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
 import {
-  ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KACHEL,
+  ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, grundKacheln, HEU, HUETTE, hindernisse, HUHN_PLAETZE, istGras, KACHEL,
   KUH_PLAETZE, MONSTER_PLATZ, nebenan, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, weg, ZEILEN, type Ort,
 } from '../lib/landschaft'
 import { artikelBild, DEKO_NAME, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
-import { monster as monsterAus } from '../lib/monster'
+import { farmMal, monster as monsterAus } from '../lib/monster'
 import { supabase } from '../lib/supabase'
 import { FigurWahl } from './FigurWahl'
 import { FarmTier } from './FarmTier'
 
 const TEMPO = 50 // Grafik-Pixel pro Sekunde
+const RAND_UNTEN = 12 // Luft zwischen Farm und Menü unten (CSS-Pixel)
 const ruhig = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const TIER_NAME: Record<string, string> = { huhn: 'Huhn', kuh: 'Kuh' }
 // Mitte einer Kachel, Füße der Figur etwas unterhalb der Mitte
@@ -44,6 +45,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   const ankunft = useRef<number>(undefined)
   const [blase, setBlase] = useState(true) // Sprechblase „… kann geerntet werden!“, bis man zum ersten Mal tippt
   const [einrichten, setEinrichten] = useState(false) // Fenster hinter dem Zahnrad: Figur und Deko
+  const [vorratOffen, setVorratOffen] = useState(false) // Jazz 2026-11-15: Vorrat als Fenster hinter dem Truhen-Knopf
   const [dekoAus, setDekoAus] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(DEKO_AUS) ?? '[]') as string[]
@@ -62,13 +64,25 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     void laden()
   }, [laden])
 
-  // Größe: ganzzahlig vergrößern, so groß wie die Breite erlaubt (mindestens 2-fach)
+  // Größe (Jazz 2026-11-15: am iPad ohne Scrollen): in halben Stufen so groß, wie Breite und Höhe bis zum Menü unten erlauben,
+  // mindestens 2-fach (auf sehr kleinen Bildschirmen scrollt es dann eben)
   useEffect(() => {
     const el = rahmen.current
     if (!el) return
-    const beob = new ResizeObserver(() => setMal(Math.max(2, Math.min(4, Math.floor(el.clientWidth / (SPALTEN * KACHEL))))))
+    const passen = () => {
+      const oben = el.getBoundingClientRect().top + window.scrollY
+      const menue = document.querySelector('nav.menue')?.getBoundingClientRect().height ?? 0
+      const hoehe = window.innerHeight - oben - menue - RAND_UNTEN
+      const m = Math.min(el.clientWidth / (SPALTEN * KACHEL), hoehe / (ZEILEN * KACHEL))
+      setMal(Math.max(2, Math.min(4, Math.floor(m * 2) / 2)))
+    }
+    const beob = new ResizeObserver(passen)
     beob.observe(el)
-    return () => beob.disconnect()
+    window.addEventListener('resize', passen)
+    return () => {
+      beob.disconnect()
+      window.removeEventListener('resize', passen)
+    }
   }, [daten === null])
 
   const felder = daten ? Math.min(daten.felder, FELD_PLAETZE.length) : 0
@@ -192,6 +206,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     monster: Boolean(daten.monster),
   })
   const farmMonster = daten.monster ? monsterAus(daten.monster) : null
+  const monsterMal = farmMonster ? farmMal(farmMonster, mal) : mal
+  const monsterGeschenk = daten.liegen.some((d) => d.bei.startsWith('monster:'))
   // Geschenk des Monsters ist ein Samen zum Pflanzen (Samentüte), alles andere Ernte, Ei, Milch oder Obst
   const liegtDing = (d: { sorte: string; bei: string }) =>
     d.bei.startsWith('monster:') ? { name: `Samen: ${SORTE_NAME[d.sorte] ?? d.sorte}`, grafik: GRAFIK.saatgut, nummer: (SORTE[d.sorte] ?? 0) * 2 } : vorratDing(d.sorte)
@@ -201,7 +217,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     ...huehner.map((t, i) => [`tier:${t.id}`, tierFlaeche(HUHN_PLAETZE[i], 1)] as const),
     ...kuehe.map((t, i) => [`tier:${t.id}`, tierFlaeche(KUH_PLAETZE[i], 2)] as const),
     ...baeume.map((b) => [`baum:${b.id}`, tierFlaeche(BAUM_PLAETZE[b.art], 2)] as const),
-    ...(daten.monster ? [[`monster:${daten.monster}`, tierFlaeche(MONSTER_PLATZ, 1)] as const] : []),
+    // Geschenk rechts neben der Laufbahn des Monsters (darunter läge es unter der Meldung)
+    ...(daten.monster ? [[`monster:${daten.monster}`, tierFlaeche({ x: MONSTER_PLATZ.x + 3, y: MONSTER_PLATZ.y }, 1)] as const] : []),
   ])
   const bepflanzt = new Set(daten.pflanzen.map((p) => `${FELD_PLAETZE[p.feld].x},${FELD_PLAETZE[p.feld].y}`))
   const liegenOrte = ablagePlaetze(
@@ -267,17 +284,19 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     )
   }
 
-  function tierKnopf(t: { id: string; art: string }, o: { x: number; y: number }, groesse: number, i: number) {
+  function tierKnopf(t: { id: string; art: string; satt: boolean }, o: { x: number; y: number }, groesse: number, i: number) {
     return (
       <button
         key={t.id}
         type="button"
         className="farm-ding farm-tier"
         style={{ left: px(o.x), top: px(o.y), zIndex: (o.y + groesse) * KACHEL }}
-        aria-label={`${TIER_NAME[t.art]} füttern`}
+        aria-label={`${TIER_NAME[t.art]} füttern${t.satt ? '' : ', hat Hunger'}`}
         onClick={() => gehe(nebenan(tierFlaeche(o, groesse)), () => setMenue({ art: 'tier', id: t.id }))}
       >
-        <FarmTier art={t.art === 'kuh' ? 'kuh' : 'huhn'} mal={mal} von={bereich(t.art, i)[0]} bis={bereich(t.art, i)[1]} />
+        <FarmTier art={t.art === 'kuh' ? 'kuh' : 'huhn'} mal={mal} von={bereich(t.art, i)[0]} bis={bereich(t.art, i)[1]}>
+          {!t.satt && herz !== t.id && <Ausruf mal={mal} />}
+        </FarmTier>
         {herz === t.id && (
           <span className="farm-herz">
             <Sprite grafik={GRAFIK.herz} mal={mal} titel="Herz" />
@@ -301,7 +320,17 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     <section className="farm" style={{ ['--farm-breite' as string]: `${px(SPALTEN)}px` }}>
       {/* Jazz 2026-11-14: Leiste mit Sammelalbum-Knopf (Buch über dem Wort, Flieder), Titel als Holzschild wie auf den anderen Seiten, Zahnrad */}
       <div className="farm-leiste">
-        <span />
+        {/* Jazz 2026-11-15: Sammelalbum und Vorrat nebeneinander oben links (vorher unter der Farm), damit die Farm ohne Scrollen passt */}
+        <div className="farm-leiste__knoepfe">
+          <a className="knopf knopf--album farm-album" href={album}>
+            <Symbol name="sammelbuch" />
+            Sammelalbum
+          </a>
+          <button type="button" className="knopf farm-album" onClick={() => setVorratOffen(true)}>
+            <Sprite grafik={GRAFIK.truhe} mal={2} />
+            Vorrat
+          </button>
+        </div>
         <header className="pixel-schild">
           <h2>Meine Farm</h2>
         </header>
@@ -309,19 +338,20 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
           <Symbol name="einstellungen" />
         </button>
       </div>
-      {/* Usability-Test 2026-11-13: Meldungen stehen über der Karte (unter ihr waren sie am iPad außer Sicht); fester Platz, damit die Karte nicht springt */}
-      <div className="karte farm-meldung">
-        {fehler ? (
-          <p role="alert">{fehler}</p>
-        ) : (
-          <p role="status" className={meldung ? undefined : 'leise'}>
-            {meldung ?? 'Tippe irgendwohin, dann läuft deine Figur dorthin. Tippe ein Feld, ein Tier oder einen Obstbaum an.'}
-          </p>
-        )}
-      </div>
       <div ref={rahmen} className="farm-rahmen">
         {/* Jazz 2026-11-14: Holzrahmen wie ein Spielfenster; liegt über dem äußeren Wasserstreifen der Karte (bausteine.css) */}
         <div className="spiel-fenster">
+        {/* Usability-Test 2026-11-13: Meldungen stehen über der Karte, an festem Platz. Jazz 2026-11-15 (Farm ohne Scrollen am iPad):
+            als Papier-Banner unten im Spielfenster (dort ist fast nur Wasser), statt als eigener Kasten darüber */}
+        <div className="farm-meldung">
+          {fehler ? (
+            <p role="alert">{fehler}</p>
+          ) : (
+            <p role="status" className={meldung ? undefined : 'leise'}>
+              {meldung ?? 'Tippe irgendwohin, dann läuft deine Figur hin. Tippe Felder, Tiere und Bäume an.'}
+            </p>
+          )}
+        </div>
         <div className="farm-landschaft" style={{ width: px(SPALTEN), height: px(ZEILEN) }} onClick={inDieLandschaft}>
           <canvas ref={leinwand} width={SPALTEN * KACHEL} height={ZEILEN * KACHEL} style={{ width: px(SPALTEN), height: px(ZEILEN) }} aria-hidden="true" />
 
@@ -358,12 +388,16 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             return <Ding key={i} grafik={b.grafik} nummer={b.nummer} x={px(o.x)} y={px(o.y)} mal={mal} z={(o.y + 1) * KACHEL} />
           })}
           {farmMonster && (
+            // Jazz 2026-11-15: Hütte links unten in der Dachfarbe des Monsters, nur solange ein Monster da ist
+            <Ding grafik={GRAFIK.huette} nummer={farmMonster.dach} x={px(HUETTE.x)} y={px(HUETTE.y)} mal={mal} z={(HUETTE.y + 4) * KACHEL} />
+          )}
+          {farmMonster && (
             <button
               type="button"
               className="farm-ding farm-monster"
               style={{
-                left: px(MONSTER_PLATZ.x) - ((farmMonster.grafik.bildBreite - KACHEL) * mal) / 2,
-                top: px(MONSTER_PLATZ.y) - (farmMonster.grafik.bildHoehe - KACHEL) * mal,
+                left: px(MONSTER_PLATZ.x) - ((farmMonster.grafik.bildBreite * monsterMal) - KACHEL * mal) / 2,
+                top: px(MONSTER_PLATZ.y + 1) - farmMonster.grafik.bildHoehe * monsterMal,
                 zIndex: (MONSTER_PLATZ.y + 1) * KACHEL,
               }}
               aria-label={`${farmMonster.name}, wohnt auf deiner Farm`}
@@ -373,7 +407,9 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
                 )
               }
             >
-              <Sprite grafik={farmMonster.grafik} mal={mal} />
+              <FarmTier art="monster" grafik={farmMonster.grafik} mal={monsterMal} wegMal={mal} von={-KACHEL} bis={2 * KACHEL}>
+                {monsterGeschenk && <Ausruf mal={mal} />}
+              </FarmTier>
             </button>
           )}
           {huehner.map((t, i) => tierKnopf(t, HUHN_PLAETZE[i], 1, i))}
@@ -572,16 +608,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         </FarmMenue>
       )}
 
-      {/* Jazz 2026-11-14: Knopf zum Sammelalbum unten in der Mitte, über dem Vorrat */}
-      <div className="farm-album-zeile">
-        <a className="knopf knopf--album farm-album" href={album}>
-          <Symbol name="sammelbuch" />
-          Sammelalbum
-        </a>
-      </div>
-
-      <div className="pixel-tafel farm-vorrat-tafel">
-        <h3>Dein Vorrat</h3>
+      {vorratOffen && (
+        <FarmMenue titel="Dein Vorrat" schliessen={() => setVorratOffen(false)}>
         {daten.vorrat.length === 0 ? (
           <p>Noch leer. Was du erntest und einsammelst, liegt hier.</p>
         ) : (
@@ -600,10 +628,18 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             })}
           </ul>
         )}
-      </div>
+        </FarmMenue>
+      )}
     </section>
   )
 }
+
+// Jazz 2026-11-15: wackelnde Ausrufezeichen-Blase (3 Bilder) über hungrigen Tieren und über dem Monster, solange sein Geschenk daliegt
+const Ausruf = ({ mal }: { mal: number }) => (
+  <span className="farm-ausruf" style={{ ['--lauf' as string]: `${-48 * mal}px` }}>
+    <Sprite grafik={GRAFIK.blase_ausruf} mal={mal} />
+  </span>
+)
 
 // Menü im Papier-Look (UI Pack): Titel, X zum Schließen, Inhalt scrollt bei vielen Gegenständen
 function FarmMenue({ titel, schliessen, children }: { titel: string; schliessen: () => void; children: ReactNode }) {

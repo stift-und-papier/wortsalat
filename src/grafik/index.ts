@@ -60,6 +60,9 @@ import schalter_bahn_an from './schalter_bahn_an.png'
 import schalter_knopf from './schalter_knopf.png'
 import symbol_rahmen from './symbol_rahmen.png'
 import monster_fledermaus from './monster_fledermaus.png'
+import huette from './huette.png'
+import blase_ausruf from './blase_ausruf.png'
+import truhe from './truhe.png'
 import feld from './feld.png'
 import figur_blau from './figur_blau.png'
 import figur_katze from './figur_katze.png'
@@ -133,6 +136,9 @@ export const GRAFIK = {
   schalter_knopf: { url: schalter_knopf, breite: 18, hoehe: 19, bildBreite: 18, bildHoehe: 19 },
   symbol_rahmen: { url: symbol_rahmen, breite: 26, hoehe: 26, bildBreite: 26, bildHoehe: 26 },
   monster_fledermaus: { url: monster_fledermaus, breite: 128, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
+  huette: { url: huette, breite: 192, hoehe: 192, bildBreite: 64, bildHoehe: 64 },
+  blase_ausruf: { url: blase_ausruf, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  truhe: { url: truhe, breite: 16, hoehe: 14, bildBreite: 16, bildHoehe: 14 },
   feld: { url: feld, breite: 14, hoehe: 14, bildBreite: 14, bildHoehe: 14 },
   figur_blau: { url: figur_blau, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },
   figur_katze: { url: figur_katze, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },

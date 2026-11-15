@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ablagePlaetze, BAUM_PLAETZE, belegung, BOOT, blobTeil, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_DEKO, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KUH_PLAETZE,
-  nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, weg, ZEILEN,
+  MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, weg, ZEILEN,
 } from './landschaft'
 
 describe('Landschaft', () => {
@@ -37,6 +37,11 @@ describe('Landschaft', () => {
       ...HUHN_PLAETZE.map((o) => tierFlaeche(o, 1)),
       ...KUH_PLAETZE.map((o) => tierFlaeche(o, 2)),
     ]
+    for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
+  })
+  it('mit Monster und Hütte (Jazz 2026-11-15) bleibt alles erreichbar, auch das Monster', () => {
+    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 4, monster: true })
+    const ziele = [...FELD_PLAETZE.map((o) => [o]), ...HUHN_PLAETZE.map((o) => [o]), [MONSTER_PLATZ]]
     for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
   })
   it('Weg geht um Hindernisse herum und schneidet keine Ecken', () => {

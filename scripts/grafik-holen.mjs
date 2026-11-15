@@ -129,6 +129,11 @@ const BILDER = [
   // kleiner Holzrahmen um die Pflanzen-Symbole im Lernweg (Character Backdrop-frame a3, nur das Quadrat), als border-image (Rand 5)
   { name: 'symbol_rahmen', datei: UI + 'Dialouge UI/Character Backdrop-frame/backdrops_a3.png', x: 11, y: 11, breite: 26, hoehe: 26 },
   { name: 'monster_fledermaus', datei: 'assets/entpackt/Sprout Sorry pack/Early Access/Dungeon Pack/enemies/bat_animations.png', x: 32, y: 0, breite: 128, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
+  // Jazz 2026-11-15: Hütte für das Monster auf der Farm (9 Dachfarben: grün, hellgrün, gelb, orange, rosa, rot, lila, blau, mint),
+  // Ausrufezeichen-Blase über hungrigen Tieren und dem Monster mit Geschenk (3 Bilder, eigenes Werk der Lehrkraft), Truhe für den Vorrat
+  { name: 'huette', datei: 'assets/entpackt/Sprout Sorry pack/Early Access/Village pack/houses/small hut/small_huts.png', bildBreite: 64, bildHoehe: 64 },
+  { name: 'blase_ausruf', datei: 'assets/bubble emotes july update.png', x: 0, y: 128, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  { name: 'truhe', datei: 'assets/entpackt/Sprout Lands - Sprites - Basic pack/Objects/Chest.png', x: 16, y: 18, breite: 16, hoehe: 14 },
 ]
 
 mkdirSync('src/grafik', { recursive: true })

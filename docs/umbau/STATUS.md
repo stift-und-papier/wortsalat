@@ -367,3 +367,21 @@
   iPad-Hochformat 820 × 1180: „Farm einrichten“ mit Monster-Wahl, Paketliste; kein Scrollen zur Seite, Konsole ohne Fehler.
   **Nicht getestet:** Monster wechseln mit zwei möglichen Monstern (Dachs-19 hat nur Rübchen; DB-Test prüft das Wählen), Formular-Modus bei gemischten
   Formaten, echtes iPad. Testdaten: „Test: Zwei Formate ohne Monster“ im „Testpaket Diktat“, Rübchen auf der Farm von Dachs-19, 1 Salat-Samen.
+- **Farm-Wünsche von Jazz** (2026-11-15, Teil 1 von 3 der neuen Liste: Farm, dann Fallende Wörter, dann Lehrkraft; alle Vorschläge angenommen):
+  - **Monster-Größe:** höchstens so groß wie die Spielfigur (21 Pixel). Rübchen (25) und Schleime (23) werden in halben Stufen verkleinert
+    (`farm` in `src/lib/monster.ts`, `farmMal`); Spinnen, Maus, Gespenst, Fledermaus bleiben (Spinnen und Maus sind so groß wie ein Huhn).
+  - **Hütte links unten** (`huette.png`, Village pack „small hut“, 9 Dachfarben; Dach in der Farbe des Monsters, `dach` in `monster.ts`), nur mit Monster.
+    Monster läuft davor hin und her (`FarmTier` mit `art="monster"`), still bei „Bewegung reduzieren“. Dafür verschoben: kleiner Baum (4, 12) → (2, 3),
+    Deko-Plätze (2, 8) → (1, 9), (3, 10) → (15, 1), (5, 9) → (7, 2). Test: mit Monster und Hütte bleibt alles erreichbar.
+  - **Ausrufezeichen-Blase** (`blase_ausruf.png`, 3 Bilder, wackelt) über hungrigen Tieren und über dem Monster, solange sein Samen daliegt; wandert mit.
+    Das Geschenk liegt jetzt rechts neben der Laufbahn (sonst unter der Meldung).
+  - **Vorrat** als Knopf mit Truhe (Sprout Lands Basic, `truhe.png`) neben dem Sammelalbum oben links; öffnet ein Fenster „Dein Vorrat“. Liste unter der Farm entfällt.
+  - **Ohne Scrollen am iPad:** Größe nach Breite und Höhe bis zum Menü unten, in halben Stufen (Sprite erlaubt jetzt 2,5-fach usw.), mindestens 2-fach.
+    Meldung als Papier-Banner unten im Spielfenster (über Rahmen und Wasser), Leiste flacher (Schild mit einfachem Rahmen, Knöpfe mit dünnerem Rand),
+    Standardsatz kürzer („Tippe irgendwohin, dann läuft deine Figur hin. Tippe Felder, Tiere und Bäume an.“).
+  **Getestet** (Browser, Dachs-19): 1180 × 820, 820 × 1180 und 1024 × 768: ganze Karte sichtbar über dem Menü (bei 1024 × 768 bleiben 25 px leerer
+  Seitenrand zum Scrollen), 2-fach. Hütte mit grünem Dach, Rübchen läuft davor, Blase wandert mit; Huhn hungrig (Testdaten kurz geändert, danach zurück) →
+  Blase; Samen fällig → Blase am Monster, Samen rechts daneben, Einsammeln → Blase weg, Meldung im Banner. Vorrat-Fenster öffnet und schließt (Esc).
+  `npm test` 141, Build ohne Fehler, Konsole ohne Fehler. **Nicht getestet:** echtes iPad in Safari (Safaris Leisten nehmen Höhe weg; dann kann die Farm
+  knapp unter das Menü rutschen), Füttern lässt die Blase verschwinden (Dachs-19 hatte kein Futter), andere Monster als Rübchen auf der Farm.
+  Gefunden, nicht behoben (war schon vorher so): mit allen 18 Deko-Stücken **und** dem Birnbaum kommt die Figur nicht an das rechte Huhn bei (17, 10).

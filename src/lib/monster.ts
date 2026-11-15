@@ -1,22 +1,27 @@
 // Übungsumbau Schritt 6: Monster, die die Lehrkraft je Übung wählt (Schlüssel = aufgaben.monster, Standard Rübchen).
 import { GRAFIK } from '../grafik'
 
+// Farm (Jazz 2026-11-15): dach = Bild der Hütte (Dachfarbe passend zum Monster); farm = Verkleinerung, damit das Monster
+// höchstens so groß ist wie die Spielfigur (21 Pixel hoch; Rübchen ist 25, Schleime 23 Pixel hoch). Fehlt farm, bleibt die Größe.
 export const MONSTER = {
-  ruebchen: { name: 'Rübchen', grafik: GRAFIK.monster_ruebchen, mal: 2 },
-  schleim_gruen: { name: 'Schleim grün', grafik: GRAFIK.monster_schleim_gruen, mal: 2 },
-  schleim_blau: { name: 'Schleim blau', grafik: GRAFIK.monster_schleim_blau, mal: 2 },
-  schleim_feuer: { name: 'Feuerschleim', grafik: GRAFIK.monster_schleim_feuer, mal: 2 },
-  gespenst: { name: 'Gespenst', grafik: GRAFIK.monster_gespenst, mal: 3 },
-  spinne_gruen: { name: 'Spinne grün', grafik: GRAFIK.monster_spinne_gruen, mal: 3 },
-  spinne_lila: { name: 'Spinne lila', grafik: GRAFIK.monster_spinne_lila, mal: 3 },
-  spinne_gold: { name: 'Spinne gold', grafik: GRAFIK.monster_spinne_gold, mal: 3 },
-  maus: { name: 'Maus', grafik: GRAFIK.monster_maus, mal: 3 },
-  fledermaus: { name: 'Fledermaus', grafik: GRAFIK.monster_fledermaus, mal: 2 },
+  ruebchen: { name: 'Rübchen', grafik: GRAFIK.monster_ruebchen, mal: 2, dach: 0, farm: 0.84 },
+  schleim_gruen: { name: 'Schleim grün', grafik: GRAFIK.monster_schleim_gruen, mal: 2, dach: 1, farm: 0.91 },
+  schleim_blau: { name: 'Schleim blau', grafik: GRAFIK.monster_schleim_blau, mal: 2, dach: 7, farm: 0.91 },
+  schleim_feuer: { name: 'Feuerschleim', grafik: GRAFIK.monster_schleim_feuer, mal: 2, dach: 5, farm: 0.91 },
+  gespenst: { name: 'Gespenst', grafik: GRAFIK.monster_gespenst, mal: 3, dach: 8 },
+  spinne_gruen: { name: 'Spinne grün', grafik: GRAFIK.monster_spinne_gruen, mal: 3, dach: 0 },
+  spinne_lila: { name: 'Spinne lila', grafik: GRAFIK.monster_spinne_lila, mal: 3, dach: 6 },
+  spinne_gold: { name: 'Spinne gold', grafik: GRAFIK.monster_spinne_gold, mal: 3, dach: 2 },
+  maus: { name: 'Maus', grafik: GRAFIK.monster_maus, mal: 3, dach: 3 },
+  fledermaus: { name: 'Fledermaus', grafik: GRAFIK.monster_fledermaus, mal: 2, dach: 6 },
 } as const
 
 // Spielszene: Gespenst, Maus und Spinnen sind schon gespiegelt ausgeschnitten (scripts/grafik-holen.mjs). Größe ganzzahlig:
 // 16-px-Monster 6-fach, 32-px-Monster 3-fach (Jazz, Schritt 8).
 export const spielMal = (g: { bildHoehe: number }) => (g.bildHoehe <= 16 ? 6 : 3)
+
+/** Größe auf der Farm in halben Stufen (auf dem iPad-Bildschirm trotzdem ganze Bildpunkte) */
+export const farmMal = (m: { name: string; farm?: number }, mal: number) => Math.floor(mal * (m.farm ?? 1) * 2) / 2
 
 export type MonsterName = keyof typeof MONSTER
 

@@ -6,7 +6,8 @@ import { einzelbild, type Grafik } from '../lib/sprite'
  * und für Vorlesehilfen unsichtbar.
  */
 export function Sprite({ grafik, nummer = 0, mal = 2, titel }: { grafik: Grafik; nummer?: number; mal?: number; titel?: string }) {
-  const m = Math.max(1, Math.round(mal)) // nur ganze Vielfache, sonst werden Pixel ungleich breit
+  // nur ganze oder halbe Vielfache (Jazz 2026-11-15, Farm ohne Scrollen): auf dem iPad (2 Bildpunkte je CSS-Pixel) bleiben alle Pixel gleich breit
+  const m = Math.max(1, Math.round(mal * 2) / 2)
   const { x, y } = einzelbild(grafik, nummer)
   return (
     <span

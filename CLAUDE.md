@@ -294,3 +294,7 @@
   Formate pro Runde wählbar (sechs Standardformate), Haken „Runden zufällig mischen“, Merkdiktat-Grenze je Teil (50–100 %), Übungen **ohne Monster**
   (zählen nicht fürs Album). **Monster auf der Farm:** 4 Freundschaften mit demselben Monster → zieht ein, schenkt montags und donnerstags einen
   zufälligen Shop-Samen (liegt daneben, einsammeln), immer nur eins, wechseln unter „Farm einrichten“.
+- 2026-11-15 (Jazz, Farm): Monster auf der Farm höchstens so groß wie die Spielfigur, wohnt links unten in einer **Hütte** (Dachfarbe passend
+  zum Monster) und läuft davor hin und her. **Ausrufezeichen-Blase** (3 Bilder) über hungrigen Tieren und dem Monster mit Geschenk. **Vorrat** als
+  Truhen-Knopf neben dem Sammelalbum (Fenster statt Liste). Farm passt am iPad ohne Scrollen: Größe nach Breite und Höhe in halben Stufen
+  (Sprite erlaubt x,5-fach), Meldung als Banner unten im Spielfenster.

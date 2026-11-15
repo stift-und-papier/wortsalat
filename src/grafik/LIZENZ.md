@@ -29,7 +29,8 @@ Obstbäume (`baum_*.png`), Früchte (`fruechte.png`) und Boot (`deko_boot.png`) 
 
 Monster für die Übungen aus dem Sorry Pack (Ordner „Early Access“, halloween/mobs und Dungeon Pack/enemies):
 `monster_gespenst.png`, `monster_spinne_gruen.png`, `monster_spinne_lila.png`, `monster_spinne_gold.png`, `monster_maus.png`,
-`monster_fledermaus.png` (je eine Zeile der Ruhe- bzw. Flug-Animation).
+`monster_fledermaus.png` (je eine Zeile der Ruhe- bzw. Flug-Animation). Hütte für das Monster auf der Farm (`huette.png`,
+Village pack, houses/small hut, alle 9 Dachfarben). Truhe für den Vorrat (`truhe.png`, Sprout Lands Basic, Objects/Chest.png, erstes Bild).
 
 Fliegendes Herz im Spiel (`herz_flug.png`): ein volles Herz aus `Hearts.png` (UI Pack Premium, Icons/special icons).
 Spielfenster-Rahmen (`rahmen_spiel.png`, Holzrahmen mit Pfosten) und helle Tafel (`tafel.png`, Settings-Menü ohne Schrift) aus dem
@@ -52,7 +53,7 @@ UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-La
 
 - `einstein.png`: Maskottchen Einstein, Posen freundlich, blinzelt, lob, freut sich, huch, erklärt (aus der eigenen Vorlage
   auf ihr Pixelraster verkleinert, Hintergrund entfernt).
-- `bubble emotes july update.png` (Sprechblasen): daraus `herz.png`.
+- `bubble emotes july update.png` (Sprechblasen): daraus `herz.png` und `blase_ausruf.png` (Ausrufezeichen, 3 Bilder).
 - `ranke.png`, `ranke_topf.png`: Rankpflanze und Topf im Lernweg, eigene Zeichnung (2026-11-14), aus dem Screenshot auf das
   Pixelraster zurückgerechnet (`assets/ranke_a.png`, `ranke_b.png`, `ranke_topf.png`), Farben aus der Sprout-Lands-Palette.
 - `monster_ruebchen.png`: Rübchen (aus `assets/chomp_idle.png`, obere Zeile der Ruhe-Animation).

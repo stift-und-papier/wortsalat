@@ -1,11 +1,14 @@
 // Tier auf der Farm, das sich bewegt (Lehrkraft 2026-11-12): die Kuh läuft in der Scheune hin und her, Hühner laufen ein Stück
 // und picken auf dem Boden. Nur Anzeige: Der Knopf (Tippfläche) und die Hindernisse bleiben am festen Platz, nur das Bild wandert
 // ein paar Grafik-Pixel. Bei „Bewegung reduzieren“ steht das Tier still.
-import { useEffect, useState } from 'react'
+// Jazz 2026-11-15: auch das Monster vor seiner Hütte (pendelt wie die Kuh, sein Bild hat nur eine Zeile). children (z. B. die
+// Ausrufezeichen-Blase) wandern mit, werden aber nicht gespiegelt.
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Sprite } from '../gemeinsam/Sprite'
 import { GRAFIK } from '../grafik'
+import type { Grafik } from '../lib/sprite'
 
-type Art = 'huhn' | 'kuh'
+type Art = 'huhn' | 'kuh' | 'monster'
 type Zustand = 'steht' | 'laeuft' | 'pickt'
 
 // Zeilen im Bild (8 Bilder je Zeile) und Zahl der Bilder; tempo in Grafik-Pixeln pro Sekunde
@@ -16,9 +19,15 @@ const TIERE = {
 
 const zufall = (von: number, bis: number) => von + Math.random() * (bis - von)
 
-/** von/bis: wie weit das Bild vom Platz weg darf (Grafik-Pixel, links negativ) */
-export function FarmTier({ art, mal, von, bis }: { art: Art; mal: number; von: number; bis: number }) {
-  const t = TIERE[art]
+/** von/bis: wie weit das Bild vom Platz weg darf (Pixel der Farm, links negativ); mal: Größe des Bilds, wegMal: Größe der Farm */
+export function FarmTier(props: { art: Art; grafik?: Grafik; mal: number; wegMal?: number; von: number; bis: number; children?: ReactNode }) {
+  const { art, grafik, mal, von, bis } = props
+  const wegMal = props.wegMal ?? mal
+  const t = useMemo(() => {
+    if (art !== 'monster' || !grafik) return TIERE[art === 'monster' ? 'huhn' : art]
+    const n = grafik.breite / grafik.bildBreite
+    return { grafik, tempo: 6, steht: [0, n], laeuft: [0, n], pickt: null } as const
+  }, [art, grafik])
   const [z, setZ] = useState<{ zustand: Zustand; x: number; blick: 1 | -1; dauer: number }>({ zustand: 'steht', x: 0, blick: 1, dauer: 0 })
 
   useEffect(() => {
@@ -60,7 +69,7 @@ export function FarmTier({ art, mal, von, bis }: { art: Art; mal: number; von: n
   return (
     <span
       className="farm-tier__weg"
-      style={{ transform: `translateX(${z.x * mal}px)`, transition: `transform ${z.dauer}ms linear` }}
+      style={{ transform: `translateX(${z.x * wegMal}px)`, transition: `transform ${z.dauer}ms linear` }}
     >
       <span
         className="farm-tier__bild"
@@ -73,6 +82,7 @@ export function FarmTier({ art, mal, von, bis }: { art: Art; mal: number; von: n
       >
         <Sprite grafik={t.grafik} nummer={reihe * 8} mal={mal} />
       </span>
+      {props.children}
     </span>
   )
 }

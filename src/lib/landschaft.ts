@@ -42,7 +42,7 @@ export const BAEUME: (Ort & { grafik: 'baum' | 'baum_klein' })[] = [
   { grafik: 'baum', x: 8, y: 1 },
   { grafik: 'baum_klein', x: 1, y: 7 },
   { grafik: 'baum_klein', x: 10, y: 2 },
-  { grafik: 'baum_klein', x: 4, y: 12 },
+  { grafik: 'baum_klein', x: 2, y: 3 }, // Jazz 2026-11-15: von (4, 12) weg, dort läuft jetzt das Monster
 ]
 export const BRUNNEN: Ort = { x: 8, y: 6 } // 2 × 2
 // Obstbäume (je einer, 2 × 2 Kacheln Stamm und Krone; das Bild ist 48 × 48 und ragt darüber hinaus): zwei über dem Acker, einer vor dem Stall
@@ -50,13 +50,17 @@ export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: { x: 3, y: 1 }, 
 // Boot (3 × 2 Kacheln) liegt im Wasser unten, am Ufer festgebunden; kein Hindernis (Wasser ist es schon)
 export const BOOT: Ort = { x: 8, y: 13 }
 export const DEKO_PLAETZE: Ort[] = [
-  { x: 8, y: 4 }, { x: 10, y: 5 }, { x: 11, y: 3 }, { x: 2, y: 8 }, { x: 3, y: 10 }, { x: 5, y: 9 },
+  // Jazz 2026-11-15: drei Plätze links unten für die Monster-Hütte verschoben ((2, 8) → (1, 9), (3, 10) → (15, 1), (5, 9) → (7, 2))
+  { x: 8, y: 4 }, { x: 10, y: 5 }, { x: 11, y: 3 }, { x: 1, y: 9 }, { x: 15, y: 1 }, { x: 7, y: 2 },
   { x: 7, y: 9 }, { x: 6, y: 11 }, { x: 8, y: 12 }, { x: 19, y: 8 }, { x: 18, y: 10 }, { x: 11, y: 11 },
   { x: 6, y: 7 }, { x: 4, y: 7 }, { x: 12, y: 6 }, { x: 17, y: 9 }, { x: 19, y: 9 }, { x: 2, y: 5 },
 ]
 // Lehrkraft 2026-11-12: Start so weit rechts, dass die Sprechblase links von der Figur Platz hat (mit 2-facher Größe gut 140 Grafik-Pixel)
-// Monster, das auf der Farm wohnt (Jazz 2026-11-15): unten zwischen Baum und Hühnerstall
-export const MONSTER_PLATZ: Ort = { x: 12, y: 12 }
+// Monster, das auf der Farm wohnt (Jazz 2026-11-15): links unten vor seiner Hütte, läuft dort hin und her (FarmTier).
+// Die Hütte (Bild 4 × 4 Kacheln) steht nur, solange ein Monster da ist; Hindernis sind die unteren 2 Reihen, durchs Dach läuft man dahinter.
+export const HUETTE: Ort = { x: 2, y: 8 }
+export const huettenKacheln = (): Ort[] => flaeche({ x: HUETTE.x, y: HUETTE.y + 2 }, 4, 2)
+export const MONSTER_PLATZ: Ort = { x: 4, y: 12 }
 export const FIGUR_START: Ort = { x: 10, y: 7 } // Mitte der Karte (21 × 15 Kacheln), Jazz 2026-11-14
 // Kleine Halme und Blümchen auf dem Gras (nur innen, nie am Rand)
 export const GRAS_DEKO: (Ort & { nummer: number })[] = [
@@ -137,14 +141,16 @@ export function belegung(): Map<string, string> {
   setze('Brunnen', BRUNNEN, 2, 2)
   Object.entries(BAUM_PLAETZE).forEach(([name, o]) => setze(name, o, 2, 2))
   DEKO_PLAETZE.forEach((o, i) => setze(`Deko ${i}`, o))
+  huettenKacheln().forEach((o) => setze('Hütte', o))
   setze('Monster', MONSTER_PLATZ)
   setze('Figur', FIGUR_START)
   return belegt
 }
 
 export type Stand = { deko: number; brunnen: boolean; huehner: number; kuehe: number; obstbaeume?: string[]; monster?: boolean }
-const flaeche = (o: Ort, breite: number, hoehe: number): Ort[] =>
-  Array.from({ length: breite * hoehe }, (_, i) => ({ x: o.x + (i % breite), y: o.y + Math.floor(i / breite) }))
+function flaeche(o: Ort, breite: number, hoehe: number): Ort[] {
+  return Array.from({ length: breite * hoehe }, (_, i) => ({ x: o.x + (i % breite), y: o.y + Math.floor(i / breite) }))
+}
 /** Kacheln, die ein Tier belegt (Huhn 1 × 1, Kuh 2 × 2) oder ein Obstbaum (2 × 2) */
 export const tierFlaeche = (o: Ort, groesse: number) => flaeche(o, groesse, groesse)
 
@@ -154,7 +160,7 @@ export function hindernisse(s: Stand): Set<string> {
   const liste: Ort[] = DEKO_PLAETZE.slice(0, s.deko)
   for (const b of BAEUME) liste.push(...flaeche(b, b.grafik === 'baum' ? 2 : 1, 2))
   if (s.brunnen) liste.push(...flaeche(BRUNNEN, 2, 2))
-  if (s.monster) liste.push(MONSTER_PLATZ)
+  if (s.monster) liste.push(MONSTER_PLATZ, ...huettenKacheln())
   for (const b of s.obstbaeume ?? []) if (BAUM_PLAETZE[b]) liste.push(...flaeche(BAUM_PLAETZE[b], 2, 2))
   if (s.huehner) liste.push(...flaeche(STALL, 3, 3), ...HUHN_PLAETZE.slice(0, s.huehner))
   if (s.kuehe) {
