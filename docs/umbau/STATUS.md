@@ -152,6 +152,14 @@
   `npm test` 138, lint, build ohne Fehler. **Nicht getestet:** iPad; Shop-Reiter „Verkaufen“ (Kater-73 hat nichts im Vorrat).
   `docs/umbau/rahmen-vorschlag.png` (Vorschaubild mit Paket-Grafiken) bleibt absichtlich ungespeichert (nicht im Repo).
 
+- **Lehrkraftseite, Teilaufgabe 1 – Bestandsaufnahme** (2026-11-15, nur gelesen): `docs/umbau/analyse-lehrkraftseite.md`.
+  Kernpunkte: Runden-Reiter gibt es in allen sechs Formaten, aber ohne Duplizieren und Umsortieren, Entfernen ohne Nachfrage;
+  spielbar ist nur Lückentext; Diktat und Merkdiktat nur im Editor; Fallende Wörter fehlt ganz; Paket-Auswahl ist eine Aufklappliste
+  mit 71 Einträgen (70 Erklärseiten); ungespeicherte Eingaben gehen beim Verlassen ohne Warnung verloren. 14 Vorschläge für die Eingabe.
+  **Getestet** (Browser, als Lehrkraft, 1180 × 820 und 1024 × 768): siehe „Wie geprüft wurde“ in der Datei. **Nicht getestet:** alles,
+  was Daten ändert (Speichern, Paket füllen, Zuweisen); Klickzahlen aus dem Code gezählt.
+  Achtung: `uebungsumbau` liegt 9 Commits hinter `main`; drei eingespielte Migrationen gibt es nur auf `main`.
+
 ## Datenorte
 - **Datenbank Supabase** (Projekt `diwpqkxhmuetdpxxcoar`, Frankfurt): Klassen, Pseudonyme, Aufgaben, Pakete, Zuweisungen,
   Versuche, Lernstände, Münzen, Farm, Besitz. Aufbau nur über `supabase/migrations/` (31 Migrationen).
@@ -210,8 +218,11 @@
 - 2026-11-13 (Jazz, Nachtrag Schritt 8): Spielfigur kämpft statt Einstein; Figuren Grün, Blau, Katze (Namen ohne Geschlecht), Wahl im neuen
   Reiter „Einstellungen“ (dort auch Dunkler Modus und Leseschrift), gespeichert je Schüler:in in der Datenbank. Blaue Figur hat Jazz selbst
   mit einem Bildeditor umgefärbt. Gespenst, Maus, Spinnen gespiegelt; Sätze siehe Erledigt.
+- 2026-11-15 (Jazz, Lehrkraftseite Teilaufgabe 1): Eine Runde darf mehrere Sätze enthalten (schwerere Runden).
+  Gesucht: Ersatz für OpenDyslexic, LRS-freundlich, passend zum Look der Schülerseiten (Vorschläge gemacht, Entscheidung offen).
 
 ## Geänderte Dateien
+- Lehrkraftseite Teilaufgabe 1: `docs/umbau/analyse-lehrkraftseite.md` (neu), `docs/umbau/STATUS.md`
 - Schritt 0: `docs/umbau/STATUS.md`, `docs/umbau/ARBEITSPLAN.md` (neu), `.gitignore`, `CLAUDE.md`
 - Schritt 1: `docs/umbau/analyse-wortsalat.md` (neu), `docs/umbau/STATUS.md`
 - Schritt 2: `docs/umbau/analyse-tastenheld.md` (neu), `docs/umbau/asset-inventar.md` (neu), `docs/umbau/STATUS.md`
@@ -257,4 +268,6 @@
 - Diktat: Server zählt Merkdiktat und Abschreiben vorerst als eine Runde; Herzen und Genauigkeit richtig in Schritt 10.
 
 ## Nächster Schritt
+- Lehrkraftseite: Jazz beantwortet die Rückfragen aus Teilaufgabe 1 (fünf oder sechs Teilaufgaben, `main` hereinholen, Umfang
+  Teilaufgabe 2, Schrift) und gibt Teilaufgabe 2 frei.
 - Jazz testet auf dem iPad (Checkliste D im Arbeitsplan), danach Schritt 9 – alle bestehenden Aufgabenformate anbinden.
