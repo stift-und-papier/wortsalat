@@ -342,3 +342,6 @@
   Teilaufgabe 2 und 3 sind fertig. Offen aus Teilaufgabe 3: **Übungen ohne Monsterkampf** (Rückfrage an Jazz gestellt, danach bauen).
   Danach **Teilaufgabe 4** (Erklärungen als eigener Menüpunkt der Lehrkraft), zuerst Rückfragen.
 - Jazz testet auf dem iPad (Checkliste D im Arbeitsplan), danach Schritt 9 – alle bestehenden Aufgabenformate anbinden.
+- 2026-11-15 (Jazz): alle sechs Vorschläge angenommen (Mischen-Haken, ohne Monster, Merkdiktat-Grenze je Teil, Formate pro Runde,
+  Monster auf der Farm, Reihenfolge 2 → 5 → 3 → 1 → 4). Einstein: Übungsname im Satz ist der Link, kein eigener Knopf mehr (erledigt,
+  im Browser geprüft). **Offen, noch nicht begonnen:** Mischen-Haken, ohne Monster, Merkdiktat-Grenze, Formate pro Runde, Farm-Monster.

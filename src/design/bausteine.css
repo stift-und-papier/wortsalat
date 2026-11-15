@@ -803,8 +803,8 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .muenzen-stand { justify-content: space-between; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
 /* Knopf zum Sammelalbum: Gold wie die Ecken des Buchs (nur dieser Knopf) */
 .knopf--album, .knopf--album:active { border-image-source: var(--rahmen-album); }
-/* Einstein auf dem Lernweg: Knopf in der Sprechblase führt zur nächsten Übung */
-.einstein-weiter { margin-top: var(--space-xs); padding-block: var(--space-2xs); line-height: 1.4; text-align: left; }
+/* Einstein auf dem Lernweg: der Übungsname im Satz führt zur Übung (Jazz 2026-11-15) */
+.einstein-link { color: var(--color-aktion); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Lernweg (Lernweg.tsx): Kästen je Kernkompetenz, darin rankt eine Pflanze hoch ---------- */
 .lernweg-kasten summary {

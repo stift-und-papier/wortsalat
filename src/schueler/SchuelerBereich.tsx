@@ -1,6 +1,6 @@
 // alt (Übungswiese), im Pixel-Look: alles, was Schüler:innen sehen. Zugriff nur über die Datenbank-Funktionen
 // mit dem Link-Token (#/s/<token>/…). Antworten ohne Internet warten im Speicher des iPads (speicher.ts).
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { Fragment, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { AufgabeBearbeiten, type PruefAntwort } from '../gemeinsam/AufgabeBearbeiten'
 import { EinsteinSagt } from '../gemeinsam/Einstein'
 import { Sprite } from '../gemeinsam/Sprite'
@@ -353,12 +353,22 @@ export function SchuelerBereich({ token, pfad }: Props) {
     <Rahmen basis={basis} aktiv="start" muenzen={muenzen} fenster={fenster}>
       {wartendHinweis}
       <EinsteinSagt pose="freundlich">
-        <p>{EINSTEIN[gruss]?.replaceAll('{name}', daten.pseudonym).replaceAll('{uebung}', naechste?.titel ?? '')}</p>
-        {naechstesPaket && naechste && (
-          <a className="knopf knopf--haupt einstein-weiter" href={`#${basis}/p/${naechstesPaket.id}/a/${naechste.id}`}>
-            Mach weiter mit der Übung {naechste.titel}!
-          </a>
-        )}
+        {/* Jazz 2026-11-15: der Übungsname im Satz ist der Link (statt eigenem Knopf) */}
+        <p>
+          {(EINSTEIN[gruss] ?? '')
+            .replaceAll('{name}', daten.pseudonym)
+            .split('{uebung}')
+            .map((stueck, i) => (
+              <Fragment key={i}>
+                {i > 0 && naechstesPaket && naechste && (
+                  <a className="einstein-link" href={`#${basis}/p/${naechstesPaket.id}/a/${naechste.id}`}>
+                    {naechste.titel}
+                  </a>
+                )}
+                {stueck}
+              </Fragment>
+            ))}
+        </p>
       </EinsteinSagt>
       <Lernweg
         token={token}
