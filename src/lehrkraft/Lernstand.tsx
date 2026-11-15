@@ -2,6 +2,7 @@
 // Lernstand der Klasse (Heatmap + Einzelansicht) und Einzelseite zum Drucken. Nur für die Lehrkraft –
 // Schüler:innen sehen ausschließlich ihre Entwicklung in Worten (schueler_entwicklung).
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { csvSpeichern, tabelleZeilen } from '../lib/excel'
 import { fehlerText } from '../lib/fehler'
 import { datum, GROSSE_BEREICHE, grosserBereich, stufeAusPunkte, zusammenfassen, type Auswertung, type Einstellungen } from '../lib/lernstand'
 import { supabase } from '../lib/supabase'
@@ -24,6 +25,7 @@ export function KlassenLernstand({ klasseId }: { klasseId: string }) {
   const [fehler, setFehler] = useState<string | null>(null)
   const [ausgewaehlt, setAusgewaehlt] = useState<string | null>(null)
   const einzelRef = useRef<HTMLDivElement>(null)
+  const tabelleRef = useRef<HTMLTableElement>(null)
 
   useEffect(() => {
     void Promise.all([
@@ -138,6 +140,10 @@ export function KlassenLernstand({ klasseId }: { klasseId: string }) {
         <button type="button" className="lk-knopf" onClick={() => window.print()}>
           Klasse drucken oder als PDF
         </button>
+        {/* Jazz 2026-11-15: Tabelle so, wie sie gerade zu sehen ist (Ansicht, aufgeklappte Bereiche), mit den Zeichen -- bis ++ */}
+        <button type="button" className="lk-knopf" disabled={spalten.length === 0} onClick={() => tabelleRef.current && csvSpeichern(`Lernstand ${klasse.name}`, tabelleZeilen(tabelleRef.current))}>
+          Für Excel speichern
+        </button>
       </div>
       {ansicht === 'bereiche' && spalten.length > 0 && (
         <fieldset className="lk-nicht-drucken">
@@ -165,7 +171,7 @@ export function KlassenLernstand({ klasseId }: { klasseId: string }) {
             </p>
           ) : (
             <div className="lk-rollen">
-              <table className="lk-heatmap">
+              <table className="lk-heatmap" ref={tabelleRef}>
                 <thead>
                   <tr>
                     <th>Schüler:in</th>

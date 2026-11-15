@@ -7,7 +7,6 @@ import {
   kategorienAus,
   ohneLoesung,
   reihenZuTeilen,
-  stelleZuText,
   teileZuText,
   textZuTeilen,
   versionenBloecke,
@@ -30,6 +29,8 @@ import {
 import { Sprite } from '../gemeinsam/Sprite'
 import { MONSTER, type MonsterName } from '../lib/monster'
 import { KompetenzAuswahl } from './KompetenzAuswahl'
+import { AntippModus } from './AntippModus'
+import { antippMeldung, ausText } from '../lib/antippen'
 import { FallendeWoerter } from '../gemeinsam/FallendeWoerter'
 
 // Je Format: Name, kurze Beschreibung und Mini-Beispiel (Format-Kacheln), Standard-Arbeitsanweisung und
@@ -197,7 +198,8 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Einstellungen je Übung (Abschreiben: Zeichen je Herz; Fallende Wörter: Tempo, gleichzeitig, ohne Zeitdruck)
   const [spiel, setSpiel] = useState<SpielEinstellungen>({})
   const [monsterName, setMonsterName] = useState<string>('ruebchen')
-  const [modus, setModus] = useState<'text' | 'formular'>('text')
+  // Jazz 2026-11-15: Antippen ist Standard, die Schreibweise mit [Klammern] wählt man selbst
+  const [modus, setModus] = useState<'antippen' | 'text'>('antippen')
   const [fehler, setFehler] = useState<string | null>(null)
   const [gespeichert, setGespeichert] = useState(false)
   const [geladen, setGeladen] = useState(aufgabeId === null)
@@ -267,7 +269,6 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Der Text bleibt stehen; ein leerer Text bekommt so die passende Erklärung.
   function formatWechseln(neu: AufgabenTyp) {
     if (anweisung === FORMATE[typ].anweisung) setAnweisung(FORMATE[neu].anweisung)
-    setModus('text')
     if (neu === 'fallende_woerter' && rundenJe === 6) setRundenJe(10)
     setTyp(neu)
   }
@@ -492,16 +493,16 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
               </div>
             ) : istFallend ? null : (
             <div className="lk-reiter" role="group">
+              <button type="button" className="lk-knopf" aria-pressed={modus === 'antippen'} onClick={() => setModus('antippen')}>
+                Wörter antippen
+              </button>
               <button type="button" className="lk-knopf" aria-pressed={modus === 'text'} onClick={() => setModus('text')}>
                 Als Text mit [Klammern]
-              </button>
-              <button type="button" className="lk-knopf" aria-pressed={modus === 'formular'} onClick={() => setModus('formular')}>
-                Per Formular
               </button>
             </div>
             )}
 
-            {modus === 'text' ? (
+            {modus === 'text' || einFeld ? (
               <>
                 <Erklaerung offen={!runden.some((r) => r.text)}>
                   {istDiktat ? (
@@ -694,11 +695,18 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                       ) : (r.typ ?? typ) === 'ueberarbeiten' ? (
                         <VersionenFormular text={r.text} onChange={(t) => setRundeText(i, t)} />
                       ) : (
-                        <FormularModus teile={zerlegt[i].teile} onChange={(t) => setRundeText(i, t)} />
+                        <AntippModus
+                          text={r.text}
+                          typ={(r.typ ?? typ) as 'lueckentext' | 'auswahl' | 'zuordnen' | 'fehler'}
+                          kategorien={kategorien ?? []}
+                          platzhalter={ausText(FORMATE[r.typ ?? typ].beispiel).klar}
+                          beschriftung={`Aufgabentext Runde ${i + 1}`}
+                          onChange={(t) => setRundeText(i, t)}
+                        />
                       )}
                       {r.text && zerlegt[i].fehler.length > 0 && (
                         <ul className="lk-hinweis" role="alert">
-                          {zerlegt[i].fehler.map((f) => (
+                          {zerlegt[i].fehler.map((f) => (modus === 'antippen' ? antippMeldung(f) : f)).map((f) => (
                             <li key={f}>{f}</li>
                           ))}
                         </ul>
@@ -926,108 +934,6 @@ function rundeInfo(typ: AufgabenTyp, teile: LueckentextTeil[]): string {
   const luecken = teile.filter((t) => t.t === 'luecke').length
   const auswahl = teile.filter((t) => t.t === 'auswahl').length
   return [luecken ? zahl(luecken, 'Lücke', 'Lücken') : '', auswahl ? zahl(auswahl, 'Auswahl-Stelle', 'Auswahl-Stellen') : ''].filter(Boolean).join(' und ') || 'Text ohne Lücke'
-}
-
-// Formular: Textstücke, Lücken, Auswahl-Stellen und Zuordnungen nacheinander.
-// Sie werden als Rohtext gehalten (z. B. "a/", "das | *dass", "Hund = Nomen"), damit man beim Tippen nichts verliert.
-type Zeile = { art: 'text'; v: string } | { art: 'luecke' | 'auswahl' | 'einheit' | 'wort'; roh: string }
-
-// Wörter ohne Kategorie (Ablenker) gehören im Formular zum normalen Text; benachbarte Textstücke werden zusammengefasst.
-function zeilenAus(teile: LueckentextTeil[]): Zeile[] {
-  const zeilen: Zeile[] = []
-  for (const t of teile) {
-    const text = t.t === 'text' ? t.v : (t.t === 'einheit' && !t.kategorie) || (t.t === 'wort' && !t.korrekturen) ? t.v : null
-    const letzte = zeilen[zeilen.length - 1]
-    if (text !== null) {
-      if (letzte && letzte.art === 'text') zeilen[zeilen.length - 1] = { art: 'text', v: letzte.v + text }
-      else zeilen.push({ art: 'text', v: text })
-    } else if (t.t !== 'text' && t.t !== 'reihe' && t.t !== 'versionen') {
-      zeilen.push({ art: t.t, roh: stelleZuText(t) })
-    }
-  }
-  return zeilen
-}
-
-function FormularModus({ teile, onChange }: { teile: LueckentextTeil[]; onChange: (text: string) => void }) {
-  const [zeilen, setZeilen] = useState<Zeile[]>(() => zeilenAus(teile))
-
-  function setzen(neu: Zeile[]) {
-    setZeilen(neu)
-    onChange(neu.map((z) => (z.art === 'text' ? z.v : `[${z.roh}]`)).join(''))
-  }
-  const aendern = (index: number, neu: Zeile) => setzen(zeilen.map((z, i) => (i === index ? neu : z)))
-  let stellenNr = 0
-
-  return (
-    <div className="lk-formular">
-      {zeilen.length === 0 && <p className="lk-leise">Fügen Sie unten abwechselnd Text, Lücken und Auswahl-Stellen hinzu.</p>}
-      {zeilen.map((z, i) => (
-        <div key={i} className="lk-teil">
-          {z.art === 'text' ? (
-            <label>
-              Text
-              <textarea className="lk-feld" rows={2} value={z.v} onChange={(e) => aendern(i, { art: 'text', v: e.target.value })} spellCheck={false} />
-            </label>
-          ) : z.art === 'luecke' ? (
-            <label>
-              Lücke {++stellenNr}: richtige Lösung(en), mehrere mit / trennen; Hinweis nach : (z. B. Rad fahren : Rad + fahren)
-              <input className="lk-feld" value={z.roh} onChange={(e) => aendern(i, { art: 'luecke', roh: e.target.value })} spellCheck={false} />
-            </label>
-          ) : z.art === 'wort' ? (
-            <label>
-              Fehler {++stellenNr}: Fehlerwort -&gt; Verbesserung (mehrere Verbesserungen mit / trennen)
-              <input className="lk-feld"
-                value={z.roh}
-                onChange={(e) => aendern(i, { art: 'wort', roh: e.target.value })}
-                spellCheck={false}
-                placeholder="weis -> weiß"
-              />
-            </label>
-          ) : z.art === 'einheit' ? (
-            <label>
-              Zuordnung {++stellenNr}: Wort oder Wortgruppe = Kategorie
-              <input className="lk-feld"
-                value={z.roh}
-                onChange={(e) => aendern(i, { art: 'einheit', roh: e.target.value })}
-                spellCheck={false}
-                placeholder="Der kleine Hund = Subjekt"
-              />
-            </label>
-          ) : (
-            <label>
-              Auswahl {++stellenNr}: Möglichkeiten mit | trennen, richtige mit * markieren
-              <input className="lk-feld"
-                value={z.roh}
-                onChange={(e) => aendern(i, { art: 'auswahl', roh: e.target.value })}
-                spellCheck={false}
-                placeholder="das | *dass"
-              />
-            </label>
-          )}
-          <button type="button" className="lk-knopf" onClick={() => setzen(zeilen.filter((_, j) => j !== i))} aria-label="Entfernen">
-            ✕
-          </button>
-        </div>
-      ))}
-      <div className="lk-knopfreihe">
-        <button type="button" className="lk-knopf" onClick={() => setzen([...zeilen, { art: 'text', v: ' ' }])}>
-          + Text
-        </button>
-        <button type="button" className="lk-knopf" onClick={() => setzen([...zeilen, { art: 'luecke', roh: '' }])}>
-          + Lücke
-        </button>
-        <button type="button" className="lk-knopf" onClick={() => setzen([...zeilen, { art: 'auswahl', roh: '' }])}>
-          + Auswahl
-        </button>
-        <button type="button" className="lk-knopf" onClick={() => setzen([...zeilen, { art: 'einheit', roh: '' }])}>
-          + Zuordnung
-        </button>
-        <button type="button" className="lk-knopf" onClick={() => setzen([...zeilen, { art: 'wort', roh: '' }])}>
-          + Fehler
-        </button>
-      </div>
-    </div>
-  )
 }
 
 // Formular für „Reihenfolge“: je Satz Satzart, Anzahl Varianten und ein Feld mit den Reihenfolgen.

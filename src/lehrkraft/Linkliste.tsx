@@ -1,5 +1,6 @@
 import QRCode from 'qrcode'
 import { useEffect, useState } from 'react'
+import { csvSpeichern } from '../lib/excel'
 import { fehlerText } from '../lib/fehler'
 import { schuelerLink } from '../lib/router'
 import { supabase } from '../lib/supabase'
@@ -37,6 +38,10 @@ export function Linkliste({ klasseId }: { klasseId: string }) {
         <div>
           <button type="button" className="lk-knopf lk-knopf--haupt" onClick={() => window.print()}>
             Drucken oder als PDF speichern
+          </button>{' '}
+          {/* Jazz 2026-11-15: Pseudonym und Link als Liste für Excel */}
+          <button type="button" className="lk-knopf" onClick={() => csvSpeichern(`Links ${klasse.name}`, [['Pseudonym', 'Link'], ...schueler.map((s) => [s.pseudonym, schuelerLink(s.token)])])}>
+            Für Excel speichern
           </button>
         </div>
         <p className="lk-leise">Zum Ausschneiden: Jede Karte hat einen Rahmen. Als PDF: im Druckfenster „Als PDF speichern“ wählen.</p>

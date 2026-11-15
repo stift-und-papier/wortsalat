@@ -297,3 +297,17 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 .lk-runde { display: grid; gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--color-lk-linie); border-left-width: 4px; border-radius: var(--radius-lk); }
 .lk-runde[data-aktiv] { border-left-color: var(--color-lk-aktion); }
 .lk-runde__kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs); }
+
+/* Antipp-Modus im Editor (Jazz 2026-11-15): Text mit antippbaren Wörtern; markierte Stellen hinterlegt, gewählte mit Rand */
+.lk-antippen { display: grid; gap: var(--space-xs); }
+.lk-antipp-text { margin: 0; padding: var(--space-sm); line-height: 2.4; white-space: pre-wrap; border: 1px solid var(--color-lk-linie); border-radius: var(--radius-lk); }
+.lk-antipp-wort, .lk-antipp-stelle {
+  font: inherit; color: inherit; cursor: pointer; padding: 2px 1px; margin: 0; border-radius: 4px;
+  min-height: 2em; border: 1px dashed transparent; background: none;
+}
+.lk-antipp-wort:hover, .lk-antipp-wort:focus-visible { border-color: var(--color-lk-aktion); }
+.lk-antipp-wort[aria-pressed='true'] { border: 2px solid var(--color-lk-aktion); background: var(--color-lk-papier-2); }
+.lk-antipp-stelle { background: var(--color-lk-papier-2); border: 2px solid var(--color-lk-linie); font-weight: 700; }
+.lk-antipp-stelle small { font-weight: 400; color: var(--color-lk-leise); }
+.lk-antipp-stelle[aria-pressed='true'] { border-color: var(--color-lk-aktion); box-shadow: inset 0 -3px 0 var(--color-lk-aktion); }
+.lk-antipp-felder { grid-template-columns: minmax(0, 1fr); align-items: start; }

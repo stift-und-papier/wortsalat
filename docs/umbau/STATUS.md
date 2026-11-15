@@ -404,3 +404,22 @@
   sagt zusätzlich „Die Wörter warten so lange.“ **Spielfeld im Querformat:** beim Start scrollt die Seite so, dass das ganze Spielfeld über dem Menü liegt.
   **Getestet** (1180 × 820, Dachs-19): Spielfeld unten bei 685 px, Menü ab 737 px, Monsterszene bleibt sichtbar; Feststelltaste (per Skript) → Wort bleibt
   2 s auf derselben Höhe, danach fällt es weiter; Knöpfe hell und dunkel angesehen. **Nicht getestet:** echte Feststelltaste, Hochformat.
+- **Teilaufgabe 6 (Eingabe verbessern) vorgezogen, Lehrkraft-Teil der Liste** (Jazz 2026-11-15, alle Vorschläge angenommen, Antippen ist Standard):
+  - **„Wörter antippen“** ersetzt „Per Formular“ und ist Standard; „Als Text mit [Klammern]“ wählt man selbst. Text in ein Feld schreiben, darunter
+    Wörter antippen (`src/lehrkraft/AntippModus.tsx`, Umrechnung `src/lib/antippen.ts` mit Tests). Lückentext: Wort → Lücke (Felder: weitere Lösungen,
+    Hinweis); Auswahl: Wort = richtige Möglichkeit (Feld: falsche Möglichkeiten; Platz der richtigen wechselt je Wort); Fehler finden: Text mit Fehlern
+    schreiben, Fehlerwort antippen, Verbesserung eintragen; Zuordnen: Wort bzw. erstes und letztes Wort einer Gruppe, dann Kategorie (vorhandene als Knöpfe
+    oder neue eintippen). Noch einmal antippen = wieder Text; „+ nächstes Wort“ für Lösungen aus mehreren Wörtern. Weitertippen im Text behält die Stellen
+    davor und dahinter. Meldungen ohne Klammern und mit „Sie“. Gespeichert wird weiter der [Klammer]-Text (kein neues Speicherformat).
+    Reihenfolge und Sätze verbessern behalten ihre Formulare, Diktat und Fallende Wörter ihr Textfeld. Altes `FormularModus` entfernt.
+  - **Klicks** (Beispiel „Ich weiß, dass du kommst, weil das Wetter schön ist.“ mit 3 Lücken): **vorher 14** (altes Formular: 7 Stücke, je „+ Text“/„+ Lücke“
+    und Klick ins neue Feld; aus dem Aufbau des alten Formulars gezählt, nicht nachgeklickt), **nachher 4** (Textfeld + 3 Wörter, im Browser geklickt).
+    Fehler finden mit 2 Fehlern: vorher 10, nachher 3 (Verbesserungsfeld hat sofort den Cursor). Zuordnen „Der kleine Hund bellt laut.“ mit Gruppe und
+    2 Kategorien: vorher 8 plus Schreibweise „= Kategorie“, nachher 6 (gezählt).
+  - **Für Excel speichern** (`src/lib/excel.ts`, CSV mit BOM und Semikolon, Zellen mit = + - @ bekommen ein Leerzeichen davor, damit Excel keine Formel
+    daraus macht): Übungen (wie gefiltert/sortiert), Pakete (wie gefiltert), Lernstand der Klasse (wie angezeigt, Zeichen -- bis ++), Links der Klasse.
+  **Getestet** (Browser, Lehrkraft 1180 × 820 und 820 × 1180): neue Lückentext-Übung (nicht gespeichert) mit 3 Lücken, Vorschau zeigt sie; Text davor
+  ergänzt → Lücken bleiben; Wechsel zu Klammern zeigt `[dass] … [weil] [das]`; Fehler finden, Auswahl, Zuordnen (Gruppe, neue und vorhandene Kategorie)
+  ergeben gültige Klammern ohne Meldung; bestehende Übung „Test: Zwei Formate ohne Monster“ lädt richtig. Alle vier Excel-Dateien abgefangen und gelesen
+  (Kopfzeilen ohne Knopf- und Pfeiltexte). `npm test` 150, lint, build ohne Fehler. **Nicht getestet:** Öffnen der Dateien in Excel (kein Excel hier),
+  Antippen mit dem Finger am echten iPad, Speichern einer im Antipp-Modus angelegten Übung (Speichern selbst unverändert).
