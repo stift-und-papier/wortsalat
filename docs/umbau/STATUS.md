@@ -207,6 +207,12 @@
   **Nicht getestet:** iPad und Bildschirmtastatur (Tottasten ^ ´), Abschreiben und Merkdiktat ohne Internet („Nochmal senden“),
   Schüleransicht bei 1180 × 820, „Bewegung reduzieren“ (die Wörter fallen trotzdem, das ist das Spiel).
   Testdaten: drei Übungen „Test: …“, „Testpaket Diktat“ (Klasse Test), vier Durchgänge bei Dachs-19.
+  Nachtrag (Jazz 2026-11-15): Einstein sagt auf der Startseite „Es gibt eine neue Übung! „…““ bzw., wenn eine schon gespielte Übung wieder
+  frei ist (die wird dann zuerst vorgeschlagen), „Du hast eine Übung, bei der du weiter üben kannst! „…““ (`uebung-neu`, `uebung-verbessern`
+  in `einstein.md`). Diktat-Runden laufen immer in der Reihenfolge der Lehrkraft (war schon so, DB-Test 19.2). **Getestet im iPad-Format**
+  (alle Versuche von Dachs-19 freigegeben): Startseite 1180 × 820 zeigt den Verbessern-Satz mit Knopf; Merkdiktat 1180 × 820; Fallende Wörter
+  820 × 1180 (Hochformat, kein Scrollen zur Seite, Tippen geht); Editor 820 × 1180. **Nicht getestet:** echtes iPad mit Bildschirmtastatur
+  (sie verdeckt im Hochformat etwa die halbe Höhe; ob das Fallfeld dann sichtbar bleibt, ist offen).
 
 ## Datenorte
 - **Datenbank Supabase** (Projekt `diwpqkxhmuetdpxxcoar`, Frankfurt): Klassen, Pseudonyme, Aufgaben, Pakete, Zuweisungen,

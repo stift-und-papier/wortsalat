@@ -334,16 +334,26 @@ export function SchuelerBereich({ token, pfad }: Props) {
 
   // Startseite (Jazz 2026-11-14): der Lernweg. Ganz oben begrüßt Einstein; gibt es eine offene Übung, führt ein Knopf in seiner Sprechblase dorthin.
   const offen = (a: SchuelerAufgabe) => !a.geloest && !a.morgen
-  const naechstesPaket = daten.pakete.find((p) => p.aufgaben.some(offen))
-  const naechste = naechstesPaket?.aufgaben.find(offen)
+  // Jazz 2026-11-15: zuerst eine Übung, die man verbessern kann (schon gespielt, wieder frei), sonst die nächste offene
+  const verbessern = (a: SchuelerAufgabe) => offen(a) && a.versuche > 0
+  const naechstesPaket = daten.pakete.find((p) => p.aufgaben.some(verbessern)) ?? daten.pakete.find((p) => p.aufgaben.some(offen))
+  const naechste = naechstesPaket?.aufgaben.find(verbessern) ?? naechstesPaket?.aufgaben.find(offen)
   // Usability-Test 2026-11-13: beim ersten Mal (noch nichts gelöst) erklärt Einstein, wie Üben und Farm zusammenhängen
   const neu = !daten.pakete.some((p) => p.aufgaben.some((a) => a.geloest))
-  const gruss = naechste ? (neu ? 'begruessung-neu' : 'begruessung') : daten.pakete.length ? 'begruessung-fertig' : 'begruessung-leer'
+  const gruss = naechste
+    ? neu
+      ? 'begruessung-neu'
+      : naechste.versuche > 0
+        ? 'uebung-verbessern'
+        : 'uebung-neu'
+    : daten.pakete.length
+      ? 'begruessung-fertig'
+      : 'begruessung-leer'
   return (
     <Rahmen basis={basis} aktiv="start" muenzen={muenzen} fenster={fenster}>
       {wartendHinweis}
       <EinsteinSagt pose="freundlich">
-        <p>{EINSTEIN[gruss]?.replaceAll('{name}', daten.pseudonym)}</p>
+        <p>{EINSTEIN[gruss]?.replaceAll('{name}', daten.pseudonym).replaceAll('{uebung}', naechste?.titel ?? '')}</p>
         {naechstesPaket && naechste && (
           <a className="knopf knopf--haupt einstein-weiter" href={`#${basis}/p/${naechstesPaket.id}/a/${naechste.id}`}>
             Mach weiter mit der Übung {naechste.titel}!

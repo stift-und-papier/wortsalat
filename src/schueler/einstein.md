@@ -2,11 +2,18 @@
 Was Einstein in der Schüleransicht sagt. Diese Datei dürfen Sie direkt ändern.
   ## kennung   → ein Text; darunter der Text (eine Leerzeile beginnt einen neuen Absatz)
   {name}      → wird durch den Fantasienamen ersetzt
+  {uebung}    → Name der Übung, zu der der Knopf führt
 Die Kennungen (Wörter nach ##) bitte nicht ändern. Regeln: Einstein sagt nie „falsch“ und verrät nie eine Lösung.
 -->
 
 ## begruessung
 Hallo {name}! Schön, dass du da bist.
+
+## uebung-neu
+Hallo {name}! Es gibt eine neue Übung! „{uebung}“
+
+## uebung-verbessern
+Hallo {name}! Du hast eine Übung, bei der du weiter üben kannst! „{uebung}“
 
 ## begruessung-neu
 Hallo {name}! Hier übst du Deutsch. Für jede gelöste Aufgabe bekommst du Münzen. Damit kaufst du im Shop Samen für deine Farm, und jede Übung gießt deine Pflanzen. Tippe auf „Weiter üben“, dann geht es los.
