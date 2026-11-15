@@ -290,3 +290,7 @@
   richtige Zeichen (5–30 einstellbar), Freundschaft ab 95 %. Merkdiktat: ein Teil = eine Runde, Herz nur ganz richtig, 95 % über alle Zeichen.
   Fallende Wörter: Wortliste, Tempo, 1/2 gleichzeitig, Haken „Ohne Zeitdruck“ (Wörter warten in der Mitte), alles stellt die Lehrkraft ein
   (Migration `diktat_fallende`). Gewünscht: Übungen auch ohne Monsterkampf.
+- 2026-11-15 (Lehrkraft): Einstein nennt die Übung im Satz als Link („Es gibt eine neue Übung! …“ / „Du hast eine Übung, bei der du weiter üben kannst! …“).
+  Formate pro Runde wählbar (sechs Standardformate), Haken „Runden zufällig mischen“, Merkdiktat-Grenze je Teil (50–100 %), Übungen **ohne Monster**
+  (zählen nicht fürs Album). **Monster auf der Farm:** 4 Freundschaften mit demselben Monster → zieht ein, schenkt montags und donnerstags einen
+  zufälligen Shop-Samen (liegt daneben, einsammeln), immer nur eins, wechseln unter „Farm einrichten“.

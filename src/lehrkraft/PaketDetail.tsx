@@ -93,7 +93,7 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
             {inhalt.map((e, i) => (
               <li key={e.aufgabe_id} className="lk-eintrag">
                 <span>
-                  {e.aufgabe.typ !== 'erklaerung' && (
+                  {e.aufgabe.typ !== 'erklaerung' && e.aufgabe.monster !== 'kein' && (
                     <span className="lk-monster-klein" title={monster(e.aufgabe.monster).name}>
                       <Sprite grafik={monster(e.aufgabe.monster).grafik} mal={Math.max(1, monster(e.aufgabe.monster).mal - 1)} />
                     </span>

@@ -60,7 +60,7 @@ export type LueckentextTeil = TextTeil | LueckenTeil | AuswahlTeil | EinheitTeil
 export type Darstellung = 'antippen' | 'dropdown'
 
 /** Spalte aufgaben.spiel: Einstellungen je Übung (Diktat, Fallende Wörter; Jazz 2026-11-15) */
-export type SpielEinstellungen = { zeichen_je_herz?: number; tempo?: 'langsam' | 'mittel' | 'schnell'; gleichzeitig?: 1 | 2; ohne_zeitdruck?: boolean }
+export type SpielEinstellungen = { zeichen_je_herz?: number; tempo?: 'langsam' | 'mittel' | 'schnell'; gleichzeitig?: 1 | 2; ohne_zeitdruck?: boolean; reihenfolge?: boolean; teil_grenze?: number }
 
 /** Spalte aufgaben.loesung: alles, was die Lehrkraft eingibt (mit Lösungen). Schüler:innen bekommen sie nie. */
 export type LueckentextInhalt = {
@@ -80,6 +80,8 @@ export type LueckentextInhalt = {
   saetze?: string[]
   /** nur bei Fallenden Wörtern: das Wort dieser Runde */
   wort?: string
+  /** eigenes Format dieser Runde (sonst das der Übung) */
+  typ?: AufgabenTyp
   /** Übungsumbau: eine Übung besteht aus Runden, jede Runde im bisherigen Format (Diktat: genau eine, ohne Runden-Reiter) */
   runden?: LueckentextInhalt[]
 }
@@ -98,6 +100,7 @@ export type LueckentextInhaltSchueler = {
   modus?: 'abschreiben' | 'merken'
   saetze?: string[]
   wort?: string
+  typ?: AufgabenTyp
   teile: (
     | TextTeil
     | { t: 'luecke'; id: number; hinweis?: string }

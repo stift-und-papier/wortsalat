@@ -24,6 +24,8 @@ const TEXT_FREUND = 'Juhu, ihr seid jetzt Freunde! Das Monster hat sich über de
 const TEXT_MORGEN = 'Das Monster braucht noch etwas Zeit, um Freundschaft zu schließen. Morgen kannst du es noch einmal versuchen!'
 // Vorschlag Claude (Schritt 8): schon befreundet, diesmal nicht alles richtig
 const TEXT_SCHON_FREUND = 'Ihr seid schon Freunde. Morgen kannst du wieder mit dem Monster üben.'
+// Übung ohne Monster (Jazz 2026-11-15, Vorschlag Claude)
+const OHNE = { freund: 'Geschafft! Du hast alles richtig gemacht.', morgen: 'Morgen kannst du es noch einmal versuchen!', schon: 'Diese Übung hast du schon einmal ganz geschafft. Morgen kannst du wieder üben.' }
 
 type Props = {
   token: string
@@ -110,9 +112,9 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   if (daten.status === 'morgen') {
     return (
       <>
-        <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={daten.befreundet} ende="morgen" />
+        {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={daten.befreundet} ende="morgen" />}
         <div className="karte aufgabe">
-          <p>{daten.befreundet ? TEXT_SCHON_FREUND : 'Heute hast du mit diesem Monster schon geübt. Morgen kannst du es noch einmal versuchen!'}</p>
+          <p>{daten.monster === 'kein' ? (daten.befreundet ? OHNE.schon : 'Heute hast du diese Übung schon gemacht. ' + OHNE.morgen) : daten.befreundet ? TEXT_SCHON_FREUND : 'Heute hast du mit diesem Monster schon geübt. Morgen kannst du es noch einmal versuchen!'}</p>
           <div className="knopf-reihe">
             <a className="knopf knopf--haupt" href={zumPaket}>Zurück zum Paket</a>
           </div>
@@ -130,10 +132,11 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   if (abschluss) {
     // Diktat: Freundschaft ab 95 % rechnet nur der Server
     const allesRichtig = aufgabe.typ === 'diktat' ? abschluss.neu_befreundet : gespielt.every((g) => g.richtig)
-    const text = allesRichtig ? TEXT_FREUND : abschluss.befreundet ? TEXT_SCHON_FREUND : TEXT_MORGEN
+    const ohne = daten.monster === 'kein'
+    const text = allesRichtig ? (ohne ? OHNE.freund : TEXT_FREUND) : abschluss.befreundet ? (ohne ? OHNE.schon : TEXT_SCHON_FREUND) : ohne ? OHNE.morgen : TEXT_MORGEN
     return (
       <>
-        <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={abschluss.befreundet} ende={allesRichtig ? 'freund' : 'morgen'} />
+        {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={abschluss.befreundet} ende={allesRichtig ? 'freund' : 'morgen'} />}
         <div className="karte aufgabe">
           <EinsteinSagt pose={allesRichtig ? 'freut-sich' : 'erklaert'}>
             <p>{text}</p>
@@ -249,7 +252,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
     const start = daten.gespielt.length
     return (
       <>
-        <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />
+        {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />}
         <div className="karte aufgabe">
           {kopf}
           <FallendeWoerter
@@ -283,10 +286,10 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
           ? jetzt.antworten.fehler.length
           : 0
       : 0
-    const markiert = jetzt && merken && !jetzt.richtig ? falscheWoerter(soll, String(jetzt.antworten?.[0] ?? '')) : []
+    const markiert = jetzt && merken ? falscheWoerter(soll, String(jetzt.antworten?.[0] ?? '')) : []
     return (
       <>
-        <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />
+        {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />}
         <div className="karte aufgabe">
           {kopf}
           {!jetzt && !merken && (
@@ -402,7 +405,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
 
   return (
     <>
-      <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />
+      {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />}
       <form
         className="karte aufgabe"
         onSubmit={(e) => {
@@ -452,7 +455,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
               <div className="rueckmeldung rueckmeldung--richtig" role="status">
                 <span className="rueckmeldung__zeichen" aria-hidden="true">✓</span>
                 <p>
-                  <strong>Richtig!</strong> Dein Herz hat das Monster getroffen.
+                  <strong>Richtig!</strong>{daten.monster !== 'kein' && ' Dein Herz hat das Monster getroffen.'}
                 </p>
               </div>
             ) : (

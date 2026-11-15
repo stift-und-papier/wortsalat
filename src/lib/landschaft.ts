@@ -55,6 +55,8 @@ export const DEKO_PLAETZE: Ort[] = [
   { x: 6, y: 7 }, { x: 4, y: 7 }, { x: 12, y: 6 }, { x: 17, y: 9 }, { x: 19, y: 9 }, { x: 2, y: 5 },
 ]
 // Lehrkraft 2026-11-12: Start so weit rechts, dass die Sprechblase links von der Figur Platz hat (mit 2-facher Größe gut 140 Grafik-Pixel)
+// Monster, das auf der Farm wohnt (Jazz 2026-11-15): unten zwischen Baum und Hühnerstall
+export const MONSTER_PLATZ: Ort = { x: 12, y: 12 }
 export const FIGUR_START: Ort = { x: 10, y: 7 } // Mitte der Karte (21 × 15 Kacheln), Jazz 2026-11-14
 // Kleine Halme und Blümchen auf dem Gras (nur innen, nie am Rand)
 export const GRAS_DEKO: (Ort & { nummer: number })[] = [
@@ -135,11 +137,12 @@ export function belegung(): Map<string, string> {
   setze('Brunnen', BRUNNEN, 2, 2)
   Object.entries(BAUM_PLAETZE).forEach(([name, o]) => setze(name, o, 2, 2))
   DEKO_PLAETZE.forEach((o, i) => setze(`Deko ${i}`, o))
+  setze('Monster', MONSTER_PLATZ)
   setze('Figur', FIGUR_START)
   return belegt
 }
 
-export type Stand = { deko: number; brunnen: boolean; huehner: number; kuehe: number; obstbaeume?: string[] }
+export type Stand = { deko: number; brunnen: boolean; huehner: number; kuehe: number; obstbaeume?: string[]; monster?: boolean }
 const flaeche = (o: Ort, breite: number, hoehe: number): Ort[] =>
   Array.from({ length: breite * hoehe }, (_, i) => ({ x: o.x + (i % breite), y: o.y + Math.floor(i / breite) }))
 /** Kacheln, die ein Tier belegt (Huhn 1 × 1, Kuh 2 × 2) oder ein Obstbaum (2 × 2) */
@@ -151,6 +154,7 @@ export function hindernisse(s: Stand): Set<string> {
   const liste: Ort[] = DEKO_PLAETZE.slice(0, s.deko)
   for (const b of BAEUME) liste.push(...flaeche(b, b.grafik === 'baum' ? 2 : 1, 2))
   if (s.brunnen) liste.push(...flaeche(BRUNNEN, 2, 2))
+  if (s.monster) liste.push(MONSTER_PLATZ)
   for (const b of s.obstbaeume ?? []) if (BAUM_PLAETZE[b]) liste.push(...flaeche(BAUM_PLAETZE[b], 2, 2))
   if (s.huehner) liste.push(...flaeche(STALL, 3, 3), ...HUHN_PLAETZE.slice(0, s.huehner))
   if (s.kuehe) {

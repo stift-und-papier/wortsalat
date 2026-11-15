@@ -59,8 +59,12 @@ export type Farm = {
   tiere: { id: string; art: string; satt: boolean }[]
   // tage = Tage, bis der Baum wieder Früchte trägt (0 = reif)
   baeume: { id: string; art: string; tage: number }[]
-  // liegt auf der Farm und wartet aufs Einsammeln; bei = 'feld:<Nummer>' oder 'tier:<id>'
+  // liegt auf der Farm und wartet aufs Einsammeln; bei = 'feld:<Nummer>', 'tier:<id>', 'baum:<id>' oder 'monster:<name>' (Samen-Geschenk)
   liegen: { id: string; sorte: string; bei: string }[]
+  // Monster auf der Farm (Jazz 2026-11-15): wer dort wohnt, ob es gerade eingezogen ist, welche man wählen kann
+  monster?: string | null
+  monster_neu?: boolean
+  monster_wahl?: string[]
 }
 
 /** Bild für die Shop-Karte: Samentüte, Tier, Deko oder Feld (reife Karotte als Zeichen) */

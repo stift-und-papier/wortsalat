@@ -1087,9 +1087,23 @@ begin
     v_ad uuid;
     v_ab uuid;
   begin
+    -- Igel-11 und passende ★★★-Aufgaben gibt es in der echten Datenbank nicht mehr (aufgeräumt): dann selbst anlegen (wird verworfen)
+    if v_igel is null then
+      insert into public.schueler (owner, klasse_id, pseudonym) values (c_lk_a, c_kl_a, 'Igel-11') returning id, token into v_igel, t_igel;
+      insert into public.kompetenzen (owner, code, kerncurriculum, bereich, stufe, kompetenz) values
+        (c_lk_a, 'T-15a', 'Realschule', 'Test', '6', 'Testkompetenz 15a'), (c_lk_a, 'T-15b', 'Realschule', 'Test', '6', 'Testkompetenz 15b');
+      with neu as (
+        insert into public.aufgaben (owner, typ, titel, stufe, loesung)
+        select c_lk_a, 'lueckentext', 'L15-' || c, 3, '{"teile":[{"t":"luecke","id":0,"loesungen":["x"]}]}'
+        from unnest(array['T-15a', 'T-15b']) c
+        returning id, titel
+      )
+      insert into public.aufgabe_kompetenzen (aufgabe_id, kompetenz_id)
+      select neu.id, k.id from neu join public.kompetenzen k on k.owner = c_lk_a and k.code = substr(neu.titel, 5);
+    end if;
     -- Eigene Lernstand-Daten (echte Versuche von Igel-11 gibt es nicht mehr; alles wird am Ende verworfen):
     -- je eine ★★★-Aufgabe mit genau einer Kompetenz aus dem KC der Klasse, zwei verschiedene Kompetenzen.
-    -- Aufgabe D: 4 Tage 0 %, dann 6 Tage 100 % → von „--“ auf „+“ (deutlich). Aufgabe B: 4 Tage 40 %, dann 4 Tage 80 % → „-“ auf „o“ (besser).
+    -- Aufgabe D: 4 Tage 0 %, dann 6 Tage 100 % → von „--“ auf „+“ (deutlich). Aufgabe B: 6 Tage 60 %, dann 6 Tage 80 % (eine Stufe, besser).
     delete from public.versuche where schueler_id = v_igel;
     with kandidaten as (
       select a.id as aufgabe, min(ak.kompetenz_id::text) as kompetenz
@@ -1097,24 +1111,30 @@ begin
       join public.aufgabe_kompetenzen ak on ak.aufgabe_id = a.id
       join public.kompetenzen k on k.id = ak.kompetenz_id
         and k.kerncurriculum = (select kl.kerncurriculum from public.klassen kl join public.schueler s on s.klasse_id = kl.id where s.id = v_igel)
+        and k.owner = (select s.owner from public.schueler s where s.id = v_igel)
       where a.stufe = 3 and a.typ <> 'erklaerung'
       group by a.id having count(*) = 1
     ), d as (select * from kandidaten order by kompetenz, aufgabe limit 1)
     select d.aufgabe, (select k2.aufgabe from kandidaten k2 where k2.kompetenz <> d.kompetenz order by k2.kompetenz, k2.aufgabe limit 1)
     into v_ad, v_ab from d;
+    -- selbst angelegte Aufgaben (s. o.) haben Vorrang
+    if exists (select 1 from public.aufgaben where owner = c_lk_a and titel = 'L15-T-15a') then
+      v_ad := (select id from public.aufgaben where owner = c_lk_a and titel = 'L15-T-15a');
+      v_ab := (select id from public.aufgaben where owner = c_lk_a and titel = 'L15-T-15b');
+    end if;
     insert into public.versuche (client_id, schueler_id, aufgabe_id, antworten, ergebnis, anteil_richtig, richtig, zaehlt_fuer_lernstand, bearbeitet_am)
     select gen_random_uuid(), v_igel, x.aufgabe, '{}', '{}', x.anteil, x.anteil = 1, true, now() - make_interval(days => x.tag)
     from (
       select v_ad as aufgabe, 0::numeric as anteil, t as tag from generate_series(17, 20) t
       union all select v_ad, 1, t from generate_series(5, 10) t
-      union all select v_ab, 0.4, t from generate_series(17, 20) t
-      union all select v_ab, 0.8, t from generate_series(5, 8) t
+      union all select v_ab, 0.6, t from generate_series(17, 22) t
+      union all select v_ab, 0.8, t from generate_series(5, 10) t
     ) x;
     delete from public.belohnungen where schueler_id = v_igel;
     select count(*) filter (where x ->> 'kategorie' in ('besser', 'deutlich')), count(*) filter (where x ->> 'kategorie' = 'deutlich')
       into v_besser, v_deutlich
     from jsonb_array_elements(public.schueler_entwicklung(t_igel) -> 'kompetenzen') x;
-    if v_deutlich = 0 or v_besser <= v_deutlich then raise exception 'Block 15.0: Testdaten Igel-11 passen nicht (% / %)', v_besser, v_deutlich; end if;
+    if v_deutlich = 0 or v_besser <= v_deutlich then raise exception 'Block 15.0: Testdaten Igel-11 passen nicht (% / %): %', v_besser, v_deutlich, public.schueler_entwicklung(t_igel) -> 'kompetenzen'; end if;
     select count(*) into v_samen_vorher from public.besitz where schueler_id = v_igel and artikel_id in ('tulpe', 'rose');
     set local role anon;
     begin
@@ -1590,6 +1610,139 @@ begin
       raise exception 'Block 19.3: leeres Wort angenommen';
     exception when sqlstate '22023' then null;
     end;
+    n := n + 1;
+  end;
+
+  -- Block 20: Formate pro Runde, Reihenfolge, Merkdiktat-Grenze, ohne Monster (Jazz 2026-11-15)
+  declare
+    v_s public.schueler := (select s from public.schueler s where s.pseudonym = 'Fuchs-01');
+    t_fuchs text := (select token from public.schueler where pseudonym = 'Fuchs-01');
+    v_paket uuid;
+    v_mix uuid;
+    v_reihe uuid;
+    v_merk uuid;
+    v jsonb;
+    v_d uuid;
+  begin
+    insert into public.aufgaben (owner, typ, titel, stufe, monster, runden_je_durchgang, spiel, loesung) values
+      (c_lk_a, 'lueckentext', 'M20-mix', 1, 'kein', 6, '{"reihenfolge":true}',
+       '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]},
+                   {"typ":"auswahl","teile":[{"t":"auswahl","id":0,"optionen":["x","y"],"richtig":[1]}]}]}'),
+      (c_lk_a, 'lueckentext', 'M20-reihe', 1, 'ruebchen', 5, '{"reihenfolge":true}',
+       (select jsonb_build_object('runden', jsonb_agg(jsonb_build_object('teile', jsonb_build_array(
+          jsonb_build_object('t', 'luecke', 'id', 0, 'loesungen', jsonb_build_array(chr(96 + k))))) order by k))
+        from generate_series(1, 5) k)),
+      (c_lk_a, 'diktat', 'M20-merk', 1, 'ruebchen', 6, '{"teil_grenze":60}',
+       '{"runden":[{"modus":"merken","text":"Ja.","saetze":["Ja."],"teile":[]}]}');
+    v_mix := (select id from public.aufgaben where titel = 'M20-mix' and owner = c_lk_a);
+    v_reihe := (select id from public.aufgaben where titel = 'M20-reihe' and owner = c_lk_a);
+    v_merk := (select id from public.aufgaben where titel = 'M20-merk' and owner = c_lk_a);
+    insert into public.pakete (owner, titel, jahrgaenge, zweige) values (c_lk_a, 'P-20', '{7}', '{Realschule}') returning id into v_paket;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position) values (v_paket, v_mix, 1), (v_paket, v_reihe, 2), (v_paket, v_merk, 3);
+    insert into public.zuweisungen (owner, paket_id, klasse_id) values (c_lk_a, v_paket, c_kl_a);
+
+    -- 20.1 Format pro Runde: Inhalt nennt das Format, ohne Lösung; Runde 2 wird als Auswahl geprüft
+    v := (select inhalt from public.aufgaben where id = v_mix);
+    if v -> 'runden' -> 1 ->> 'typ' <> 'auswahl' or v -> 'runden' -> 0 ->> 'typ' <> 'lueckentext' or v::text ~ 'richtig|loesungen' then
+      raise exception 'Block 20.1: Inhalt je Runde falsch: %', v;
+    end if;
+    v := public.uebung_starten_um(v_s, v_paket, v_mix, '2026-05-01 08:00+02');
+    v_d := (v ->> 'durchgang')::uuid;
+    v := public.runde_pruefen_um(v_s, v_d, 0, '{"0":"a"}', '2026-05-01 08:01+02');
+    v := public.runde_pruefen_um(v_s, v_d, 1, '{"0":[1]}', '2026-05-01 08:02+02');
+    if not (v ->> 'richtig')::boolean or v -> 'loesung' <> '{"luecken":[{"id":0,"loesungen":["y"]}]}'::jsonb then
+      raise exception 'Block 20.1: Auswahl-Runde falsch geprüft: %', v;
+    end if;
+    begin
+      insert into public.aufgaben (owner, typ, titel, loesung) values (c_lk_a, 'lueckentext', 'M20-falsch', '{"runden":[{"typ":"diktat","teile":[]}]}');
+      raise exception 'Block 20.1: Diktat als Runde angenommen';
+    exception when sqlstate '22023' then null;
+    end;
+    n := n + 1;
+
+    -- 20.2 ohne Monster: befreundet zählt, aber nicht im Sammelalbum
+    if not (v -> 'abschluss' ->> 'befreundet')::boolean then raise exception 'Block 20.2: ohne Monster nicht geschafft: %', v; end if;
+    if public.schueler_album(t_fuchs) @> '[{"id":"kein","art":"monster"}]' then raise exception 'Block 20.2: „kein“ im Sammelalbum'; end if;
+    n := n + 1;
+
+    -- 20.3 Reihenfolge der Lehrkraft
+    v := public.uebung_starten_um(v_s, v_paket, v_reihe, '2026-05-01 09:00+02');
+    if (select runden from public.durchgaenge where id = (v ->> 'durchgang')::uuid) <> '{0,1,2,3,4}'::smallint[] then
+      raise exception 'Block 20.3: Runden nicht in Reihenfolge: %', v -> 'runden';
+    end if;
+    n := n + 1;
+
+    -- 20.4 Merkdiktat-Grenze 60 %: „Je.“ statt „Ja.“ (2/3) trifft
+    v := public.uebung_starten_um(v_s, v_paket, v_merk, '2026-05-01 10:00+02');
+    v := public.runde_pruefen_um(v_s, (v ->> 'durchgang')::uuid, 0, '{"0":"Je."}', '2026-05-01 10:01+02');
+    if not (v ->> 'richtig')::boolean then raise exception 'Block 20.4: Grenze 60 %% nicht beachtet: %', v; end if;
+    n := n + 1;
+  end;
+
+  -- Block 21: Monster auf der Farm (Jazz 2026-11-15)
+  declare
+    v_s public.schueler := (select s from public.schueler s where s.pseudonym = 'Eule-02');
+    t_eule text := (select token from public.schueler where pseudonym = 'Eule-02');
+    v_paket uuid;
+    v jsonb;
+    v_u uuid;
+    v_samen_vorher bigint;
+    k integer;
+  begin
+    insert into public.aufgaben (owner, typ, titel, stufe, monster, loesung)
+    select c_lk_a, 'lueckentext', 'F21-' || i, 1, 'maus', '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]}]}'
+    from generate_series(1, 4) i;
+    insert into public.pakete (owner, titel, jahrgaenge, zweige) values (c_lk_a, 'P-21', '{7}', '{Realschule}') returning id into v_paket;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position)
+    select v_paket, id, row_number() over (order by titel) from public.aufgaben where owner = c_lk_a and titel like 'F21-%';
+    insert into public.zuweisungen (owner, paket_id, klasse_id) values (c_lk_a, v_paket, c_kl_a);
+
+    -- 21.1 drei Freundschaften reichen nicht, die vierte holt die Maus auf die Farm (mit Willkommens-Fenster)
+    for k in 1..4 loop
+      v_u := (select id from public.aufgaben where owner = c_lk_a and titel = 'F21-' || k);
+      v := public.uebung_starten_um(v_s, v_paket, v_u, '2026-06-01 08:00+02');
+      perform public.runde_pruefen_um(v_s, (v ->> 'durchgang')::uuid, 0, '{"0":"a"}', '2026-06-01 08:01+02');
+      if k = 3 and cardinality(public.monster_kandidaten(v_s)) <> 0 then raise exception 'Block 21.1: Monster schon nach 3 Freundschaften'; end if;
+    end loop;
+    set local role anon;
+    v := public.schueler_farm(t_eule);
+    reset role;
+    if v ->> 'monster' <> 'maus' or not (v ->> 'monster_neu')::boolean or v -> 'monster_wahl' <> '["maus"]' then
+      raise exception 'Block 21.1: Maus zieht nicht ein: %', v - 'pflanzen' - 'samen';
+    end if;
+    n := n + 1;
+
+    -- 21.2 fälliger Samen liegt beim Monster; Einsammeln macht daraus einen Samen zum Pflanzen
+    update public.schueler set monster_geschenk_am = public.heute() - 8 where id = v_s.id;
+    set local role anon;
+    v := public.schueler_farm(t_eule);
+    if (select count(*) from jsonb_array_elements(v -> 'liegen') x where x ->> 'bei' = 'monster:maus') <> 1 then
+      raise exception 'Block 21.2: kein Samen beim Monster: %', v -> 'liegen';
+    end if;
+    v := public.schueler_farm(t_eule);
+    if (select count(*) from jsonb_array_elements(v -> 'liegen') x where x ->> 'bei' = 'monster:maus') <> 1 then
+      raise exception 'Block 21.2: zweimal Samen am selben Tag';
+    end if;
+    reset role;
+    select count(*) into v_samen_vorher from public.besitz where schueler_id = v_s.id;
+    set local role anon;
+    v := public.einsammeln(t_eule, (select (x ->> 'id')::uuid from jsonb_array_elements(v -> 'liegen') x where x ->> 'bei' = 'monster:maus'));
+    reset role;
+    if (select count(*) from public.besitz where schueler_id = v_s.id) <> v_samen_vorher + 1 or v -> 'liegen' @> '[{"bei":"monster:maus"}]' then
+      raise exception 'Block 21.2: Samen nicht eingesammelt: %', v -> 'liegen';
+    end if;
+    n := n + 1;
+
+    -- 21.3 Wählen: nur Monster mit 4 Freundschaften; dasselbe wählen schließt das Willkommens-Fenster
+    set local role anon;
+    begin
+      perform public.farm_monster_waehlen(t_eule, 'gespenst');
+      raise exception 'Block 21.3: fremdes Monster gewählt';
+    exception when sqlstate 'P0001' then null;
+    end;
+    v := public.farm_monster_waehlen(t_eule, 'maus');
+    reset role;
+    if (v ->> 'monster_neu')::boolean then raise exception 'Block 21.3: Willkommen bleibt offen'; end if;
     n := n + 1;
   end;
 

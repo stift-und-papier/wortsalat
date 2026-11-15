@@ -9,10 +9,11 @@ import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
 import {
   ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KACHEL,
-  KUH_PLAETZE, nebenan, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, weg, ZEILEN, type Ort,
+  KUH_PLAETZE, MONSTER_PLATZ, nebenan, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, weg, ZEILEN, type Ort,
 } from '../lib/landschaft'
 import { artikelBild, DEKO_NAME, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
+import { monster as monsterAus } from '../lib/monster'
 import { supabase } from '../lib/supabase'
 import { FigurWahl } from './FigurWahl'
 import { FarmTier } from './FarmTier'
@@ -137,7 +138,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     schritt(0, figur)
   }
 
-  async function ausfuehren(rpc: 'pflanzen' | 'ernten' | 'fuettern' | 'einsammeln', args: Record<string, unknown>, erfolg: string | ((neu: FarmDaten) => string)) {
+  async function ausfuehren(rpc: 'pflanzen' | 'ernten' | 'fuettern' | 'einsammeln' | 'farm_monster_waehlen', args: Record<string, unknown>, erfolg: string | ((neu: FarmDaten) => string)) {
     setFehler(null)
     const { data, error } = await supabase.rpc(rpc, { p_token: token, ...args })
     if (error) return setFehler(fehlerText(error))
@@ -188,13 +189,19 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   const baeume = daten.baeume.filter((b) => BAUM_PLAETZE[b.art])
   const besetzt = hindernisse({
     deko: deko.length, brunnen: hatBrunnen, huehner: huehner.length, kuehe: kuehe.length, obstbaeume: baeume.map((b) => b.art),
+    monster: Boolean(daten.monster),
   })
+  const farmMonster = daten.monster ? monsterAus(daten.monster) : null
+  // Geschenk des Monsters ist ein Samen zum Pflanzen (Samentüte), alles andere Ernte, Ei, Milch oder Obst
+  const liegtDing = (d: { sorte: string; bei: string }) =>
+    d.bei.startsWith('monster:') ? { name: `Samen: ${SORTE_NAME[d.sorte] ?? d.sorte}`, grafik: GRAFIK.saatgut, nummer: (SORTE[d.sorte] ?? 0) * 2 } : vorratDing(d.sorte)
   const ernte = daten.vorrat.filter((v) => v.sorte in SORTE)
   // Was auf der Farm liegt: Ernte beim Feld, Ei/Milch beim Tier (Plätze rechnet ablagePlaetze, nichts überdeckt sich)
   const tierOrt = new Map<string, Ort[]>([
     ...huehner.map((t, i) => [`tier:${t.id}`, tierFlaeche(HUHN_PLAETZE[i], 1)] as const),
     ...kuehe.map((t, i) => [`tier:${t.id}`, tierFlaeche(KUH_PLAETZE[i], 2)] as const),
     ...baeume.map((b) => [`baum:${b.id}`, tierFlaeche(BAUM_PLAETZE[b.art], 2)] as const),
+    ...(daten.monster ? [[`monster:${daten.monster}`, tierFlaeche(MONSTER_PLATZ, 1)] as const] : []),
   ])
   const bepflanzt = new Set(daten.pflanzen.map((p) => `${FELD_PLAETZE[p.feld].x},${FELD_PLAETZE[p.feld].y}`))
   const liegenOrte = ablagePlaetze(
@@ -350,11 +357,30 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             const o = DEKO_PLAETZE[i]
             return <Ding key={i} grafik={b.grafik} nummer={b.nummer} x={px(o.x)} y={px(o.y)} mal={mal} z={(o.y + 1) * KACHEL} />
           })}
+          {farmMonster && (
+            <button
+              type="button"
+              className="farm-ding farm-monster"
+              style={{
+                left: px(MONSTER_PLATZ.x) - ((farmMonster.grafik.bildBreite - KACHEL) * mal) / 2,
+                top: px(MONSTER_PLATZ.y) - (farmMonster.grafik.bildHoehe - KACHEL) * mal,
+                zIndex: (MONSTER_PLATZ.y + 1) * KACHEL,
+              }}
+              aria-label={`${farmMonster.name}, wohnt auf deiner Farm`}
+              onClick={() =>
+                gehe(nebenan([MONSTER_PLATZ]), () =>
+                  setMeldung(`${farmMonster.name} wohnt bei dir. Montags und donnerstags legt es dir einen Samen hin.`),
+                )
+              }
+            >
+              <Sprite grafik={farmMonster.grafik} mal={mal} />
+            </button>
+          )}
           {huehner.map((t, i) => tierKnopf(t, HUHN_PLAETZE[i], 1, i))}
           {kuehe.map((t, i) => tierKnopf(t, KUH_PLAETZE[i], 2, i))}
           {daten.liegen.map((d, i) => {
             const o = liegenOrte[i]
-            const ding = vorratDing(d.sorte)
+            const ding = liegtDing(d)
             return (
               <button
                 key={d.id}
@@ -365,7 +391,14 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
                 onClick={() =>
                   gehe(
                     (z) => z.x === o.x && z.y === o.y,
-                    () => void ausfuehren('einsammeln', { p_ding: d.id }, `Eingesammelt: ${ding.name}. Es liegt jetzt in deinem Vorrat.`),
+                    () =>
+                      void ausfuehren(
+                        'einsammeln',
+                        { p_ding: d.id },
+                        d.bei.startsWith('monster:')
+                          ? `Eingesammelt: ${ding.name}. Du kannst ihn jetzt auf ein leeres Feld pflanzen.`
+                          : `Eingesammelt: ${ding.name}. Es liegt jetzt in deinem Vorrat.`,
+                      ),
                   )
                 }
               >
@@ -479,6 +512,25 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         <FarmMenue titel="Farm einrichten" schliessen={() => setEinrichten(false)}>
           <h4>Deine Figur</h4>
           <FigurWahl token={token} figur={figurName} nachWahl={nachFigur} />
+          <h4>Dein Monster</h4>
+          {!daten.monster_wahl?.length ? (
+            <p>Freunde dich in 4 Übungen mit demselben Monster an. Dann zieht es auf deine Farm.</p>
+          ) : (
+            <div className="farm-deko-wahl">
+              {daten.monster_wahl.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  className="chip"
+                  aria-pressed={daten.monster === m}
+                  onClick={() => void ausfuehren('farm_monster_waehlen', { p_monster: m }, `${monsterAus(m).name} wohnt jetzt auf deiner Farm.`).then(() => setEinrichten(false))}
+                >
+                  <Sprite grafik={monsterAus(m).grafik} mal={monsterAus(m).grafik.bildHoehe <= 16 ? 2 : 1} />
+                  {monsterAus(m).name}
+                </button>
+              ))}
+            </div>
+          )}
           <h4>Deko auf der Farm</h4>
           {dekoArten.length === 0 ? (
             <p>
@@ -496,6 +548,27 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
               ))}
             </div>
           )}
+        </FarmMenue>
+      )}
+
+      {daten.monster_neu && farmMonster && daten.monster && (
+        <FarmMenue titel="Ein Monster möchte bei dir wohnen!" schliessen={() => void ausfuehren('farm_monster_waehlen', { p_monster: daten.monster }, `${farmMonster.name} wohnt jetzt auf deiner Farm.`)}>
+          <p className="farm-monster-neu">
+            <Sprite grafik={farmMonster.grafik} mal={3} />
+          </p>
+          <p>
+            Du hast dich in 4 Übungen mit {farmMonster.name} angefreundet. Jetzt zieht es auf deine Farm. Montags und donnerstags legt es dir
+            einen Samen hin. Unter „Farm einrichten“ kannst du später ein anderes Monster wählen.
+          </p>
+          <div className="knopf-reihe">
+            <button
+              type="button"
+              className="knopf knopf--haupt"
+              onClick={() => void ausfuehren('farm_monster_waehlen', { p_monster: daten.monster }, `${farmMonster.name} wohnt jetzt auf deiner Farm.`)}
+            >
+              Willkommen!
+            </button>
+          </div>
         </FarmMenue>
       )}
 

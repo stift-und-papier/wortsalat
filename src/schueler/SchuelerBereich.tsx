@@ -223,7 +223,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
           {paket.aufgaben.map((a, i) => (
             <li key={a.id}>
               <a className="karte paket-liste__eintrag" href={`#${basis}/p/${paket.id}/a/${a.id}`}>
-                {a.uebung ? (
+                {a.uebung && a.monster !== 'kein' ? (
                   <span className="paket-liste__monster">
                     <Sprite grafik={monster(a.monster).grafik} mal={monster(a.monster).grafik.bildHoehe <= 16 ? 2 : 1} />
                     {a.befreundet && (

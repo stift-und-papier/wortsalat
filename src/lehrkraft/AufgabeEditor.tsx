@@ -102,6 +102,9 @@ export const FORMATE: Record<AufgabenTyp, { name: string; kurz: string; mini: st
   },
 }
 
+/** Formate, die man je Runde wählen kann (Diktate, Fallende Wörter und Erklärseiten sind eigene Übungen) */
+const RUNDEN_FORMATE: AufgabenTyp[] = ['lueckentext', 'auswahl', 'zuordnen', 'fehler', 'reihenfolge', 'ueberarbeiten']
+
 /** Fallende Wörter: ein Wort oder eine Wortgruppe pro Zeile */
 const woerterAus = (t: string) => t.split('\n').map((w) => w.replace(/\s+/g, ' ').trim()).filter(Boolean)
 
@@ -150,8 +153,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Übungsumbau: eine Übung hat mehrere Runden (Reiter), jede Runde ist ein eigener Aufgabentext im bisherigen Format
   // k = fester Schlüssel der Runde im Editor (bleibt beim Umsortieren, damit Formularfelder zu ihrer Runde gehören)
   const naechsterK = useRef(1)
-  const neueRunde = (text = '') => ({ k: naechsterK.current++, text })
-  const [runden, setRunden] = useState<{ k: number; text: string }[]>(() => [{ k: 0, text: '' }])
+  // typ: eigenes Format dieser Runde (Jazz 2026-11-15); leer = Format der Übung
+  const neueRunde = (text = '', typ?: AufgabenTyp) => ({ k: naechsterK.current++, text, typ })
+  const [runden, setRunden] = useState<{ k: number; text: string; typ?: AufgabenTyp }[]>(() => [{ k: 0, text: '' }])
   const [aktiv, setAktiv] = useState(0)
   const text = runden[aktiv]?.text ?? ''
   const setRundeText = (i: number, neu: string) => setRunden((alt) => alt.map((r, j) => (j === i ? { ...r, text: neu } : r)))
@@ -166,8 +170,8 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
     setFokusK(null)
   }, [fokusK])
 
-  function rundeEinfuegen(nach: number, text = '') {
-    const neu = neueRunde(text)
+  function rundeEinfuegen(nach: number, text = '', rtyp?: AufgabenTyp) {
+    const neu = neueRunde(text, rtyp)
     setRunden([...runden.slice(0, nach + 1), neu, ...runden.slice(nach + 1)])
     setAktiv(nach + 1)
     setFokusK(neu.k)
@@ -240,7 +244,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         // Merkdiktat (ein Teil je Runde) und Fallende Wörter (ein Wort je Runde) bearbeitet man in einem Textfeld
         if (a.typ === 'diktat') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.text).join(' | ') }])
         else if (a.typ === 'fallende_woerter') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.wort ?? r.text).join('\n') }])
-        else setRunden(gespeichert.map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile) })))
+        else setRunden(gespeichert.map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile), typ: r.typ })))
         setDarstellung(l.darstellung ?? 'antippen')
         setKategorienText((l.kategorien ?? []).join(', '))
         setKorrigieren(l.korrigieren ?? false)
@@ -277,8 +281,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Jede Runde einzeln zerlegen; angezeigt (Formular, Vorschau) wird die gewählte Runde
   const zerlegt = useMemo(
     () =>
-      runden.map(({ text: t }) =>
-        typ === 'erklaerung'
+      runden.map(({ text: t, typ: rt }) => {
+        const ty = rt ?? typ
+        return typ === 'erklaerung'
           ? { teile: [], fehler: [] }
           : typ === 'diktat'
             ? { teile: [], fehler: saetzeTeilen(t).length ? [] : ['Bitte fügen Sie einen Text ein.'] }
@@ -291,19 +296,24 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                   ...woerterAus(t).filter((w) => w.length > 60).map((w) => `„${w.slice(0, 20)}…“ ist zu lang (höchstens 60 Zeichen).`),
                 ],
               }
-            : typ === 'reihenfolge'
+            : ty === 'reihenfolge'
               ? reihenZuTeilen(t)
-              : typ === 'ueberarbeiten'
+              : ty === 'ueberarbeiten'
                 ? versionenZuTeilen(t)
-                : textZuTeilen(t, typ === 'fehler' ? 'fehler' : typ === 'zuordnen'),
-      ),
+                : textZuTeilen(t, ty === 'fehler' ? 'fehler' : ty === 'zuordnen')
+      }),
     [runden, typ],
   )
   const { teile, fehler: textFehler } = zerlegt[aktiv] ?? zerlegt[0]
   // Runden mit Fehlern (außer der gewählten, deren Fehler direkt unter dem Textfeld stehen)
   const fehlerRunden = zerlegt.flatMap((z, i) => (z.fehler.length || !runden[i].text.trim() ? [i + 1] : []))
-  const kategorien = typ === 'zuordnen' ? kategorienAus(zerlegt.flatMap((z) => z.teile), kategorienText.split(',')) : undefined
-  const fehlerOptionen = typ === 'fehler' ? { korrigieren, anzahl_zeigen: anzahlZeigen } : {}
+  // Formate, die in dieser Übung vorkommen (je Runde wählbar), und das Format der gewählten Runde
+  const typen = new Set(runden.map((x) => x.typ ?? typ))
+  const aktivTyp = runden[aktiv]?.typ ?? typ
+  const kategorien = typen.has('zuordnen')
+    ? kategorienAus(zerlegt.filter((_, i) => (runden[i].typ ?? typ) === 'zuordnen').flatMap((z) => z.teile), kategorienText.split(','))
+    : undefined
+  const fehlerOptionen = typen.has('fehler') ? { korrigieren, anzahl_zeigen: anzahlZeigen } : {}
   // Spalte loesung (mit Lösungen); die Schüler-Fassung (inhalt) erzeugt die Datenbank daraus
   const istDiktat = typ === 'diktat'
   const istFallend = typ === 'fallende_woerter'
@@ -312,17 +322,18 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   const saetze = istDiktat ? saetzeTeilen(text) : []
   const woerter = istFallend ? woerterAus(text) : []
   const zeichenJeHerz = spiel.zeichen_je_herz ?? 10
-  const rundeLoesung = (t: string, tl: LueckentextTeil[]) =>
+  const teilGrenze = spiel.teil_grenze ?? 100
+  const rundeLoesung = (t: string, tl: LueckentextTeil[], rt?: AufgabenTyp) =>
     istDiktat
       ? { text: t, gross_klein_beachten: true, teile: [], modus: diktatModus, saetze: saetzeTeilen(t) }
-      : { text: t, gross_klein_beachten: grossKlein, darstellung, kategorien, ...fehlerOptionen, teile: tl }
+      : { text: t, gross_klein_beachten: grossKlein, darstellung, kategorien, ...fehlerOptionen, ...(rt && rt !== typ ? { typ: rt } : {}), teile: tl }
   // gewählte Runde (für die Vorschau)
-  const loesung = istErklaerung ? { text: '', gross_klein_beachten: true, teile: [], erklaerung } : rundeLoesung(text, teile)
+  const loesung = istErklaerung ? { text: '', gross_klein_beachten: true, teile: [], erklaerung } : rundeLoesung(text, teile, runden[aktiv]?.typ)
   // Diktate haben keine Runden (Jazz, Schritt 6): gespeichert als eine einzige Runde, damit sie als Übung zählen
   const erklaerungLeer = !erklaerung.text && !erklaerung.merke
   const format = FORMATE[typ]
   const BEISPIEL = format.beispiel
-  const hatLuecke = teile.some((t) => t.t === 'luecke') || (typ === 'fehler' && korrigieren)
+  const hatLuecke = teile.some((t) => t.t === 'luecke') || (aktivTyp === 'fehler' && korrigieren)
   const hatAuswahl = teile.some((t) => t.t === 'auswahl')
 
   async function speichern() {
@@ -350,16 +361,17 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
             { runden: saetze.map((t) => ({ text: t, gross_klein_beachten: true, teile: [], modus: 'merken', saetze: [t] })) }
           : istFallend
             ? { runden: woerter.map((w) => ({ wort: w, text: w, gross_klein_beachten: true, teile: [] })) }
-            : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile)) },
+            : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile, r.typ)) },
       monster: monsterName,
       runden_je_durchgang: Math.min(50, Math.max(1, Math.round(rundenJe) || 6)),
       spiel: istDiktat
         ? diktatModus === 'abschreiben'
           ? { zeichen_je_herz: Math.min(30, Math.max(5, Math.round(zeichenJeHerz) || 10)) }
-          : {}
-        : istFallend
-          ? { tempo: spiel.tempo ?? 'mittel', gleichzeitig: spiel.gleichzeitig ?? 1, ohne_zeitdruck: spiel.ohne_zeitdruck ?? false }
-          : {},
+          : { teil_grenze: Math.min(100, Math.max(50, Math.round(teilGrenze) || 100)) }
+        : {
+            ...(istFallend ? { tempo: spiel.tempo ?? 'mittel', gleichzeitig: spiel.gleichzeitig ?? 1, ohne_zeitdruck: spiel.ohne_zeitdruck ?? false } : {}),
+            ...(spiel.reihenfolge ? { reihenfolge: true } : {}),
+          },
     }
     const id = aufgabeId ?? angelegt.current
     const { data, error } = id
@@ -640,8 +652,20 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                     <li key={r.k} className="lk-runde" data-aktiv={i === aktiv || undefined} onFocusCapture={() => setAktiv(i)}>
                       <div className="lk-runde__kopf">
                         <strong>Runde {i + 1}</strong>
+                        <select
+                          className="lk-feld lk-feld--klein"
+                          value={r.typ ?? typ}
+                          onChange={(e) => setRunden(runden.map((x, j) => (j === i ? { ...x, typ: e.target.value === typ ? undefined : (e.target.value as AufgabenTyp) } : x)))}
+                          aria-label={`Format von Runde ${i + 1}`}
+                        >
+                          {RUNDEN_FORMATE.map((f) => (
+                            <option key={f} value={f}>
+                              {FORMATE[f].name}
+                            </option>
+                          ))}
+                        </select>
                         <span className="lk-knopfreihe">
-                          <button type="button" className="lk-knopf" onClick={() => rundeEinfuegen(i, r.text)} disabled={runden.length >= 100} aria-label={`Runde ${i + 1} kopieren`}>
+                          <button type="button" className="lk-knopf" onClick={() => rundeEinfuegen(i, r.text, r.typ)} disabled={runden.length >= 100} aria-label={`Runde ${i + 1} kopieren`}>
                             Kopieren
                           </button>
                           <button type="button" className="lk-knopf" disabled={i === 0} onClick={() => rundeVerschieben(i, -1)} aria-label={`Runde ${i + 1} nach oben`}>
@@ -661,13 +685,13 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                           rows={3}
                           value={r.text}
                           onChange={(e) => setRundeText(i, e.target.value)}
-                          placeholder={BEISPIEL}
+                          placeholder={FORMATE[r.typ ?? typ].beispiel}
                           spellCheck={false}
                           aria-label={`Aufgabentext Runde ${i + 1}`}
                         />
-                      ) : typ === 'reihenfolge' ? (
+                      ) : (r.typ ?? typ) === 'reihenfolge' ? (
                         <ReihenFormular text={r.text} onChange={(t) => setRundeText(i, t)} />
-                      ) : typ === 'ueberarbeiten' ? (
+                      ) : (r.typ ?? typ) === 'ueberarbeiten' ? (
                         <VersionenFormular text={r.text} onChange={(t) => setRundeText(i, t)} />
                       ) : (
                         <FormularModus teile={zerlegt[i].teile} onChange={(t) => setRundeText(i, t)} />
@@ -679,7 +703,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                           ))}
                         </ul>
                       )}
-                      {r.text && zerlegt[i].fehler.length === 0 && <p className="lk-leise">✓ {rundeInfo(typ, zerlegt[i].teile)} erkannt.</p>}
+                      {r.text && zerlegt[i].fehler.length === 0 && <p className="lk-leise">✓ {rundeInfo(r.typ ?? typ, zerlegt[i].teile)} erkannt.</p>}
                     </li>
                   ))}
                 </ol>
@@ -697,7 +721,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                 Groß-/Kleinschreibung wird bewertet
               </label>
             )}
-            {typ === 'fehler' && (
+            {typen.has('fehler') && (
               <div>
                 <div className="lk-reiter" role="group">
                   <button type="button" className="lk-knopf" aria-pressed={!korrigieren} onClick={() => setKorrigieren(false)}>
@@ -713,7 +737,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                 </label>
               </div>
             )}
-            {typ === 'zuordnen' && (
+            {typen.has('zuordnen') && (
               <label>
                 Kategorien („Stifte“). Die im Text verwendeten kommen automatisch dazu. Weitere als Ablenker mit Komma trennen:
                 <input className="lk-feld"
@@ -754,6 +778,20 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                 </span>
               </label>
             )}
+            {!istDiktat && (
+              <label className="lk-haken">
+                <input type="checkbox" checked={!spiel.reihenfolge} onChange={(e) => setSpiel({ ...spiel, reihenfolge: !e.target.checked })} />
+                {istFallend ? 'Wörter zufällig mischen' : 'Runden zufällig mischen'} (sonst in Ihrer Reihenfolge)
+              </label>
+            )}
+            {istDiktat && diktatModus === 'merken' && (
+              <label>
+                Ein Teil zählt als geschafft ab … % richtig getippter Zeichen
+                <input className="lk-feld lk-feld--zahl" type="number" min={50} max={100} value={teilGrenze}
+                  onChange={(e) => setSpiel({ ...spiel, teil_grenze: Number(e.target.value) })} />
+                <span className="lk-leise">100 = nur ganz richtige Teile treffen. Ganz richtige Teile treffen immer. Freundschaft gibt es ab 95 % über alle Teile.</span>
+              </label>
+            )}
           </fieldset>
           </>
           )}
@@ -773,7 +811,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                     key={JSON.stringify([loesung, anweisung, hinweis, farbig, diktatModus])}
                     aufgabe={{
                       id: aufgabeId ?? 'vorschau',
-                      typ,
+                      typ: aktivTyp,
                       titel: titel || format.name,
                       anweisung,
                       farbig,
@@ -784,7 +822,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                       geloest: false,
                       loesung_angesehen: false,
                     }}
-                    pruefen={vorschauPruefen(typ, loesung, rueckmeldung)}
+                    pruefen={vorschauPruefen(aktivTyp, loesung, rueckmeldung)}
                   />
                   <p className="lk-leise">Probieren Sie die Aufgabe hier aus. In der Vorschau wird nichts gespeichert.</p>
                 </div>
@@ -829,6 +867,10 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                   {MONSTER[m].name}
                 </button>
               ))}
+              {/* Jazz 2026-11-15: Übung ohne Monsterkampf (zählt nicht fürs Sammelalbum) */}
+              <button type="button" className="lk-knopf" aria-pressed={monsterName === 'kein'} onClick={() => setMonsterName('kein')}>
+                Ohne Monster
+              </button>
             </div>
           </fieldset>
           <KompetenzAuswahl ausgewaehlt={kompetenzIds} onChange={setKompetenzIds} />

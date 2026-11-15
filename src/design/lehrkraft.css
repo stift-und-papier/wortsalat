@@ -108,6 +108,7 @@
 .lk-knopfreihe { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 .lk-feld--schmal { width: 11rem; }
 .lk-feld--zahl { width: 6rem; }
+.lk-feld--klein { width: auto; min-height: 0; }
 textarea.lk-feld { padding: var(--space-xs) var(--space-sm); }
 .lk-knopf { text-decoration: none; }
 /* Umschalter: gewählt = Holz-Strich unten wie im Menü */

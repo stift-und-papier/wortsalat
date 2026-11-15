@@ -649,14 +649,14 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .farm-landschaft canvas { display: block; image-rendering: pixelated; clip-path: inset(10px 12px 12px 12px); }
 .farm-landschaft .sprite { image-rendering: pixelated; }
 .farm-ding { position: absolute; pointer-events: none; line-height: 0; }
-.farm-feld, .farm-tier, .farm-liegt, .farm-baum {
+.farm-feld, .farm-tier, .farm-liegt, .farm-baum, .farm-monster {
   position: absolute; display: grid; place-items: center; line-height: 0;
   padding: 0; border: none; background: none; cursor: pointer; pointer-events: auto;
 }
 /* Tippfläche mindestens 48 px, auch wenn Feld oder Huhn kleiner gezeichnet sind */
-.farm-feld::before, .farm-tier::before, .farm-liegt::before, .farm-baum::before { content: ''; position: absolute; inset: min(0px, calc((100% - 48px) / 2)); }
+.farm-feld::before, .farm-tier::before, .farm-liegt::before, .farm-baum::before, .farm-monster::before { content: ''; position: absolute; inset: min(0px, calc((100% - 48px) / 2)); }
 .farm-feld[aria-pressed='true'] { outline: 3px solid var(--color-aktion); outline-offset: 1px; }
-.farm-feld:focus-visible, .farm-tier:focus-visible, .farm-liegt:focus-visible, .farm-baum:focus-visible { outline: 3px solid var(--color-aktion); }
+.farm-feld:focus-visible, .farm-tier:focus-visible, .farm-liegt:focus-visible, .farm-baum:focus-visible, .farm-monster:focus-visible { outline: 3px solid var(--color-aktion); }
 /* Pflanzen stehen mitten im Feld (Lehrkraft 2026-11-12) */
 /* Obstbäume: Bild 48 × 48 ragt über die 2 × 2 Kacheln hinaus; stehen still, nur beim Ernten fallen die Früchte einmal */
 .farm-baum__bild { position: absolute; line-height: 0; pointer-events: none; }
@@ -905,3 +905,5 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .shop-wahl h2 { margin: var(--space-2xs) 0 0; font-size: 1.25rem; line-height: 1.3; }
 .shop-wahl .knopf { --px: 2px; min-height: 48px; }
 .buch-hinweis { line-height: 1.4; } /* Leseschrift: sonst ragt die Seite 2 px über den Bildschirm */
+/* Monster auf der Farm (Jazz 2026-11-15): Bild im Willkommens-Fenster mittig */
+.farm-monster-neu { text-align: center; line-height: 0; margin: 0; }
