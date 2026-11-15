@@ -55,9 +55,6 @@ export function Erklaerungen({ token, basis, id, zeigen }: Props) {
 
   return (
     <>
-      <header className="pixel-schild">
-        <h1>Erklärungen</h1>
-      </header>
       <p className="karte">{liste.length === 0 ? 'Hier gibt es noch keine Erklärungen.' : 'Hier kannst du nachlesen, wie etwas geht. Tippe auf ein Thema.'}</p>
       {[...themen].map(([bereich, eintraege]) => (
         <details key={bereich} className="karte hilfe-eintrag erklaerungen-thema">

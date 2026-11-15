@@ -62,12 +62,14 @@ import symbol_rahmen from './symbol_rahmen.png'
 import monster_fledermaus from './monster_fledermaus.png'
 import huette from './huette.png'
 import blase_ausruf from './blase_ausruf.png'
+import fallen_wiese from './fallen_wiese.png'
 import truhe from './truhe.png'
 import feld from './feld.png'
 import figur_blau from './figur_blau.png'
 import figur_katze from './figur_katze.png'
 import buch from './buch.png'
 import buch_rot from './buch_rot.png'
+import buch_symbol from './buch_symbol.png'
 import reiter from './reiter.png'
 import lesezeichen from './lesezeichen.png'
 import sticker from './sticker.png'
@@ -138,12 +140,14 @@ export const GRAFIK = {
   monster_fledermaus: { url: monster_fledermaus, breite: 128, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
   huette: { url: huette, breite: 192, hoehe: 192, bildBreite: 64, bildHoehe: 64 },
   blase_ausruf: { url: blase_ausruf, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  fallen_wiese: { url: fallen_wiese, breite: 576, hoehe: 324, bildBreite: 576, bildHoehe: 324 },
   truhe: { url: truhe, breite: 16, hoehe: 14, bildBreite: 16, bildHoehe: 14 },
   feld: { url: feld, breite: 14, hoehe: 14, bildBreite: 14, bildHoehe: 14 },
   figur_blau: { url: figur_blau, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },
   figur_katze: { url: figur_katze, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },
   buch: { url: buch, breite: 2976, hoehe: 216, bildBreite: 248, bildHoehe: 216 },
   buch_rot: { url: buch_rot, breite: 2976, hoehe: 216, bildBreite: 248, bildHoehe: 216 },
+  buch_symbol: { url: buch_symbol, breite: 22, hoehe: 26, bildBreite: 22, bildHoehe: 26 },
   reiter: { url: reiter, breite: 80, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   lesezeichen: { url: lesezeichen, breite: 160, hoehe: 20, bildBreite: 40, bildHoehe: 20 },
   sticker: { url: sticker, breite: 1596, hoehe: 32, bildBreite: 42, bildHoehe: 32 },

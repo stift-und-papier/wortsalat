@@ -385,3 +385,17 @@
   `npm test` 141, Build ohne Fehler, Konsole ohne Fehler. **Nicht getestet:** echtes iPad in Safari (Safaris Leisten nehmen Höhe weg; dann kann die Farm
   knapp unter das Menü rutschen), Füttern lässt die Blase verschwinden (Dachs-19 hatte kein Futter), andere Monster als Rübchen auf der Farm.
   Gefunden, nicht behoben (war schon vorher so): mit allen 18 Deko-Stücken **und** dem Birnbaum kommt die Figur nicht an das rechte Huhn bei (17, 10).
+- **Nach der Farm** (Jazz 2026-11-15): Monster läuft nur auf dem Gras vor der Hütte (Weg 0 bis 2 Kacheln nach rechts). Überschrift **jeder Schülerseite**
+  (Lernweg, Übungen, Farm, Erklärungen, Hilfe) als kleines Holzschild in der Kopfzeile zwischen Dunkel-Schalter und Münzen (`titel` in `Rahmen`);
+  Paket- und Übungsseite behalten ihre Kopfzeile mit Zurück-Knopf. Dunkel-Schalter 2-fach statt 3-fach. Sammelalbum- und Vorrat-Knopf nur mit Bild
+  (Name in `aria-label`): Buch = Zeichnung der Lehrkraft (`buch_symbol.png`, braun), Truhe. Alles bis 2d3b5cd nach `main` gepusht und veröffentlicht.
+- **Fallende Wörter** (Jazz 2026-11-15, Teil 2 der Liste, alle Vorschläge angenommen): Hintergrund Wiese mit Wolken (`fallen_wiese.png`, Nature Landscapes
+  nature_2, Sprout-Lands-Farben) mit leichtem hellem Schleier; jedes Wort in einem Papier-Kästchen (Tafel aus dem UI Pack), getippte Buchstaben blasser;
+  aktives Kästchen mit dickem dunklem Rahmen, der jede halbe Sekunde blinkt (still bei „Bewegung reduzieren“), daneben = Pfirsich-Rahmen ohne Blinken.
+  **Feststelltaste:** `FeststellHinweis` (Pfirsich-Kasten mit gezeichneter Taste ⇪, „Die Feststelltaste ist an. Drücke sie einmal, dann schreibst du wieder
+  normal. Sie ist links neben dem A.“) bei Fallenden Wörtern (über dem Spielfeld), Abschreiben und Merkdiktat (Spiel und alte Ansicht).
+  **Getestet** (Browser 1180 × 820): Editor-Vorschau und Schüleransicht Dachs-19 (dunkler Modus): Hintergrund, Kästchen, Blinken (Farbe wechselt alle 0,5 s),
+  falsches Zeichen → Pfirsich-Rahmen und „Schau genau hin“; Hinweis erscheint bei Tastendruck mit Feststelltaste (per Skript ausgelöst) und verschwindet
+  ohne. Kopfzeile auf Hilfe und Farm. `npm test` 141, lint, build ohne Fehler. **Nicht getestet:** echte Feststelltaste (der Testbrowser kann sie nicht drücken)
+  und ob iPad-Tastaturen sie melden; Hinweis beim Abschreiben und Merkdiktat nur im Code eingebaut, nicht angesehen. **Gefunden, nicht behoben (war schon so):**
+  im Querformat 1180 × 820 liegt der untere Teil des Spielfelds unter dem Menü, man muss etwa 150 px scrollen.

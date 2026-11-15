@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Abschreiben } from '../gemeinsam/DiktatAnzeige'
 import { Eingabe } from '../gemeinsam/Eingabe'
+import { FeststellHinweis } from '../gemeinsam/FeststellHinweis'
 import { FallendeWoerter, type WortErgebnis } from '../gemeinsam/FallendeWoerter'
 import { falscheWoerter, vereinheitliche } from '../lib/diktat'
 import { Anweisung } from '../gemeinsam/Anweisung'
@@ -327,6 +328,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
                 void senden(index, { 0: merkText }).then((r) => r && setSchuss({ nr: ++schussNr.current, treffer: r.richtig }))
               }}
             >
+              <FeststellHinweis />
               <Eingabe className="luecke diktat__feld" aria-label={`Teil ${index + 1} aus dem Gedächtnis`} autoFocus value={merkText} onChange={(e) => setMerkText(e.target.value)} />
               <div className="knopf-reihe">
                 <button

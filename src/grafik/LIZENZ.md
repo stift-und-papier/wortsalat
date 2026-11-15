@@ -41,6 +41,8 @@ UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-La
 - `monster_schleim_gruen.png`, `monster_schleim_blau.png`, `monster_schleim_feuer.png`: Ruhe-Animation (Blick nach vorn) aus
   „Free Slime Mobs Pixel Art Top-Down Sprite Pack“ von craftpix.net. Lizenz https://craftpix.net/file-licenses/ :
   Nutzung und Veränderung in eigenen Projekten erlaubt, die Grafiken nicht als Grafiken weitergeben, Nennung freiwillig.
+- `fallen_wiese.png`: Wiese mit Wolken (`nature_2/orig.png`) aus „Nature Landscapes Free Pixel Art“, auf die Sprout-Lands-Palette umgefärbt
+  (Hintergrund der Fallenden Wörter), gleiche Lizenz wie `spiel_wiese.png`.
 - `spiel_wiese.png`: Ausschnitt (Hügel und Gras) aus „Nature Landscapes Free Pixel Art“ (`orig.png`),
   https://free-game-assets.itch.io/nature-landscapes-free-pixel-art ; `License.txt` im Paket verweist auf dieselbe Lizenz
   https://craftpix.net/file-licenses/ .
@@ -53,6 +55,8 @@ UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-La
 
 - `einstein.png`: Maskottchen Einstein, Posen freundlich, blinzelt, lob, freut sich, huch, erklärt (aus der eigenen Vorlage
   auf ihr Pixelraster verkleinert, Hintergrund entfernt).
+- `buch_symbol.png`: Buch für den Sammelalbum-Knopf, eigene Zeichnung (`assets/Buch.png`, 2026-11-15), auf ihr Raster von 22 × 26 Pixeln
+  zurückgezeichnet und braun wie das Sammelalbum (Farben der Sprout-Lands-Palette).
 - `bubble emotes july update.png` (Sprechblasen): daraus `herz.png` und `blase_ausruf.png` (Ausrufezeichen, 3 Bilder).
 - `ranke.png`, `ranke_topf.png`: Rankpflanze und Topf im Lernweg, eigene Zeichnung (2026-11-14), aus dem Screenshot auf das
   Pixelraster zurückgerechnet (`assets/ranke_a.png`, `ranke_b.png`, `ranke_topf.png`), Farben aus der Sprout-Lands-Palette.

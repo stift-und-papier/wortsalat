@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { vereinheitliche } from '../lib/diktat'
 import type { SpielEinstellungen } from '../lib/typen'
 import { Eingabe } from './Eingabe'
+import { FeststellHinweis } from './FeststellHinweis'
 
 export type WortErgebnis = { fehler: number; gelandet: boolean }
 
@@ -115,13 +116,14 @@ export function FallendeWoerter({ woerter, einstellungen, onWort, onFertig, auto
   const z = ziel()
   return (
     <div className="fallen" onClick={() => feld.current?.focus()}>
+      <FeststellHinweis />
       <div className="fallen__feld" role="img" aria-label={z ? `Tippe: ${z.wort.join('')}` : 'Gleich kommt das nächste Wort.'}>
         {stand.current.fallend.map((f) => (
           <span
             key={`${f.index}-${f.wiederholt}`}
             aria-hidden="true"
             className={`fallen__wort${f === z ? ' fallen__wort--ziel' : ''}${f === z && daneben ? ' fallen__wort--daneben' : ''}`}
-            style={{ top: `calc(${f.y} * (100% - 3rem))`, left: f.spalte ? '52%' : '8%' }}
+            style={{ top: `calc(${f.y} * (100% - 3.75rem))`, left: f.spalte ? '52%' : '8%' }}
           >
             {f.wort.map((b, i) => (
               <span key={i} className={i < f.pos ? 'diktat__z diktat__z--fertig' : 'diktat__z'}>

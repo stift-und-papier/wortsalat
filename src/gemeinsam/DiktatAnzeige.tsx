@@ -6,6 +6,7 @@ import { MuenzenPlus } from './MuenzenPlus'
 import { Anweisung } from './Anweisung'
 import { EinsteinSagt } from './Einstein'
 import { Eingabe } from './Eingabe'
+import { FeststellHinweis } from './FeststellHinweis'
 import { Sterne } from './Sterne'
 
 type Props = {
@@ -185,6 +186,7 @@ export function Abschreiben({ text, onFertig, onZeichen }: { text: string; onFer
 
   return (
     <div className="diktat" onClick={() => feld.current?.focus()}>
+      <FeststellHinweis />
       <p className="leise">Tippe los, der Text läuft mit. Bei einem falschen Zeichen wartet der Cursor, bis es stimmt.</p>
       <div className="diktat__zeile" ref={zeile} role="img" aria-label={text}>
         <span className="diktat__band" ref={band}>
@@ -260,6 +262,7 @@ function Merkdiktat({ saetze, onFertig }: { saetze: string[]; onFertig: (a: Antw
 
   return (
     <div className="diktat">
+      <FeststellHinweis />
       <p className="leise">
         Teil {nr + 1} von {saetze.length}
       </p>

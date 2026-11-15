@@ -298,3 +298,6 @@
   zum Monster) und läuft davor hin und her. **Ausrufezeichen-Blase** (3 Bilder) über hungrigen Tieren und dem Monster mit Geschenk. **Vorrat** als
   Truhen-Knopf neben dem Sammelalbum (Fenster statt Liste). Farm passt am iPad ohne Scrollen: Größe nach Breite und Höhe in halben Stufen
   (Sprite erlaubt x,5-fach), Meldung als Banner unten im Spielfenster.
+- 2026-11-15 (Jazz): Überschrift jeder Schülerseite als Holzschild in der Kopfzeile (Mitte, zwischen Dunkel-Schalter und Münzen). Sammelalbum- und
+  Vorrat-Knopf nur mit Bild (Buch = eigene Zeichnung, braun; Truhe). Fallende Wörter: Wiese mit Wolken als Hintergrund, Wörter in Papier-Kästchen,
+  aktives blinkt. Hinweis mit Tastenbild, wenn die Feststelltaste an ist (Fallende Wörter, Abschreiben, Merkdiktat).

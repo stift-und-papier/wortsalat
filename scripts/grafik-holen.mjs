@@ -133,6 +133,8 @@ const BILDER = [
   // Ausrufezeichen-Blase über hungrigen Tieren und dem Monster mit Geschenk (3 Bilder, eigenes Werk der Lehrkraft), Truhe für den Vorrat
   { name: 'huette', datei: 'assets/entpackt/Sprout Sorry pack/Early Access/Village pack/houses/small hut/small_huts.png', bildBreite: 64, bildHoehe: 64 },
   { name: 'blase_ausruf', datei: 'assets/bubble emotes july update.png', x: 0, y: 128, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  // Jazz 2026-11-15: Hintergrund der Fallenden Wörter = Wiese mit Wolken (Nature Landscapes, nature_2), in den Sprout-Lands-Farben
+  { name: 'fallen_wiese', datei: 'assets/entpackt/Nature Landscapes/nature_2/orig.png', palette: true },
   { name: 'truhe', datei: 'assets/entpackt/Sprout Lands - Sprites - Basic pack/Objects/Chest.png', x: 16, y: 18, breite: 16, hoehe: 14 },
 ]
 
@@ -241,6 +243,56 @@ for (const n of KLEINER) {
     liste.push({ name, breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
   }
   console.log(`buch.png  ${ziel.width}×${H} (umgefärbt)`)
+}
+
+// ---------- Buch-Symbol für den Sammelalbum-Knopf (Jazz 2026-11-15): eigene Zeichnung der Lehrkraft (assets/Buch.png, blau, etwa 5,9-fach
+// vergrößert), auf ihr Raster von 22 × 26 Pixeln zurückgezeichnet und braun wie das Sammelalbum (Farben aus der Sprout-Lands-Palette).
+// # Umriss, d dunkles Braun (Linien, Rücken), h heller Streifen am Rücken, b Einband, p Seiten
+{
+  const bild = [
+    '..##################..',
+    '.#dhdbbbbbbbbbbbbbbb#.',
+    '#dhdbbdddddddddddddbb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbdbbbbbbbbbbbbbdb#',
+    '#dhdbbdddddddddddddbb#',
+    '#dhdbbbbbbbbbbbbbbbbb#',
+    '#dddddddddddddddddddd#',
+    '#d####################',
+    '#d#pppppppppppppppp#d#',
+    '#d#pppppppppppppppp#d#',
+    '#d#pppppppppppppppp#d#',
+    '.#d#################d#',
+    '..#dddddddddddddddddd#',
+    '...##################.',
+  ]
+  const farbe = { '#': 0x6b4b5b, d: 0x795e53, h: 0xc49a6c, b: 0xaa7959, p: 0xf3e5c2 }
+  const B = 22, H = bild.length
+  const ziel = new PNG({ width: B, height: H })
+  ziel.data.fill(0)
+  bild.forEach((zeile, y) => {
+    if (zeile.length !== B) throw new Error(`buch_symbol: Zeile ${y} hat ${zeile.length} statt ${B} Zeichen`)
+    ;[...zeile].forEach((z, x) => {
+      if (z === '.') return
+      const i = (y * B + x) * 4
+      ziel.data.writeUIntBE(farbe[z], i, 3)
+      ziel.data[i + 3] = 255
+    })
+  })
+  writeFileSync('src/grafik/buch_symbol.png', PNG.sync.write(ziel))
+  liste.push({ name: 'buch_symbol', breite: B, hoehe: H, bildBreite: B, bildHoehe: H })
+  console.log(`buch_symbol.png  ${B}×${H} (gezeichnet)`)
 }
 
 // Bilder auf den Lesezeichen (Jazz 2026-11-14): Emojis aus dem UI Pack (Zellen 32 × 32), auf die halbe Größe verkleinert, damit sie

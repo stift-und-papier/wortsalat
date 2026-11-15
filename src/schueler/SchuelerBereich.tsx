@@ -284,7 +284,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
 
   if (bereich === 'erklaerungen') {
     return (
-      <Rahmen basis={basis} aktiv="erklaerungen" muenzen={muenzen} fenster={fenster}>
+      <Rahmen basis={basis} aktiv="erklaerungen" muenzen={muenzen} fenster={fenster} titel="Erklärungen">
         {wartendHinweis}
         <Erklaerungen
           token={token}
@@ -312,7 +312,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
 
   if (bereich === 'hilfe') {
     return (
-      <Rahmen basis={basis} aktiv="hilfe" muenzen={muenzen} fenster={fenster}>
+      <Rahmen basis={basis} aktiv="hilfe" muenzen={muenzen} fenster={fenster} titel="Hilfe">
         <Hilfe />
       </Rahmen>
     )
@@ -320,12 +320,8 @@ export function SchuelerBereich({ token, pfad }: Props) {
 
   if (bereich === 'uebungen') {
     return (
-      <Rahmen basis={basis} aktiv="uebungen" muenzen={muenzen} fenster={fenster}>
+      <Rahmen basis={basis} aktiv="uebungen" muenzen={muenzen} fenster={fenster} titel="Meine Übungen">
         {wartendHinweis}
-        {/* Jazz 2026-11-14: alle Überschriften als Holzschild (wie im Shop), ohne Satz darunter */}
-        <header className="pixel-schild">
-          <h1>Meine Übungen</h1>
-        </header>
         {daten.pakete.length === 0 && <p className="karte">Hier kommen bald neue Übungen.</p>}
         <PaketListe pakete={daten.pakete} basis={basis} />
       </Rahmen>
@@ -350,7 +346,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
       ? 'begruessung-fertig'
       : 'begruessung-leer'
   return (
-    <Rahmen basis={basis} aktiv="start" muenzen={muenzen} fenster={fenster}>
+    <Rahmen basis={basis} aktiv="start" muenzen={muenzen} fenster={fenster} titel="Mein Lernweg">
       {wartendHinweis}
       <EinsteinSagt pose="freundlich">
         {/* Jazz 2026-11-15: der Übungsname im Satz ist der Link (statt eigenem Knopf) */}
@@ -569,10 +565,10 @@ function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, ch
             </span>
             Dunkel
           </button>
-          {/* Jazz 2026-11-15: Titel (Farm) in der Mitte zwischen Dunkel-Schalter und Münzen, spart eine Zeile */}
+          {/* Jazz 2026-11-15: Überschrift jeder Seite als Holzschild in der Mitte zwischen Dunkel-Schalter und Münzen (immer an derselben Stelle) */}
           {titel && (
             <header className="pixel-schild">
-              <h2>{titel}</h2>
+              <h1>{titel}</h1>
             </header>
           )}
           {muenzen !== null && (

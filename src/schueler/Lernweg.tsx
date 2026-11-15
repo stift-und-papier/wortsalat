@@ -62,9 +62,6 @@ export function Lernweg({ token, ziel }: { token: string; ziel: (aufgabeId: stri
 
   return (
     <>
-      <header className="pixel-schild">
-        <h1>Mein Lernweg</h1>
-      </header>
       {/* Legende als eigene Box: erklärt die Pflanzen (Usability-Test 2026-11-13: sonst unklar) */}
       <ul className="karte lernweg-legende" aria-label="Was die Pflanzen bedeuten">
         {STUFEN.map((s) => (

@@ -20,9 +20,6 @@ function BlockAnzeige({ block }: { block: Block }) {
 export function Hilfe() {
   return (
     <>
-      <header className="pixel-schild">
-        <h1>Hilfe</h1>
-      </header>
       <p className="karte">Tippe auf eine Frage, dann klappt die Antwort auf.</p>
       {ABSCHNITTE.map((a) => (
         <section key={a.titel} className="karte">
