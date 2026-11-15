@@ -492,14 +492,11 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                 </button>
               </div>
             ) : istFallend ? null : (
-            <div className="lk-reiter" role="group">
-              <button type="button" className="lk-knopf" aria-pressed={modus === 'antippen'} onClick={() => setModus('antippen')}>
-                Wörter antippen
-              </button>
-              <button type="button" className="lk-knopf" aria-pressed={modus === 'text'} onClick={() => setModus('text')}>
-                Als Text mit [Klammern]
-              </button>
-            </div>
+            // Jazz 2026-11-15: Schalter „Textmodus“ (aus = Wörter antippen, an = Text mit [Klammern])
+            <button type="button" role="switch" className="lk-schalter" aria-checked={modus === 'text'} onClick={() => setModus(modus === 'text' ? 'antippen' : 'text')}>
+              <span className="lk-schalter__bahn" aria-hidden="true" />
+              Textmodus
+            </button>
             )}
 
             {modus === 'text' || einFeld ? (

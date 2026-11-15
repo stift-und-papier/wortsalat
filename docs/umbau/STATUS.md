@@ -423,3 +423,6 @@
   ergeben gültige Klammern ohne Meldung; bestehende Übung „Test: Zwei Formate ohne Monster“ lädt richtig. Alle vier Excel-Dateien abgefangen und gelesen
   (Kopfzeilen ohne Knopf- und Pfeiltexte). `npm test` 149, lint, build ohne Fehler. **Nicht getestet:** Öffnen der Dateien in Excel (kein Excel hier),
   Antippen mit dem Finger am echten iPad, Speichern einer im Antipp-Modus angelegten Übung (Speichern selbst unverändert).
+- **Nachtrag Jazz (2026-11-15):** „Für Excel speichern“ nur noch bei Lernstand und Linkliste (bei Übungen und Paketen entfernt). Statt der zwei Reiter
+  ein **Schalter „Textmodus“** (`.lk-schalter`, `role="switch"`): aus = Wörter antippen (Standard), an = Text mit [Klammern].
+  Getestet bei 1024 × 768 (dunkel) und 820 × 1180 (hell): Schalter wechselt die Ansicht, Übungs- und Paketliste ohne Excel-Knopf. `npm test` 149, lint ohne Fehler.

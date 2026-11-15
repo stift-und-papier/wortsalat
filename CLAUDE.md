@@ -302,4 +302,4 @@
   Vorrat-Knopf nur mit Bild (Buch = eigene Zeichnung, braun; Truhe). Fallende Wörter: Wiese mit Wolken als Hintergrund, Wörter in Papier-Kästchen,
   aktives blinkt. Hinweis mit Tastenbild, wenn die Feststelltaste an ist (Fallende Wörter, Abschreiben, Merkdiktat).
 - 2026-11-15 (Jazz, Teilaufgabe 6): Editor-Standard ist **„Wörter antippen“** (Text schreiben, Wörter antippen → Lücke, Auswahl, Fehler, Zuordnung);
-  „Als Text mit [Klammern]“ wählt man selbst, „Per Formular“ entfällt. Listen (Übungen, Pakete, Lernstand, Links) **für Excel speichern** als CSV ohne Bibliothek.
+  Schalter „Textmodus“ (an = Text mit [Klammern]), „Per Formular“ entfällt. Lernstand und Linkliste **für Excel speichern** als CSV ohne Bibliothek.

@@ -1,6 +1,5 @@
 // alt (Übungswiese), auf die Lehrkraft-Ansicht „ruhig“ (lk-*) umgestellt
 import { useEffect, useState } from 'react'
-import { csvSpeichern } from '../lib/excel'
 import { fehlerText } from '../lib/fehler'
 import { LEERER_FILTER, passt } from '../lib/filter'
 import { gehe } from '../lib/router'
@@ -42,20 +41,6 @@ export function PaketListe() {
         <a className="lk-knopf lk-knopf--haupt" href="#/lehrkraft/pakete/neu">
           + Neues Paket
         </a>
-        {/* Jazz 2026-11-15: Liste für Excel (so gefiltert wie angezeigt) */}
-        <button
-          type="button"
-          className="lk-knopf"
-          disabled={!gefiltert?.length}
-          onClick={() =>
-            csvSpeichern('Pakete', [
-              ['Paket', 'Übungen', 'Zugewiesen', 'Jahrgänge', 'Schulzweige'],
-              ...(gefiltert ?? []).map((p) => [p.titel, p.paket_aufgaben.length, p.zuweisungen[0]?.count ?? 0, p.jahrgaenge.join(', '), p.zweige.join(', ')]),
-            ])
-          }
-        >
-          Für Excel speichern
-        </button>
       </div>
       {fehler && <p className="lk-hinweis" role="alert">{fehler}</p>}
       {pakete && pakete.length > 0 && (

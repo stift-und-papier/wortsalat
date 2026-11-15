@@ -1,6 +1,5 @@
 // alt (Übungswiese), auf die Lehrkraft-Ansicht „ruhig“ (lk-*) umgestellt
-import { useEffect, useRef, useState } from 'react'
-import { csvSpeichern, tabelleZeilen } from '../lib/excel'
+import { useEffect, useState } from 'react'
 import { SterneText } from '../gemeinsam/Sterne'
 import { fehlerText } from '../lib/fehler'
 import { LEERER_FILTER, passt } from '../lib/filter'
@@ -63,7 +62,6 @@ export function AufgabenListe() {
       kc: schulformen(a).join(', '),
     }
   })
-  const tabelle = useRef<HTMLTableElement>(null)
   const sortiert = zeilen && sortiere(zeilen, sortierung, (typ) => TYP_NAMEN[typ])
   async function loeschen(a: AufgabeMitKompetenzen) {
     const ok = window.confirm(
@@ -85,10 +83,6 @@ Sie verschwindet aus allen Paketen, und alle Ergebnisse der Schüler:innen dazu 
         <a className="lk-knopf lk-knopf--haupt" href="#/lehrkraft/aufgaben/neu">
           + Neue Übung
         </a>
-        {/* Jazz 2026-11-15: Liste für Excel (so gefiltert und sortiert wie angezeigt) */}
-        <button type="button" className="lk-knopf" disabled={!gefiltert?.length} onClick={() => tabelle.current && csvSpeichern('Übungen', tabelleZeilen(tabelle.current))}>
-          Für Excel speichern
-        </button>
       </div>
       {fehler && <p className="lk-hinweis" role="alert">{fehler}</p>}
       {aufgaben && aufgaben.length > 0 && (
@@ -110,7 +104,7 @@ Sie verschwindet aus allen Paketen, und alle Ergebnisse der Schüler:innen dazu 
         <p>Nichts passt zu diesem Filter.</p>
       ) : (
         <div className="lk-rollen">
-        <table className="lk-tabelle" ref={tabelle}>
+        <table className="lk-tabelle">
           <thead>
             <tr>
               {SPALTEN.map(({ spalte, name }) => {
