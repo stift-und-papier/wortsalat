@@ -268,6 +268,11 @@
 - Diktat: Server zählt Merkdiktat und Abschreiben vorerst als eine Runde; Herzen und Genauigkeit richtig in Schritt 10.
 
 ## Nächster Schritt
-- Lehrkraftseite: Jazz beantwortet die Rückfragen aus Teilaufgabe 1 (fünf oder sechs Teilaufgaben, `main` hereinholen, Umfang
-  Teilaufgabe 2, Schrift) und gibt Teilaufgabe 2 frei.
+- Lehrkraftseite (Branch **`lehrkraftseite`**, ab 2026-11-15; `main` ist in `uebungsumbau` geholt, Commit 820a2d0, danach
+  `npm test` 140, lint, build ohne Fehler, `npm run test:datenbank` ALLE TESTS BESTANDEN (148)).
+  Jazz 2026-11-15: **sechs Teilaufgaben** in der Reihenfolge von „fertig, wenn“ (1 Analyse, 2 Runden in allen Formaten samt Spielansicht
+  für die fünf fehlenden Formate, 3 Diktat und Fallende Wörter, 4 Erklärungen als eigener Menüpunkt, 5 Paket mit Suche/Filter/Sortierung,
+  6 Eingabe verbessern). Leseschrift: **Andika** ersetzt OpenDyslexic (noch nicht eingebaut, Schriftdatei muss erst geholt werden).
+  Die Arbeit an der Lehrkraftseite läuft auf `lehrkraftseite`, nicht mehr auf `uebungsumbau` (Wunsch von Jazz, weicht von A.5 ab).
+  Als Nächstes: Rückfragen zu Teilaufgabe 2 beantworten lassen, dann bauen.
 - Jazz testet auf dem iPad (Checkliste D im Arbeitsplan), danach Schritt 9 – alle bestehenden Aufgabenformate anbinden.
