@@ -2,7 +2,8 @@
 // Erkennt die Taste an jedem Tastendruck auf der Seite (getModifierState). Ohne Tastendruck weiß der Browser es nicht, dann bleibt der Hinweis weg.
 import { useEffect, useState } from 'react'
 
-export function FeststellHinweis() {
+/** true, solange die Feststelltaste an ist (bekannt erst nach einem Tastendruck) */
+export function useFeststelltaste() {
   const [an, setAn] = useState(false)
   useEffect(() => {
     const pruefen = (e: KeyboardEvent) => {
@@ -15,12 +16,18 @@ export function FeststellHinweis() {
       window.removeEventListener('keyup', pruefen)
     }
   }, [])
+  return an
+}
+
+/** zusatz: z. B. bei den Fallenden Wörtern „Die Wörter warten so lange.“ */
+export function FeststellHinweis({ zusatz }: { zusatz?: string }) {
+  const an = useFeststelltaste()
   if (!an) return null
   return (
     <p className="feststell-hinweis" role="alert">
       <FeststellTaste />
       <span>
-        <strong>Die Feststelltaste ist an.</strong> Drücke sie einmal, dann schreibst du wieder normal. Sie ist links neben dem A.
+        <strong>Die Feststelltaste ist an.</strong> Drücke sie einmal, dann schreibst du wieder normal. Sie ist links neben dem A.{zusatz && ` ${zusatz}`}
       </span>
     </p>
   )

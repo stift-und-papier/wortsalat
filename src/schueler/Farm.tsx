@@ -323,11 +323,11 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         {/* Jazz 2026-11-15: Sammelalbum und Vorrat nebeneinander oben links (vorher unter der Farm), damit die Farm ohne Scrollen passt */}
         <div className="farm-leiste__knoepfe">
           {/* Jazz 2026-11-15: nur Bilder, ohne Wort (Name für Vorlesehilfen in aria-label); Buch = Zeichnung der Lehrkraft, braun */}
-          <a className="knopf knopf--album farm-album" href={album} aria-label="Sammelalbum">
-            <Sprite grafik={GRAFIK.buch_symbol} mal={2} />
+          <a className="farm-bildknopf" href={album} aria-label="Sammelalbum">
+            <Sprite grafik={GRAFIK.buch_symbol} mal={1.5} />
           </a>
-          <button type="button" className="knopf farm-album" aria-label="Vorrat" onClick={() => setVorratOffen(true)}>
-            <Sprite grafik={GRAFIK.truhe} mal={3} />
+          <button type="button" className="farm-bildknopf" aria-label="Vorrat" onClick={() => setVorratOffen(true)}>
+            <Sprite grafik={GRAFIK.truhe} mal={2} />
           </button>
         </div>
         <button type="button" className="holzknopf" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>

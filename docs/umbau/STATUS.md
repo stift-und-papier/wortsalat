@@ -399,3 +399,8 @@
   ohne. Kopfzeile auf Hilfe und Farm. `npm test` 141, lint, build ohne Fehler. **Nicht getestet:** echte Feststelltaste (der Testbrowser kann sie nicht drücken)
   und ob iPad-Tastaturen sie melden; Hinweis beim Abschreiben und Merkdiktat nur im Code eingebaut, nicht angesehen. **Gefunden, nicht behoben (war schon so):**
   im Querformat 1180 × 820 liegt der untere Teil des Spielfelds unter dem Menü, man muss etwa 150 px scrollen.
+- **Nachtrag** (Jazz 2026-11-15): Sammelalbum- und Vorrat-Knopf kleiner (56 × 60) auf hellem Papier (Tafel aus dem UI Pack, auch im dunklen Modus hell;
+  vorher Flieder bzw. Holz, das braune Buch war schlecht zu sehen). **Feststelltaste an → Fallende Wörter halten an** (es fallen auch keine neuen), Hinweis
+  sagt zusätzlich „Die Wörter warten so lange.“ **Spielfeld im Querformat:** beim Start scrollt die Seite so, dass das ganze Spielfeld über dem Menü liegt.
+  **Getestet** (1180 × 820, Dachs-19): Spielfeld unten bei 685 px, Menü ab 737 px, Monsterszene bleibt sichtbar; Feststelltaste (per Skript) → Wort bleibt
+  2 s auf derselben Höhe, danach fällt es weiter; Knöpfe hell und dunkel angesehen. **Nicht getestet:** echte Feststelltaste, Hochformat.

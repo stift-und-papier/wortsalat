@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { vereinheitliche } from '../lib/diktat'
 import type { SpielEinstellungen } from '../lib/typen'
 import { Eingabe } from './Eingabe'
-import { FeststellHinweis } from './FeststellHinweis'
+import { FeststellHinweis, useFeststelltaste } from './FeststellHinweis'
 
 export type WortErgebnis = { fehler: number; gelandet: boolean }
 
@@ -45,17 +45,26 @@ export function FallendeWoerter({ woerter, einstellungen, onWort, onFertig, auto
   const schreibt = useRef(false)
   const rueckruf = useRef({ onWort, onFertig })
   rueckruf.current = { onWort, onFertig }
+  // Jazz 2026-11-15: Feststelltaste an → die Wörter halten an, bis sie wieder aus ist (korrigieren ohne Zeitdruck)
+  const feststell = useFeststelltaste()
+  const angehalten = useRef(false)
+  angehalten.current = feststell
+  const aussen = useRef<HTMLDivElement>(null)
+  // Jazz 2026-11-15: im Querformat lag der untere Teil des Spielfelds unter dem Menü; beim Start ganz ins Bild holen (nicht in der Editor-Vorschau)
+  useEffect(() => {
+    if (autoFocus) aussen.current?.scrollIntoView({ block: 'end', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }, [autoFocus])
 
   useEffect(() => {
     let bild = 0
     let zuletzt = performance.now()
     const schritt = (jetzt: number) => {
       const s = stand.current
-      const dt = Math.min(0.1, (jetzt - zuletzt) / 1000)
+      const dt = angehalten.current ? 0 : Math.min(0.1, (jetzt - zuletzt) / 1000)
       zuletzt = jetzt
       // neues Wort, wenn Platz ist (bei zwei Wörtern: das untere ist schon ein Stück gefallen)
       const unten = Math.max(-1, ...s.fallend.map((f) => f.y))
-      if (s.warten.length && s.fallend.length < gleichzeitig && (s.fallend.length === 0 || unten >= 0.4)) {
+      if (!angehalten.current && s.warten.length && s.fallend.length < gleichzeitig && (s.fallend.length === 0 || unten >= 0.4)) {
         const w = s.warten.shift()!
         s.fallend.push({ ...w, y: 0, pos: 0, fehler: 0, spalte: s.naechsteSpalte })
         s.naechsteSpalte = 1 - s.naechsteSpalte
@@ -115,8 +124,8 @@ export function FallendeWoerter({ woerter, einstellungen, onWort, onFertig, auto
 
   const z = ziel()
   return (
-    <div className="fallen" onClick={() => feld.current?.focus()}>
-      <FeststellHinweis />
+    <div className="fallen" ref={aussen} onClick={() => feld.current?.focus()}>
+      <FeststellHinweis zusatz="Die Wörter warten so lange." />
       <div className="fallen__feld" role="img" aria-label={z ? `Tippe: ${z.wort.join('')}` : 'Gleich kommt das nächste Wort.'}>
         {stand.current.fallend.map((f) => (
           <span

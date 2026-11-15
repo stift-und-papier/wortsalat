@@ -919,7 +919,15 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-leiste__knoepfe { display: flex; gap: var(--space-xs); }
 /* Farm ohne Scrollen: weniger Abstand oben, Schild mit einfachem statt doppeltem Rahmen */
 .farm { margin-top: 0; }
-.farm-leiste__knoepfe .knopf { --px: 2px; min-height: 48px; }
+/* Jazz 2026-11-15: kleine Bildknöpfe auf hellem Papier (Tafel aus dem UI Pack, bleibt auch im dunklen Modus hell), darauf sieht man das braune Buch */
+.farm-bildknopf {
+  display: grid; place-items: center; width: 56px; height: 60px; padding: 0; box-sizing: border-box; cursor: pointer; line-height: 0;
+  border: 10px solid transparent; border-image: url('../grafik/tafel.png') 5 fill / 10px; background: none; image-rendering: pixelated;
+}
+.farm-bildknopf:active { transform: translateY(2px); }
+.farm-bildknopf:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
+/* beim Hineinscrollen das Spielfeld über dem Menü unten halten (Menü etwa 83 px) */
+.fallen { scroll-margin-bottom: 100px; }
 .farm-leiste { margin-bottom: var(--space-xs); display: flex; justify-content: space-between; }
 .muenzen-stand .pixel-schild { border-width: 16px 17px 17px; border-image-width: 16px 17px 17px; padding-block: 0; margin: 0; }
 .muenzen-stand .pixel-schild h1 { font-size: 1.35rem; }
