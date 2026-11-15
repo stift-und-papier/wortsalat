@@ -345,27 +345,21 @@
 - 2026-11-15 (Jazz): alle sechs Vorschläge angenommen (Mischen-Haken, ohne Monster, Merkdiktat-Grenze je Teil, Formate pro Runde,
   Monster auf der Farm, Reihenfolge 2 → 5 → 3 → 1 → 4). Einstein: Übungsname im Satz ist der Link, kein eigener Knopf mehr (erledigt,
   im Browser geprüft). **Alle fünf Wünsche sind jetzt gebaut** (siehe unten). Als Nächstes: **Teilaufgabe 4**, zuerst Rückfragen.
-- **Wünsche von Jazz nach Teilaufgabe 3** (2026-11-15, Migrationen , ,
-  , eingespielt):
-  - **Formate pro Runde:** Jede Runde hat im Editor eine Auswahl „Format“ (die sechs Standardformate). Gespeichert als ,
+- **Wünsche von Jazz nach Teilaufgabe 3** (2026-11-15, Migrationen `20261115140000_runden_optionen`, `20261115150000_farm_monster`,
+  `20261115160000_farm_monster_einmal`, eingespielt):
+  - **Formate pro Runde:** Jede Runde hat im Editor eine Auswahl „Format“ (die sechs Standardformate). Gespeichert als `loesung.runden[i].typ`,
     nur wenn es vom Format der Übung abweicht; Inhalt je Runde nennt das Format. Server prüft und zeigt die Lösung im Format der Runde.
-  - **„Runden zufällig mischen“** (Haken, Standard an; bei Fallenden Wörtern „Wörter …“). Aus = Reihenfolge der Lehrkraft (),
+  - **„Runden zufällig mischen“** (Haken, Standard an; bei Fallenden Wörtern „Wörter …“). Aus = Reihenfolge der Lehrkraft (`spiel.reihenfolge`),
     die Auswahl bei mehr Runden als „pro Durchgang“ bleibt.
-  - **Merkdiktat-Grenze:** „Ein Teil zählt als geschafft ab … %“ (50–100, Standard 100, ); ganz richtige Teile treffen immer.
+  - **Merkdiktat-Grenze:** „Ein Teil zählt als geschafft ab … %“ (50–100, Standard 100, `spiel.teil_grenze`); ganz richtige Teile treffen immer.
     Nach einem Teil mit Fehlern erscheint der richtige Text mit ↻ immer, auch wenn das Herz getroffen hat.
-  - **Ohne Monster:** Knopf „Ohne Monster“ (): kein Kampfbild, „Richtig!“ ohne Monster-Satz, Ende „Geschafft! Du hast alles richtig
+  - **Ohne Monster:** Knopf „Ohne Monster“ (`monster = 'kein'`): kein Kampfbild, „Richtig!“ ohne Monster-Satz, Ende „Geschafft! Du hast alles richtig
     gemacht.“, Paketliste mit Nummer/Häkchen; zählt nicht fürs Sammelalbum und nicht fürs Farm-Monster.
   - **Monster auf der Farm:** mit demselben Monster in 4 verschiedenen Übungen befreundet → Fenster „Ein Monster möchte bei dir wohnen!“, Monster steht
-    unten zwischen Baum und Hühnerstall ( 12/12). Montags und donnerstags (beim Öffnen der Farm) liegt ein zufälliger Shop-Samen daneben;
+    unten zwischen Baum und Hühnerstall (`MONSTER_PLATZ` 12/12). Montags und donnerstags (beim Öffnen der Farm) liegt ein zufälliger Shop-Samen daneben;
     Einsammeln macht daraus einen Samen zum Pflanzen. Nach einer Pause nur ein Samen, nicht alle verpassten. Wechseln unter „Farm einrichten“.
   - DB-Test: Block 20 (Formate pro Runde, Reihenfolge, Grenze, ohne Monster) und 21 (Farm-Monster), Block 15 legt Igel-11 und seine Aufgaben selbst an,
-    wenn sie in der echten Datenbank fehlen (fehlten nach dem Aufräumen). **ALLE TESTS BESTANDEN (158).** Unknown command: "test"
-
-
-Did you mean this?
-  npm test # Test a package
-To see a list of supported npm commands, run:
-  npm help 140, lint, build ohne Fehler.
+    wenn sie in der echten Datenbank fehlen (fehlten nach dem Aufräumen). **ALLE TESTS BESTANDEN (158).** `npm test` 140, lint, build ohne Fehler.
   **Getestet** (Browser): Lehrkraft 1180 × 820: „Test: Zwei Formate ohne Monster“ (Runde 1 Lückentext, Runde 2 Auswahl, Mischen aus, ohne Monster) angelegt,
   gespeichert, neu geladen, alles da; Merkdiktat-Grenze 60 % gespeichert. Dachs-19 (1024 × 768): Zwei-Formate-Übung in Reihenfolge, ohne Kampfbild,
   „Geschafft!“, +45; Merkdiktat „Je.“ statt „Ja.“ trifft bei 60 %, ↻-Text erscheint; Farm: Rübchen zieht ein (Dachs-19 hatte schon 4 Rübchen-Freundschaften),
