@@ -53,12 +53,27 @@ UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-La
 - `einstein.png`: Maskottchen Einstein, Posen freundlich, blinzelt, lob, freut sich, huch, erklärt (aus der eigenen Vorlage
   auf ihr Pixelraster verkleinert, Hintergrund entfernt).
 - `bubble emotes july update.png` (Sprechblasen): daraus `herz.png`.
+- `ranke.png`, `ranke_topf.png`: Rankpflanze und Topf im Lernweg, eigene Zeichnung (2026-11-14), aus dem Screenshot auf das
+  Pixelraster zurückgerechnet (`assets/ranke_a.png`, `ranke_b.png`, `ranke_topf.png`), Farben aus der Sprout-Lands-Palette.
 - `monster_ruebchen.png`: Rübchen (aus `assets/chomp_idle.png`, obere Zeile der Ruhe-Animation).
 
-## Humble Gift – Paper UI System (Humble Pixel)
+## Pixel Book Animation (heondu, gekauft von der Lehrkraft über itch.io, 2026-11-14)
 
-- `album_seite.png` (Seite im Sammelalbum): zusammengesetzt aus Papier-Teilen des Pakets „Humble Gift – Paper UI System“
-  von Humble Pixel (@Humblepixel). Paket nicht weitergeben; Namensnennung freiwillig. Darum nur dieses eine Bild.
+- `buch.png` (Buch für Sammelalbum und Shop): 12 Bilder aus `Book_Sheet.png` des Pakets „Pixel Book Animation“ von heondu,
+  https://heondu.itch.io/pixel-book-animation , auf Farben der Sprout-Lands-Palette umgefärbt.
+  Die Kaufseite nennt keine eigene Lizenz; der Urheber schreibt dort in den Kommentaren, dass kommerzielle Nutzung in Ordnung ist.
+  Wie bei den anderen gekauften Paketen: Paket nicht weitergeben, im Repo nur dieses eine umgefärbte Bild.
+
+## Aus vorhandenen Bildern erzeugt (scripts/grafik-holen.mjs)
+
+- `sticker.png`: Sticker fürs Sammelalbum, erzeugt aus den oben genannten Bildern (Pflanzen, Tiere, Deko, Monster):
+  Umriss eingefärbt, heller Kleberand. Es gelten die Lizenzen der jeweiligen Vorlagen.
+- `schalter_bahn_aus.png`, `schalter_bahn_an.png`, `schalter_knopf.png`, `symbol_rahmen.png`: aus „Sprout Lands – UI Pack – Premium pack“
+  (UI Settings Buttons, Character Backdrop-frame), Cup Nooble.
+- `lesezeichen.png`: selbst gezeichnet (Skript), Farben aus der Sprout-Lands-Palette.
+- `emoji_frage.png`: Emoji aus „Sprout Lands – UI Pack – Basic pack“ (`emojis-free`), Cup Nooble.
+
+Das frühere `album_seite.png` (Humble Gift – Paper UI System) wird seit dem 2026-11-14 nicht mehr benutzt.
 
 ## TastenHeld
 

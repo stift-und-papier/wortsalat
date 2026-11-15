@@ -33,23 +33,7 @@ const SPRITES = 'assets/entpackt/Sprout Lands - Sprites - premium pack/'
 const UI_BASIS = 'assets/entpackt/Sprout Lands - UI Pack - Basic pack/Sprite sheets/'
 const MOBS = 'assets/entpackt/Sprout Sorry pack/Early Access/halloween/mobs/'
 const SCHLEIM = 'assets/entpackt/free-slime-mobs-pixel-art-top-down-sprite-pack/PNG/'
-const PAPIER ='assets/entpackt/Humble Gift - Paper UI System/Humble Gift - Paper UI System v1.1/Sprites/Paper UI Pack/Plain/1 Paper/'
-
-// Zusammengesetzte Bilder: Teile (je 32×32) an Stellen (Spalte, Zeile) übereinander legen.
-// Sammelalbum-Seite (Humble Gift Paper UI): Papier 1–9 als 3×3, darüber Zierecken (11, 13, 15, 17) und Randlinien (10, 12, 14, 16).
-// Wird in CSS als border-image (je 32 px Rand) gestreckt.
-const ZUSAMMEN = [
-  {
-    name: 'album_seite', breite: 96, hoehe: 96,
-    teile: [
-      ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n, i) => ({ datei: PAPIER + n + '.png', sp: i % 3, ze: Math.floor(i / 3) })),
-      { datei: PAPIER + '10.png', sp: 0, ze: 1 }, { datei: PAPIER + '12.png', sp: 1, ze: 0 },
-      { datei: PAPIER + '14.png', sp: 2, ze: 1 }, { datei: PAPIER + '16.png', sp: 1, ze: 2 },
-      { datei: PAPIER + '11.png', sp: 0, ze: 0 }, { datei: PAPIER + '13.png', sp: 2, ze: 0 },
-      { datei: PAPIER + '15.png', sp: 2, ze: 2 }, { datei: PAPIER + '17.png', sp: 0, ze: 2 },
-    ],
-  },
-]
+const EMOJI = 'assets/entpackt/Sprout Lands - UI Pack - Basic pack/emojis-free/Emoji_Spritesheet_Free.png'
 
 // Was wir benutzen. x, y, breite, hoehe = Ausschnitt in Pixeln (ohne Angabe: ganzes Bild).
 // bildBreite/bildHoehe: Größe eines Einzelbilds, wenn der Ausschnitt mehrere Bilder (Spritesheet) enthält.
@@ -58,7 +42,8 @@ const BILDER = [
   // Einstein: eigene Zeichnung der Lehrkraft (assets/1794384222202.jpg), am 2026-11-11 auf ihr Pixelraster
   // (6,715 Bildpunkte je Pixel) verkleinert, Hintergrund entfernt. Bilder: freundlich, blinzelt, lob, freut sich, huch, erklärt,
   // erklärt mit Augen zu, lob mit geneigtem Arm (Winken).
-  { name: 'einstein', datei: 'assets/einstein-blatt.png', bildBreite: 52, bildHoehe: 47 }, // 8 Bilder
+  // Jazz 2026-11-14: Einstein in den Farben der Sprout-Lands-Palette (Vorher-Nachher-Bild gezeigt und freigegeben)
+  { name: 'einstein', datei: 'assets/einstein-blatt.png', bildBreite: 52, bildHoehe: 47, palette: true }, // 8 Bilder
   // Farm (Phase 8). Nummern der Einzelbilder stehen in src/lib/shop.ts.
   // Ohne Mais (Zeilen 0–1, doppelt hoch): Samentüte (Spalte 0) und Geerntetes (Spalte 1), Zeilen = Sorten wie bei „pflanzen“
   { name: 'saatgut', datei: SPRITES + 'Objects/Items/farming-Plants-items.png', x: 0, y: 32, breite: 32, hoehe: 208, bildBreite: 16, bildHoehe: 16 },
@@ -134,6 +119,15 @@ const BILDER = [
   { name: 'tafel', datei: UI + 'Other UI sprites/Setting menu.png', x: 139, y: 12, breite: 106, hoehe: 122 },
   { name: 'herz_flug', datei: UI + 'Icons/special icons/Hearts.png', x: 58, y: 9, breite: 13, hoehe: 11 },
   { name: 'monster_maus', datei: MOBS + 'little_grey_mouse.png', x: 0, y: 16, breite: 208, hoehe: 16, bildBreite: 16, bildHoehe: 16, spiegeln: true },
+  // Emojis (UI Pack Basic, emojis-free, Zellen 32 × 32): Bilder auf den Lesezeichen im Buch und Fragezeichen im Shop (Jazz 2026-11-14)
+  ...[['emoji_frage', 3, 7]]
+    .map(([name, sp, ze]) => ({ name, datei: EMOJI, x: sp * 32, y: ze * 32, breite: 32, hoehe: 32 })),
+  // Schiebeschalter für den dunklen Modus (UI Settings Buttons): Bahn aus (dunkel) und an (grün), dazu der helle Knopf, der hin und her gleitet (Jazz 2026-11-14)
+  { name: 'schalter_bahn_aus', datei: UI + 'Other UI sprites/UI Settings Buttons.png', x: 2, y: 121, breite: 28, hoehe: 14 },
+  { name: 'schalter_bahn_an', datei: UI + 'Other UI sprites/UI Settings Buttons.png', x: 34, y: 121, breite: 28, hoehe: 14 },
+  { name: 'schalter_knopf', datei: UI + 'Other UI sprites/UI Settings Buttons.png', x: 7, y: 86, breite: 18, hoehe: 19 },
+  // kleiner Holzrahmen um die Pflanzen-Symbole im Lernweg (Character Backdrop-frame a3, nur das Quadrat), als border-image (Rand 5)
+  { name: 'symbol_rahmen', datei: UI + 'Dialouge UI/Character Backdrop-frame/backdrops_a3.png', x: 11, y: 11, breite: 26, hoehe: 26 },
   { name: 'monster_fledermaus', datei: 'assets/entpackt/Sprout Sorry pack/Early Access/Dungeon Pack/enemies/bat_animations.png', x: 32, y: 0, breite: 128, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
 ]
 
@@ -209,28 +203,208 @@ for (const n of KLEINER) {
   console.log('figur_katze.png  128×96 (umgebaut)')
 }
 
-for (const z of ZUSAMMEN) {
-  const ziel = new PNG({ width: z.breite, height: z.hoehe })
-  for (const t of z.teile) {
-    const q = PNG.sync.read(readFileSync(t.datei))
-    for (let y = 0; y < q.height; y++)
-      for (let x = 0; x < q.width; x++) {
-        const si = (y * q.width + x) * 4
-        if (!q.data[si + 3]) continue // durchsichtig: darunter bleibt sichtbar
-        const di = ((t.ze * 32 + y) * z.breite + t.sp * 32 + x) * 4
-        for (let c = 0; c < 4; c++) ziel.data[di + c] = q.data[si + c]
-      }
+// ---------- Buch für Sammelalbum und Shop (Jazz 2026-11-14): „Pixel Book Animation“ (gekauft), auf die Sprout-Lands-Palette umgefärbt.
+// Ein Streifen mit 12 Bildern (je 248 × 216): 0 zu, 1–2 klappt auf, 3 offen (flach, letztes Bild der Vorlage; Jazz), 4–6 Seite blättert nach links, 7 offen,
+// 8–10 Seite blättert zurück, 11 offen. Das offene Buch liegt im Bild bei x 2–245, y 49–213 (Maße in src/design/bausteine.css).
+{
+  const q = PNG.sync.read(readFileSync('assets/entpackt/Pixel Book Animation/Book_Sheet.png'))
+  const B = 248, H = 216, folge = [0, 1, 2, 14, 3, 4, 5, 14, 5, 4, 3, 14]
+  const ziel = new PNG({ width: B * folge.length, height: H })
+  ziel.data.fill(0)
+  folge.forEach((n, i) => PNG.bitblt(q, ziel, (n % 4) * 256 + 4, Math.floor(n / 4) * 256 + 20, B, H, i * B, 0))
+  // Farben von Hand zugeordnet (die nächste Palettenfarbe machte den Einband grau und die Seiten rosa):
+  // Einband in den Holztönen des Spielfenster-Rahmens, Seiten heller als die Tafel, Ecken gold.
+  const farben = {
+    0x663931: 0xaa7959, 0xa1786a: 0xc49a6c, 0xb8958a: 0xdcb98a, 0x5b2b2b: 0x90625d, 0x4f1c24: 0x795e53, 0x3d0c19: 0x6b4b5b, 0x57320d: 0x6b4b5b, // Einband
+    0xecddc0: 0xf3e5c2, 0xe7d5b4: 0xe8cfa6, 0xe1cda8: 0xe8cfa6, 0xd6c39e: 0xdcb98a, 0xcab894: 0xc49a6c, 0xbead8a: 0xc49a6c, // Seiten und Schatten
+    0xb2a280: 0xdcb98a, 0x8f7559: 0xc49a6c, // Seitenkanten unten, Schild auf dem Deckel
+    0xcfaf46: 0xd4c169, 0xd6bf78: 0xeae178, 0xa86d19: 0xb09643, 0xbd933a: 0xbfa954, 0xb88d39: 0xbfa954, 0xded9b6: 0xf3f2c0, // Ecken
   }
-  writeFileSync(`src/grafik/${z.name}.png`, PNG.sync.write(ziel))
-  liste.push({ name: z.name, breite: z.breite, hoehe: z.hoehe, bildBreite: z.breite, bildHoehe: z.hoehe })
-  console.log(`${z.name}.png  ${z.breite}×${z.hoehe} (zusammengesetzt)`)
+  // Shop: dasselbe Buch mit beerenrotem Einband (Jazz 2026-11-14: Grün war auf der Wiese zu schlecht zu sehen), sonst gleich
+  const rot = { 0x663931: 0xa35b70, 0xa1786a: 0xaf6776, 0xb8958a: 0xbd757e, 0x5b2b2b: 0x865161, 0x4f1c24: 0x865161, 0x3d0c19: 0x6b4b5b }
+  for (const [name, einband] of [['buch', {}], ['buch_rot', rot]]) {
+    const bild = new PNG({ width: ziel.width, height: H })
+    ziel.data.copy(bild.data)
+    for (let i = 0; i < bild.data.length; i += 4) {
+      if (!bild.data[i + 3]) continue
+      const alt = bild.data.readUIntBE(i, 3)
+      const neu = einband[alt] ?? farben[alt]
+      if (neu === undefined) throw new Error('Buch: Farbe #' + alt.toString(16) + ' ist nicht zugeordnet')
+      bild.data.writeUIntBE(neu, i, 3)
+    }
+    writeFileSync('src/grafik/' + name + '.png', PNG.sync.write(bild))
+    liste.push({ name, breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+  }
+  console.log(`buch.png  ${ziel.width}×${H} (umgefärbt)`)
+}
+
+// Bilder auf den Lesezeichen (Jazz 2026-11-14): Emojis aus dem UI Pack (Zellen 32 × 32), auf die halbe Größe verkleinert, damit sie
+// aufs Lesezeichen passen: je 2 × 2 Bildpunkte werden einer (Mittel der sichtbaren, dann nächste Palettenfarbe).
+// reiter.png: 0 Keimling (Pflanzen), 1 Küken (Tiere), 2 Pilz (Deko), 3 Monster, 4 Münze (Verkaufen)
+{
+  const q = PNG.sync.read(readFileSync(EMOJI))
+  const zellen = [[0, 12], [0, 17], [3, 12], [0, 10], [1, 8]]
+  const ziel = new PNG({ width: 16 * zellen.length, height: 16 })
+  ziel.data.fill(0)
+  zellen.forEach(([sp, ze], n) => {
+    for (let y = 0; y < 16; y++)
+      for (let x = 0; x < 16; x++) {
+        const sichtbar = []
+        for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+          const i = ((ze * 32 + y * 2 + dy) * q.width + sp * 32 + x * 2 + dx) * 4
+          if (q.data[i + 3] > 127) sichtbar.push([q.data[i], q.data[i + 1], q.data[i + 2]])
+        }
+        if (sichtbar.length < 2) continue
+        const mittel = [0, 1, 2].map((c) => sichtbar.reduce((sum, f) => sum + f[c], 0) / sichtbar.length)
+        ziel.data.set([...naechsteFarbe(mittel), 255], (y * ziel.width + n * 16 + x) * 4)
+      }
+  })
+  writeFileSync('src/grafik/reiter.png', PNG.sync.write(ziel))
+  liste.push({ name: 'reiter', breite: ziel.width, hoehe: 16, bildBreite: 16, bildHoehe: 16 })
+  console.log('reiter.png  ' + ziel.width + '×16 (Emojis verkleinert)')
+}
+
+// Lesezeichen (Reiter am Buchrand): selbst gezeichnete Bänder mit Schwalbenschwanz in vier Palettenfarben (rot, blau, grün, gelb)
+{
+  const B = 40, H = 20
+  const farben = [[196, 88, 84], [92, 142, 190], [116, 164, 92], [226, 182, 84]]
+  const ziel = new PNG({ width: B * farben.length, height: H })
+  ziel.data.fill(0)
+  const drin = (x, y) => x >= 0 && y >= 0 && y < H && x <= B - 1 - Math.round(5 * (1 - Math.abs(y - (H - 1) / 2) / ((H - 1) / 2)))
+  farben.forEach((farbe, n) => {
+    const mitte = naechsteFarbe(farbe), dunkel = naechsteFarbe(farbe.map((c) => c * 0.55)), hell = naechsteFarbe(farbe.map((c) => Math.min(255, c * 1.15 + 24)))
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < B; x++) {
+        if (!drin(x, y)) continue
+        const kante = !drin(x + 1, y) || !drin(x, y - 1) || !drin(x, y + 1)
+        ziel.data.set([...(kante ? dunkel : y === 1 ? hell : mitte), 255], (y * ziel.width + n * B + x) * 4)
+      }
+  })
+  writeFileSync('src/grafik/lesezeichen.png', PNG.sync.write(ziel))
+  liste.push({ name: 'lesezeichen', breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+  console.log(`lesezeichen.png  ${ziel.width}×${H} (gezeichnet)`)
+}
+
+// ---------- Sticker fürs Sammelalbum (Jazz 2026-11-14): aus den schon ausgeschnittenen Bildern, im Stil der Sprout-Lands-Emojis.
+// Der dunkle Umriss wird farbig (dunklerer Ton der Fläche daneben), rundherum ein heller Kleberand (1 Pixel). Gleiche Pixelgröße wie das Buch,
+// damit nichts über die Seite ragt. Alle Sticker in einem Blatt mit gleich großen Zellen; Nummern in STICKER_NUMMER.
+// Reihen der Sorten wie SORTE in src/lib/shop.ts.
+const SORTEN = ['karotte', 'blumenkohl', 'tomate', 'aubergine', 'tulpe', 'salat', 'weizen', 'kuerbis', 'rettich', 'rose', 'rote_bete', 'sternfrucht', 'gurke']
+const STICKER = [
+  ...SORTEN.map((id, i) => [id, 'saatgut', i * 2 + 1]), // das Geerntete
+  ['orangenbaum', 'baum_orange', 0], ['pfirsichbaum', 'baum_pfirsich', 0], ['birnenbaum', 'baum_birne', 0],
+  ['huhn', 'huhn', 0], ['kuh', 'kuh', 0], ['brunnen', 'brunnen', 0], ['boot', 'deko_boot', 0],
+  ...['busch', 'blume_gelb', 'pilz', 'stein', 'blume_lila', 'pilzhaus', 'katze_rosa', 'katze_blau'].map((id) => [id, 'deko_' + id, 0]),
+  ...['ruebchen', 'schleim_gruen', 'schleim_blau', 'schleim_feuer', 'gespenst', 'spinne_gruen', 'spinne_lila', 'spinne_gold', 'maus', 'fledermaus']
+    .map((id) => ['monster_' + id, 'monster_' + id, 0]),
+]
+const hellste = PALETTE.reduce((m, p) => (p[0] + p[1] + p[2] > m[0] + m[1] + m[2] ? p : m))
+const helligkeit = (f) => 0.3 * f[0] + 0.59 * f[1] + 0.11 * f[2]
+function sticker(name, nummer) {
+  const g = liste.find((l) => l.name === name)
+  if (!g) throw new Error(`Sticker: Bild ${name} fehlt`)
+  const q = PNG.sync.read(readFileSync(`src/grafik/${name}.png`))
+  const spalten = g.breite / g.bildBreite
+  const fx = (nummer % spalten) * g.bildBreite, fy = Math.floor(nummer / spalten) * g.bildHoehe
+  const da = (x, y) => x >= 0 && y >= 0 && x < g.bildBreite && y < g.bildHoehe && q.data[((fy + y) * q.width + fx + x) * 4 + 3] > 127
+  const farbe = (x, y) => { const i = ((fy + y) * q.width + fx + x) * 4; return [q.data[i], q.data[i + 1], q.data[i + 2]] }
+  let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1
+  for (let y = 0; y < g.bildHoehe; y++) for (let x = 0; x < g.bildBreite; x++) if (da(x, y)) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y) }
+  const w = x1 - x0 + 1, h = y1 - y0 + 1, mal = 1, R = 1
+  const amRand = (x, y) => da(x, y) && (!da(x - 1, y) || !da(x + 1, y) || !da(x, y - 1) || !da(x, y + 1))
+  const bild = new PNG({ width: w * mal + 2 * R, height: h * mal + 2 * R })
+  bild.data.fill(0)
+  const voll = (X, Y) => X >= 0 && Y >= 0 && X < bild.width && Y < bild.height && bild.data[(Y * bild.width + X) * 4 + 3] === 255
+  for (let y = y0; y <= y1; y++)
+    for (let x = x0; x <= x1; x++) {
+      if (!da(x, y)) continue
+      let f = farbe(x, y)
+      if (amRand(x, y)) {
+        const innen = []
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (da(x + dx, y + dy) && !amRand(x + dx, y + dy)) innen.push(farbe(x + dx, y + dy))
+        if (innen.length) {
+          const mittel = [0, 1, 2].map((c) => innen.reduce((s, p) => s + p[c], 0) / innen.length)
+          if (helligkeit(f) < helligkeit(mittel)) f = naechsteFarbe(mittel.map((c) => c * 0.72))
+        }
+      }
+      for (let dy = 0; dy < mal; dy++) for (let dx = 0; dx < mal; dx++) bild.data.set([...f, 255], (((y - y0) * mal + dy + R) * bild.width + (x - x0) * mal + dx + R) * 4)
+    }
+  // Kleberand: alles Durchsichtige, das höchstens R Pixel (rund gemessen) neben dem Bild liegt. Erst sammeln, dann färben,
+  // damit der Rand nicht selbst als Bild zählt.
+  const rand = []
+  for (let Y = 0; Y < bild.height; Y++)
+    for (let X = 0; X < bild.width; X++) {
+      if (voll(X, Y)) continue
+      let nah = false
+      for (let dy = -R; dy <= R && !nah; dy++) for (let dx = -R; dx <= R; dx++) if (dx * dx + dy * dy <= R * R + 1 && voll(X + dx, Y + dy)) { nah = true; break }
+      if (nah) rand.push((Y * bild.width + X) * 4)
+    }
+  for (const i of rand) bild.data.set([...hellste, 255], i)
+  return bild
+}
+{
+  const bilder = STICKER.map(([, name, nummer]) => sticker(name, nummer))
+  const B = Math.max(...bilder.map((b) => b.width)), H = Math.max(...bilder.map((b) => b.height))
+  const ziel = new PNG({ width: B * bilder.length, height: H })
+  ziel.data.fill(0)
+  bilder.forEach((b, i) => PNG.bitblt(b, ziel, 0, 0, b.width, b.height, i * B + Math.floor((B - b.width) / 2), Math.floor((H - b.height) / 2)))
+  writeFileSync('src/grafik/sticker.png', PNG.sync.write(ziel))
+  liste.push({ name: 'sticker', breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+  console.log(`sticker.png  ${ziel.width}×${H} (${bilder.length} Sticker)`)
+}
+
+// ---------- Rankpflanze im Lernweg: eigene Zeichnung von Jazz (2026-11-14), aus ihrem Screenshot auf das Pixelraster zurückgerechnet
+// (assets/ranke_a.png, ranke_b.png, ranke_topf.png), Farben aus der Sprout-Lands-Palette.
+// ranke.png: 4 Bilder je 20 × 24, der Stiel steht immer in Spalte 9 und reicht bis zur Unterkante.
+// 0/1 = Stück A/B mitten in der Ranke (Stiel auch bis zur Oberkante), 2/3 = Stück A/B als Spitze. Der Topf (19 breit) steht darunter.
+{
+  const lies = (n) => PNG.sync.read(readFileSync(`assets/${n}.png`))
+  const a = lies('ranke_a'), b = lies('ranke_b'), topf = lies('ranke_topf')
+  // die drei Farben aus Stück A (Stück B hat vom Verkleinern Zwischentöne)
+  const farbenA = []
+  for (let i = 0; i < a.data.length; i += 4) {
+    const f = [a.data[i], a.data[i + 1], a.data[i + 2]]
+    if (a.data[i + 3] && !farbenA.some((g) => g.join() === f.join())) farbenA.push(f)
+  }
+  const B = 20, H = 24, STIEL = 9
+  const ziel = new PNG({ width: B * 4, height: H })
+  ziel.data.fill(0)
+  ;[[a, 6], [b, 8]].forEach(([q, stiel], n) => {
+    const da = (x, y) => q.data[(y * q.width + x) * 4 + 3] > 127
+    const farbe = (x, y) => { const i = (y * q.width + x) * 4; const f = [q.data[i], q.data[i + 1], q.data[i + 2]]; return farbenA.reduce((m, g) => (farbAbstand(g, f) < farbAbstand(m, f) ? g : m)) }
+    let oben = 0, unten = q.height - 1
+    while (!da(stiel, oben)) oben++
+    while (!da(stiel, unten)) unten--
+    const stielFarbe = farbe(stiel, unten)
+    for (const bild of [n, n + 2]) {
+      const setze = (x, y, f) => ziel.data.set([...f, 255], (y * ziel.width + bild * B + x) * 4)
+      for (let y = 0; y < q.height; y++) for (let x = 0; x < q.width; x++) if (da(x, y)) setze(x + STIEL - stiel, y, farbe(x, y))
+      for (let y = unten + 1; y < H; y++) setze(STIEL, y, stielFarbe)
+      if (bild < 2) for (let y = 0; y < oben; y++) setze(STIEL, y, stielFarbe)
+    }
+  })
+  aufPalette(ziel)
+  // Topf: nur die warmen Holz- und Orangetöne der Palette (die nächste Palettenfarbe machte die dunklen Stellen grau)
+  const warm = [0x795e53, 0x90625d, 0xaa7959, 0xba7c54, 0xd79e61, 0xeeba77, 0xf2cf8c].map((f) => [f >> 16, (f >> 8) & 255, f & 255])
+  for (let i = 0; i < topf.data.length; i += 4) {
+    if (topf.data[i + 3] < 128) { topf.data[i + 3] = 0; continue }
+    const f = [topf.data[i], topf.data[i + 1], topf.data[i + 2]]
+    topf.data.set([...warm.reduce((m, g) => (farbAbstand(g, f) < farbAbstand(m, f) ? g : m)), 255], i)
+  }
+  writeFileSync('src/grafik/ranke.png', PNG.sync.write(ziel))
+  writeFileSync('src/grafik/ranke_topf.png', PNG.sync.write(topf))
+  liste.push({ name: 'ranke', breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+  liste.push({ name: 'ranke_topf', breite: topf.width, hoehe: topf.height, bildBreite: topf.width, bildHoehe: topf.height })
+  const i = (H - 1) * ziel.width * 4 + STIEL * 4
+  console.log(`ranke.png  ${ziel.width}×${H}, ranke_topf.png  ${topf.width}×${topf.height} (Stielfarbe #${ziel.data.readUIntBE(i, 3).toString(16)})`)
 }
 
 const zeilen = liste.map((g) => `import ${g.name} from './${g.name}.png'`)
 zeilen.push('', 'export const GRAFIK = {')
 for (const g of liste)
   zeilen.push(`  ${g.name}: { url: ${g.name}, breite: ${g.breite}, hoehe: ${g.hoehe}, bildBreite: ${g.bildBreite}, bildHoehe: ${g.bildHoehe} },`)
-zeilen.push('} as const', '')
+zeilen.push('} as const', '', '/** Nummer des Stickers im Blatt GRAFIK.sticker (Schlüssel: Shop-Artikel bzw. monster_<Name>) */',
+  `export const STICKER_NUMMER: Record<string, number> = { ${STICKER.map(([id], i) => `${id}: ${i}`).join(', ')} }`, '')
 writeFileSync(
   'src/grafik/index.ts',
   '// Automatisch erzeugt von scripts/grafik-holen.mjs – nicht von Hand ändern.\n' + zeilen.join('\n'),

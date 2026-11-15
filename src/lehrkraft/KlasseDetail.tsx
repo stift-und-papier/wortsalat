@@ -25,8 +25,9 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
 
   const laden = useCallback(async () => {
     const [k, s] = await Promise.all([
-      supabase.from('klassen').select('id, name, kerncurriculum').eq('id', klasseId).single(),
-      supabase.from('schueler').select('id, klasse_id, pseudonym, token, stufe_manuell, leseschrift').eq('klasse_id', klasseId),
+      // alle Spalten: jahrgang gibt es erst nach der Migration klasse_jahrgang
+      supabase.from('klassen').select('*').eq('id', klasseId).single(),
+      supabase.from('schueler').select('id, klasse_id, pseudonym, token, stufe_manuell').eq('klasse_id', klasseId),
     ])
     if (k.error || s.error) return setFehler(fehlerText(k.error ?? s.error))
     setKlasse(k.data as Klasse)
@@ -161,6 +162,22 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
             ))}
           </select>
         </label>
+        {/* Jazz 2026-11-14: Schüler:innen sehen unter „Erklärungen“ nur die Seiten ihres Jahrgangs; ohne Angabe alle */}
+        <label>
+          Jahrgang
+          <select
+            className="lk-feld"
+            value={klasse.jahrgang ?? ''}
+            onChange={(e) =>
+              void aendern(supabase.from('klassen').update({ jahrgang: e.target.value ? Number(e.target.value) : null }).eq('id', klasse.id), 'Jahrgang gespeichert.')
+            }
+          >
+            <option value="">nicht festgelegt</option>
+            {[5, 6, 7, 8, 9, 10].map((j) => (
+              <option key={j}>{j}</option>
+            ))}
+          </select>
+        </label>
       </form>
 
       {schueler.length === 0 ? (
@@ -181,7 +198,6 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
                 <tr>
                   <th>Pseudonym</th>
                   <th>Sterne-Stufe</th>
-                  <th>Leseschrift</th>
                   <th>Link</th>
                   <th>Ergebnisse</th>
                   <th>Münzen</th>
@@ -217,17 +233,6 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
                         <option value="2">★★ fest</option>
                         <option value="3">★★★ fest</option>
                       </select>
-                    </td>
-                    <td>
-                      {/* Übungsumbau Schritt 8: schaltet OpenDyslexic für die Schüler:in ein; am iPad weiter selbst umschaltbar */}
-                      <label className="lk-haken">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(s.leseschrift)}
-                          onChange={(e) => void aendern(supabase.from('schueler').update({ leseschrift: e.target.checked }).eq('id', s.id))}
-                        />
-                        <span className="lk-unsichtbar">Leseschrift für {s.pseudonym}</span>
-                      </label>
                     </td>
                     <td>
                       <div className="lk-knopfreihe">

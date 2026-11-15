@@ -1,23 +1,40 @@
-// alt (Übungswiese, Entwicklung.tsx), im Pixel-Look: „Mein Lernweg“ – nur die eigene Entwicklung in Worten.
-// Keine Stufen, Punkte, Prozente oder Noten: Die Datenbank liefert hier gar keine absoluten Werte (schueler_entwicklung).
+// „Mein Lernweg“ (Startseite, Jazz 2026-11-14): nur die eigene Entwicklung, ohne Stufen, Punkte, Prozente oder Noten.
+// Die Datenbank liefert hier gar keine absoluten Werte (schueler_entwicklung).
+// Je Kernkompetenz ein Kasten zum Aufklappen mit der Pflanze für den Durchschnitt. Darin die geübten Übungen, das zuletzt Geübte oben.
+// Links rankt eine Pflanze aus dem Topf hoch: je Übung ein Stück (Zeichnung von Jazz). Übung antippen führt zur Übung.
 import { useEffect, useState } from 'react'
+import { Sprite } from '../gemeinsam/Sprite'
+import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
 import { GROSSE_BEREICHE, grosserBereich } from '../lib/lernstand'
 import { supabase } from '../lib/supabase'
 
 type Kategorie = 'deutlich' | 'besser' | 'dranbleiben' | 'erste'
-type Daten = {
-  kompetenzen: { name: string; bereich: string; kategorie: Kategorie; geloest: number }[]
-  texte: Record<string, string>
-  naechster_schritt: string | null
+type Thema = { name: string; bereich: string; kategorie: Kategorie; geloest: number; zuletzt?: string | null }
+type Uebung = { aufgabe_id: string; titel: string; kompetenz: string; bereich: string; zuletzt: string | null }
+type Daten = { kompetenzen: Thema[]; uebungen?: Uebung[]; texte: Record<string, string>; naechster_schritt: string | null }
+
+// Jazz 2026-11-14: wieder die Emoji-Pflanzen (besser zu erkennen als die Pixelbilder), jede in einem kleinen Holzrahmen
+// (Character Backdrop aus dem UI Pack): keimt → wächst → wird groß → blüht
+const STUFEN: Kategorie[] = ['erste', 'dranbleiben', 'besser', 'deutlich']
+const STUFE_TEXT: Record<Kategorie, string> = { erste: 'angefangen', dranbleiben: 'dranbleiben', besser: 'wird besser', deutlich: 'deutlich besser' }
+const EMOJI: Record<Kategorie, string> = { erste: '🌱', dranbleiben: '🌿', besser: '🪴', deutlich: '🌻' } // Sonnenblume statt Tulpe: auf dem braunen Rahmen besser zu sehen (Jazz)
+
+/** Mit titel liest die Vorlesehilfe die Bedeutung vor; ohne titel ist das Symbol Verzierung (der Text steht daneben). */
+function Pflanze({ art, titel }: { art: Kategorie; titel?: string }) {
+  return (
+    <span className="pflanze-symbol" role={titel ? 'img' : undefined} aria-label={titel} aria-hidden={titel ? undefined : true}>
+      {EMOJI[art]}
+    </span>
+  )
 }
 
-const REIHENFOLGE: Kategorie[] = ['deutlich', 'besser', 'dranbleiben', 'erste']
-// Emoji hinter dem Satz: keimt → wächst → wird groß → blüht (nur Verzierung, der Satz trägt die Bedeutung)
-const PFLANZE: Record<Kategorie, string> = { erste: '🌱', dranbleiben: '🌿', besser: '🪴', deutlich: '🌷' }
-const Pflanze = ({ art }: { art: Kategorie }) => <span aria-hidden="true">{' ' + PFLANZE[art]}</span>
+/** Durchschnitt der Themen eines Kastens als Pflanze (gerundet) */
+function durchschnitt(themen: { kategorie: Kategorie }[]): Kategorie {
+  return STUFEN[Math.round(themen.reduce((s, t) => s + STUFEN.indexOf(t.kategorie), 0) / themen.length)]
+}
 
-export function Lernweg({ token, uebungen }: { token: string; uebungen: string }) {
+export function Lernweg({ token, ziel }: { token: string; ziel: (aufgabeId: string) => string | null }) {
   const [daten, setDaten] = useState<Daten | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
 
@@ -27,99 +44,77 @@ export function Lernweg({ token, uebungen }: { token: string; uebungen: string }
       .then(({ data, error }) => (error ? setFehler(fehlerText(error)) : setDaten(data as Daten)))
   }, [token])
 
-  if (fehler) return <p className="karte">{fehler}</p>
+  if (fehler) return <p className="karte" role="alert">{fehler}</p>
   if (!daten) return <p className="karte" role="status">Einen Moment …</p>
 
-  const gelungen = (anzahl: number) =>
-    (daten.texte.gelungen ?? '').replace('{anzahl}', String(anzahl)).replace('{aufgaben}', anzahl === 1 ? 'Aufgabe' : 'Aufgaben')
-  // Themen mit Entwicklung nach Bereich; Themen mit ersten Ergebnissen eingeklappt am Ende.
-  const mitWeg = daten.kompetenzen.filter((k) => k.kategorie !== 'erste')
-  const ersteSchritte = daten.kompetenzen.filter((k) => k.kategorie === 'erste')
-  // Sortiert nach Kernkompetenzen (wie in der Lehrkraft-Übersicht), darin nach Bereichen; innerhalb das Beste zuerst
-  const grosse = [...new Set(mitWeg.map((k) => grosserBereich(k.bereich)))]
+  // Kernkompetenzen in fester Reihenfolge (wie in der Lehrkraft-Übersicht). Die Übungen kommen vom Server schon „zuletzt geübt zuerst“.
+  // Das Pflanzen-Symbol einer Übung ist das ihres Themas.
+  // shortcut: Solange die Migration lernweg_zuletzt nicht eingespielt ist, fehlt uebungen; dann stehen dort die Themen (ohne Antippen).
+  const alle: Uebung[] = daten.uebungen ?? daten.kompetenzen.map((k) => ({ aufgabe_id: k.name, titel: k.name, kompetenz: k.bereich, bereich: k.bereich, zuletzt: null }))
+  const kategorie = new Map(daten.kompetenzen.map((k) => [k.name, k.kategorie]))
+  const kaesten = [...new Set(daten.kompetenzen.map((k) => grosserBereich(k.bereich)))]
     .sort((a, b) => (GROSSE_BEREICHE as readonly string[]).indexOf(a) - (GROSSE_BEREICHE as readonly string[]).indexOf(b))
     .map((gross) => ({
       gross,
-      bereiche: [...new Set(mitWeg.filter((k) => grosserBereich(k.bereich) === gross).map((k) => k.bereich))].map((bereich) => ({
-        bereich,
-        themen: mitWeg.filter((k) => k.bereich === bereich).sort((a, b) => REIHENFOLGE.indexOf(a.kategorie) - REIHENFOLGE.indexOf(b.kategorie)),
-      })),
+      themen: daten.kompetenzen.filter((k) => grosserBereich(k.bereich) === gross),
+      uebungen: alle.filter((u) => grosserBereich(u.bereich) === gross),
     }))
 
   return (
     <>
-      <header className="karte">
+      <header className="pixel-schild">
         <h1>Mein Lernweg</h1>
-        {/* Usability-Test 2026-11-13: die Pflanzen erklären (sonst unklar) */}
-        <p>Hier siehst du, wie es in deinen Themen vorangeht. Die Pflanze wächst mit: 🌱 angefangen, 🌿 dranbleiben, 🪴 wird besser, 🌷 deutlich besser.</p>
       </header>
+      {/* Legende als eigene Box: erklärt die Pflanzen (Usability-Test 2026-11-13: sonst unklar) */}
+      <ul className="karte lernweg-legende" aria-label="Was die Pflanzen bedeuten">
+        {STUFEN.map((s) => (
+          <li key={s}>
+            <Pflanze art={s} /> {STUFE_TEXT[s]}
+          </li>
+        ))}
+      </ul>
 
-      <section className="karte">
-        <h2>Dein nächster Schritt</h2>
-        <p>
-          {daten.naechster_schritt ? (
-            <>
-              {daten.texte.naechster_schritt} <strong>{daten.naechster_schritt}</strong>
-            </>
-          ) : (
-            'Mach weiter mit deinen Übungen.'
-          )}
-        </p>
-        <div className="knopf-reihe">
-          <a className="knopf knopf--haupt" href={uebungen}>
-            Weiter üben
-          </a>
-        </div>
-      </section>
+      {kaesten.length === 0 && <p className="karte">Sobald du ein paar Aufgaben bearbeitet hast, siehst du hier deinen Weg.</p>}
 
-      {daten.kompetenzen.length === 0 && <p className="karte">Sobald du ein paar Aufgaben bearbeitet hast, siehst du hier deinen Weg.</p>}
-
-      {grosse.map(({ gross, bereiche }) => (
-        <section key={gross} className="karte">
-          <h2>{gross === 'Weitere' ? 'Weitere Themen' : gross}</h2>
-          {bereiche.map(({ bereich, themen }) => (
-            <div key={bereich} className="lernweg-bereich">
-              <h3>{bereich}</h3>
-              <ul className="lernweg-liste">
-                {themen.map((k) => (
-                  <li key={k.name} className="lernweg-thema" data-art={k.kategorie}>
-                    <div className="lernweg-thema__text">
-                      <p className="lernweg-thema__name">{k.name}</p>
-                      {k.geloest > 0 && <p className="leise">{gelungen(k.geloest)}</p>}
-                    </div>
-                    <p className="lernweg-marke" data-art={k.kategorie}>
-                      {daten.texte[k.kategorie]}
-                      <Pflanze art={k.kategorie} />
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </section>
-      ))}
-
-      {ersteSchritte.length > 0 && (
-        // offen, solange es nichts anderes zu zeigen gibt (sonst sieht die Seite leer aus)
-        <details className="karte hilfe-eintrag" open={mitWeg.length === 0}>
+      {kaesten.map(({ gross, themen, uebungen }) => (
+        <details key={gross} className="karte lernweg-kasten">
           <summary>
-            {ersteSchritte.length === 1 ? 'Ein Thema, das du gerade angefangen hast' : `${ersteSchritte.length} Themen, die du gerade angefangen hast`}
+            <Pflanze art={durchschnitt(themen)} titel={STUFE_TEXT[durchschnitt(themen)]} />
+            <span className="lernweg-kasten__name">{gross === 'Weitere' ? 'Weitere Themen' : gross}</span>
           </summary>
-          <ul className="lernweg-liste">
-            {ersteSchritte.map((k) => (
-              <li key={k.name} className="lernweg-thema">
-                <div className="lernweg-thema__text">
-                  <h3>
-                    {k.name}
-                    <Pflanze art="erste" />
-                  </h3>
-                  <p className="leise">{k.bereich}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <ol className="ranke">
+            {uebungen.map((u, i) => {
+              const art = kategorie.get(u.kompetenz) ?? kategorie.get(u.titel) ?? 'erste'
+              const href = ziel(u.aufgabe_id)
+              const text = (
+                <>
+                  <span className="ranke__name">{u.titel}</span>
+                  <span>{u.kompetenz}</span>
+                </>
+              )
+              return (
+                <li key={u.aufgabe_id}>
+                  {/* oberstes Stück ist die Spitze; die beiden gezeichneten Stücke wechseln sich von unten her ab */}
+                  <Sprite grafik={GRAFIK.ranke} nummer={((uebungen.length - 1 - i) % 2) + (i === 0 ? 2 : 0)} mal={3} />
+                  {/* antippen führt zur Übung, solange sie noch in einem Paket der Klasse steckt */}
+                  {href ? (
+                    <a className="ranke__text" href={href}>
+                      {text}
+                    </a>
+                  ) : (
+                    <span className="ranke__text">{text}</span>
+                  )}
+                  {/* Symbole rechts in einer Spalte untereinander */}
+                  <Pflanze art={art} titel={daten.texte[art] ?? STUFE_TEXT[art]} />
+                </li>
+              )
+            })}
+            <li className="ranke__topf" aria-hidden="true">
+              <Sprite grafik={GRAFIK.ranke_topf} mal={3} />
+            </li>
+          </ol>
         </details>
-      )}
+      ))}
     </>
   )
 }

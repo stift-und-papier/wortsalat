@@ -517,6 +517,13 @@ begin
     if v::text ~ '"(punkte|stufe|start_|vergleich_|trend_|verlauf|anzahl|prozent)"' or v::text ~ '65[.,]7' then
       raise exception 'Block 7.7: absolute Werte in schueler_entwicklung: %', v;
     end if;
+    -- Lernweg sortiert nach „zuletzt geübt“ (Migration lernweg_zuletzt)
+    if (v -> 'kompetenzen' -> 0 ->> 'zuletzt') is null then raise exception 'Block 7.7: zuletzt fehlt in schueler_entwicklung: %', v; end if;
+    -- geübte Übungen zum Antippen: Titel und Thema, das Thema gibt es auch in der Themenliste
+    if jsonb_array_length(v -> 'uebungen') = 0 or (v -> 'uebungen' -> 0 ->> 'titel') is null
+       or not exists (select 1 from jsonb_array_elements(v -> 'kompetenzen') thema where thema ->> 'name' = v -> 'uebungen' -> 0 ->> 'kompetenz') then
+      raise exception 'Block 7.7: Übungen im Lernweg falsch: %', v -> 'uebungen';
+    end if;
     n := n + 2;
     begin
       perform public.schueler_entwicklung('falscher-token-falscher-token-xx');
@@ -1188,6 +1195,12 @@ begin
     v := public.antwort_abgeben(t_fuchs, null, v_er, '{}', gen_random_uuid());
     if not (v -> 'ergebnis' ->> 'richtig')::boolean then raise exception 'Block 16.3: Erklärseite nicht lesbar: %', v; end if;
     reset role;
+    -- Jahrgang der Klasse (Migration klasse_jahrgang): die Erklärseite steckt in einem Paket für Jahrgang 7
+    update public.klassen set jahrgang = 9 where id = (select klasse_id from public.schueler where id = v_fuchs);
+    if public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite für Jahrgang 7 in Klasse 9 sichtbar'; end if;
+    update public.klassen set jahrgang = 7 where id = (select klasse_id from public.schueler where id = v_fuchs);
+    if not public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite fehlt im eigenen Jahrgang'; end if;
+    update public.klassen set jahrgang = null where id = (select klasse_id from public.schueler where id = v_fuchs);
     n := n + 1;
 
     -- 16.4 Erklärseiten anderer Lehrkräfte: weder in der Liste noch abgebbar
@@ -1297,6 +1310,8 @@ begin
     if (select count(*) from public.versuche where client_id = v_d and anteil_richtig = 0.667 and not richtig) <> 1 then
       raise exception 'Block 17.4: Versuch für den Lernstand fehlt';
     end if;
+    -- Sammelalbum: noch nicht befreundet, also kein Monster
+    if public.schueler_album(t_fuchs)::text ~ 'monster' then raise exception 'Block 17.4: Album zeigt ein Monster ohne Freundschaft'; end if;
     n := n + 1;
 
     -- 17.5 Kalendertag Berlin: 23:59:30 derselbe Tag → morgen; 00:00:30 (UTC noch Vortag) → neuer Durchgang
@@ -1313,6 +1328,11 @@ begin
     end loop;
     if not (v -> 'abschluss' ->> 'neu_befreundet')::boolean or (v -> 'abschluss' ->> 'muenzen')::int <> 25 then
       raise exception 'Block 17.6: Münzen beim Verbessern falsch: %', v;
+    end if;
+    -- Sammelalbum: befreundetes Monster klebt jetzt drin (Standard-Monster Rübchen), fremde Alben nicht
+    if not (public.schueler_album(t_fuchs) @> '[{"id":"ruebchen","art":"monster","gesammelt":true}]')
+       or public.schueler_album(t_dachs)::text ~ 'monster' then
+      raise exception 'Block 17.6: Monster im Sammelalbum falsch';
     end if;
     n := n + 1;
 

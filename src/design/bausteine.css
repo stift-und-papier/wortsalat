@@ -296,9 +296,9 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
   border-top: calc(2 * var(--px)) solid var(--color-holz);
   padding: var(--space-2xs) var(--space-xs) max(var(--space-2xs), env(safe-area-inset-bottom));
 }
-.menue ul {
+.menue ul { /* breiter als die Textspalte: sechs Einträge in der Leseschrift brauchen Platz */
   list-style: none; margin: 0 auto; padding: 0;
-  max-width: var(--breite-inhalt);
+  max-width: 54rem;
   /* so viele Spalten wie Einträge (Lernweg und Buch kommen später dazu) */
   display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-2xs);
 }
@@ -496,24 +496,9 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .erklaerungen-bereich h2 { font-size: var(--text-h3); margin: var(--space-sm) 0 var(--space-xs); }
 
 /* ---------- Mein Lernweg (Phase 7, alt: Übungswiese) – nur Worte, nie Stufen oder Zahlen zum Stand ---------- */
-.lernweg-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-sm); }
-.lernweg-thema { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-xs) var(--space-md); }
-.lernweg-thema h3 { margin: 0; }
-.lernweg-thema p { margin: 0; }
 /* Farbe je Rückmeldung (Lehrkraft 2026-11-12), immer zusammen mit dem Satz: kräftig grün = deutlich besser,
    hellgrün = besser, Pfirsich = dranbleiben (heißt hier „weiterüben“, nie Rot), Papier = erste Ergebnisse. Streifen links in derselben Farbe. */
-.lernweg-bereich h3 { margin: var(--space-md) 0 var(--space-xs); }
-.lernweg-thema { padding: var(--space-xs) 0 var(--space-xs) var(--space-sm); border-left: 6px solid var(--color-papier-2); }
-.lernweg-thema__name { font-weight: 800; }
-.lernweg-marke { padding: var(--space-2xs) var(--space-sm); border-radius: 999px; font-weight: 800; max-width: 22rem; background: var(--color-papier-2); color: var(--color-tinte); }
-.lernweg-thema[data-art='deutlich'] { border-left-color: var(--color-richtig-tinte); }
-.lernweg-marke[data-art='deutlich'] { background: var(--color-richtig-tinte); color: var(--color-papier); }
-.lernweg-thema[data-art='besser'] { border-left-color: var(--color-richtig-flaeche); }
-.lernweg-marke[data-art='besser'] { background: var(--color-richtig-flaeche); color: var(--color-richtig-tinte); }
-.lernweg-thema[data-art='dranbleiben'] { border-left-color: var(--color-nochmal-flaeche); }
-.lernweg-marke[data-art='dranbleiben'] { background: var(--color-nochmal-flaeche); color: var(--color-nochmal-tinte); }
 /* Tulpe vorn (Samen → blüht), Text daneben, Rückmeldung rechts bzw. darunter */
-.lernweg-thema__text { flex: 1 1 10rem; }
 
 /* ---------- Fenster (z. B. Münzen von der Lehrkraft) ---------- */
 .fenster-hintergrund {
@@ -535,56 +520,108 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
   border-image: url('../grafik/rahmen_spiel.png') 16 17 17 fill / 32px 34px 34px; image-rendering: pixelated;
   color: var(--color-album-tinte); text-align: center;
 }
-.pixel-schild h1 { margin: 0; }
+.pixel-schild h1, .pixel-schild h2 { margin: 0; }
 .pixel-tafel {
   padding: var(--space-sm); border: 10px solid transparent;
   border-image: url('../grafik/tafel.png') 5 fill / 10px; image-rendering: pixelated;
   color: var(--color-album-tinte);
 }
-.pixel-tafel .leise, .album-seite .leise { color: inherit; }
+.pixel-tafel .leise { color: inherit; }
 .pixel-tafel > p:first-child { margin-top: 0; }
-.pixel-reiter { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-block: var(--space-sm); }
 
 /* ---------- Shop ---------- */
-.shop-raster {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; gap: var(--space-sm); grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-}
-.shop-artikel { display: flex; flex-direction: column; align-items: center; gap: var(--space-2xs); text-align: center; padding: var(--space-2xs); }
-.shop-artikel .knopf-reihe { justify-content: center; }
-.shop-artikel--gesperrt .farm-menue__bild { opacity: 0.75; } /* nur das Bild blasser, Text behält vollen Kontrast */
-.shop-artikel__frage { font-size: 2.5rem; font-weight: 800; line-height: 1; color: var(--color-album-tinte); }
 .muenzen-preis { display: inline-flex; align-items: center; gap: var(--space-2xs); font-weight: 800; font-variant-numeric: tabular-nums; }
 
-/* ---------- Sammelalbum (Album.tsx): Papierseite aus Humble Gift, bleibt auch im dunklen Modus hell ---------- */
-.album-seite {
-  margin-block: var(--space-md); padding: var(--space-sm);
-  border: 16px solid transparent; border-image: url('../grafik/album_seite.png') 32 fill / 64px stretch;
-  image-rendering: pixelated; color: var(--color-album-tinte);
-}
-.album-seite h2 { text-align: center; margin-top: 0; }
-.album-raster {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; gap: var(--space-sm); grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
-}
-/* Buch: Holzumschlag (Spielfenster-Rahmen gefüllt), darin Reiter und eine Papierseite */
-.album-buch {
-  padding: 0 var(--space-xs); border: solid transparent; border-width: 32px 34px 34px;
-  border-image: url('../grafik/rahmen_spiel.png') 16 17 17 fill / 32px 34px 34px; image-rendering: pixelated;
+/* ---------- Buch (gemeinsam/Buch.tsx, Jazz 2026-11-14): Sammelalbum und Shop ----------
+   Alle Maße in Buch-Pixeln (--bp), damit Buch, Lesezeichen und Sticker gemeinsam ganzzahlig wachsen.
+   Bild-Streifen buch.png: je Bild 248 × 216, das offene Buch darin bei x 2–245, y 49–213 (also 244 × 165).
+   Rechts 30 Buch-Pixel Platz für die Lesezeichen. Das Buch ist ein Bild und bleibt auch im dunklen Modus hell. */
+.buch {
+  --bp: 3px;
+  position: relative; isolation: isolate;
+  width: calc(274 * var(--bp)); height: calc(165 * var(--bp));
+  /* breiter als die Textspalte: gleich große (auch negative) Ränder halten es in der Mitte */
+  margin: 0 calc((100% - 274 * var(--bp)) / 2) var(--space-2xs);
   color: var(--color-album-tinte);
 }
-.album-buch .album-seite { margin-block: var(--space-xs) 0; }
-.album-platz {
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: var(--space-2xs);
-  padding: var(--space-2xs); text-align: center; font-weight: 800;
+/* shortcut: unter 900 px Breite (iPad hochkant, Handy) 2-fach; die Namen unter den Stickern werden dann eng. Bei Bedarf dort 2 Spalten. */
+@media (max-width: 56rem) { .buch { --bp: 2px; } }
+.buch-bild {
+  --p: calc(var(--bp) * var(--m, 1)); /* ein Bildpunkt dieses Bildes */
+  display: block; width: calc(var(--b) * var(--p)); height: calc(var(--h) * var(--p));
+  background-repeat: no-repeat; background-size: calc(var(--bb) * var(--p)) auto;
+  background-position: calc(var(--x) * -1 * var(--p)) calc(var(--y) * -1 * var(--p));
+  image-rendering: pixelated;
 }
-.album-platz--leer .farm-menue__bild { opacity: 0.6; } /* nicht gestrichelt: das heißt sonst „hier schreiben“ */
-.album-platz__frage { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+.buch__bild { position: absolute; z-index: 1; left: calc(-2 * var(--bp)); top: calc(-49 * var(--bp)); pointer-events: none; }
+/* steps(3) zeigt drei Bilder und bleibt dann auf dem vierten (offenes Buch) stehen */
+.buch[data-phase='auf'] .buch__bild > .buch-bild { animation: buch-auf 0.5s steps(3) forwards; }
+.buch[data-phase='vor'] .buch__bild > .buch-bild { animation: buch-vor 0.36s steps(3) forwards; }
+.buch[data-phase='zurueck'] .buch__bild > .buch-bild { animation: buch-zurueck 0.36s steps(3) forwards; }
+@keyframes buch-auf { from { background-position-x: 0; } to { background-position-x: calc(-744 * var(--bp)); } }
+@keyframes buch-vor { from { background-position-x: calc(-992 * var(--bp)); } to { background-position-x: calc(-1736 * var(--bp)); } }
+@keyframes buch-zurueck { from { background-position-x: calc(-1984 * var(--bp)); } to { background-position-x: calc(-2728 * var(--bp)); } }
+/* Seiten: liegen auf dem Papier des Bildes */
+.buch__seite { position: absolute; z-index: 2; top: calc(13 * var(--bp)); width: calc(98 * var(--bp)); height: calc(130 * var(--bp)); }
+.buch__seite--links { left: calc(14 * var(--bp)); }
+.buch__seite--rechts { left: calc(132 * var(--bp)); padding-top: calc(2.25rem + var(--space-2xs)); } /* so hoch wie die Überschrift links */
+.buch__seite h2 { margin: 0 0 var(--space-2xs); max-width: none; text-align: center; font-size: 1.5rem; line-height: 2.25rem; }
+/* solange das Buch aufklappt oder blättert, ist die Seite leer */
+.buch:not([data-phase='offen']) :is(.buch__seite, .buch__pfeil) { visibility: hidden; }
+/* Lesezeichen: stecken unter dem Buchrand, das gewählte schaut weiter heraus */
+.buch__reiter { position: absolute; z-index: 0; left: calc(234 * var(--bp)); top: calc(12 * var(--bp)); display: grid; gap: calc(3 * var(--bp)); }
+.buch__reiter button {
+  position: relative; padding: 0; border: 0; background: none; cursor: pointer;
+  transform: translateX(calc(-4 * var(--bp))); transition: transform var(--dur-micro) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.buch__reiter button[aria-pressed='true'] { transform: none; }
+.buch__reiter button:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
+.buch__reiter-bild { position: absolute; left: calc(14 * var(--bp)); top: calc(2 * var(--bp)); }
+/* Pfeile zum Blättern auf den unteren Ecken des Buchs */
+.buch__pfeil { position: absolute; z-index: 3; bottom: calc(-4 * var(--bp)); }
+.buch__pfeil--zurueck { left: calc(-4 * var(--bp)); }
+.buch__zurueck { left: calc(-4 * var(--bp)); bottom: auto; top: calc(-4 * var(--bp)); }
+.buch__titel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.buch__pfeil--vor { right: calc(26 * var(--bp)); }
+.buch-hinweis { text-align: center; margin: 0 auto; }
+@media (prefers-reduced-motion: reduce) { .buch__reiter button { transition: none; } }
+
+/* ---------- Sammelalbum (Album.tsx): Sticker im Emoji-Stil, je Seite 3 × 3 Klebestellen, ohne Namen ---------- */
+.sticker-raster { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); row-gap: calc(2 * var(--bp)); }
+.sticker-platz {
+  display: flex; align-items: center; justify-content: center; min-width: 0; height: calc(32 * var(--bp));
+}
+/* Zelle im Stickerblatt ist breiter als die Spalte (Boot): seitlich überstehen lassen. Schatten = klebt auf dem Papier. */
+.sticker { flex: none; margin-inline: calc(-5 * var(--bp)); filter: drop-shadow(0 var(--bp) 0 rgba(107, 75, 91, 0.3)); }
+/* leicht schief eingeklebt */
+.sticker-platz:nth-child(3n + 1) .sticker { transform: rotate(-4deg); }
+.sticker-platz:nth-child(3n) .sticker { transform: rotate(3deg); }
+.sticker-platz:nth-child(4n + 2) .sticker { transform: rotate(5deg); }
+/* leere Klebestelle: blasses Feld mit abgeschnittenen Ecken, nicht gestrichelt (das heißt sonst „hier schreiben“) */
+.sticker-leer {
+  width: calc(20 * var(--bp)); height: calc(20 * var(--bp));
+  background: var(--color-buch-leer);
+  clip-path: polygon(
+    calc(2 * var(--bp)) 0, calc(100% - 2 * var(--bp)) 0, 100% calc(2 * var(--bp)), 100% calc(100% - 2 * var(--bp)),
+    calc(100% - 2 * var(--bp)) 100%, calc(2 * var(--bp)) 100%, 0 calc(100% - 2 * var(--bp)), 0 calc(2 * var(--bp))
+  );
+}
 
 /* ---------- Farm (Landschaft) ---------- */
+/* Jazz 2026-11-14: Spiel-Oberfläche ohne Karte. Die Farm darf breiter sein als die Textspalte und füllt das iPad in der Breite
+   (1008 px = 3-fach); gleich große, auch negative Ränder halten sie in der Mitte. Leiste, Meldung und Vorrat so breit wie das Spielfenster. */
+.farm { width: min(100vw - 16px, 1344px); margin: var(--space-md) calc((100% - min(100vw - 16px, 1344px)) / 2); }
+.farm > :not(.farm-rahmen) { max-width: var(--farm-breite); margin-inline: auto; }
+.farm-vorrat-tafel { margin-top: var(--space-sm); }
+.farm-vorrat-tafel h3 { margin-top: 0; }
+.farm-deko-wahl { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.farm-menue h4 { margin: var(--space-sm) 0 var(--space-2xs); font-size: 1em; }
+.farm-menue a { color: inherit; } /* Papier ist immer hell: Link in der dunklen Schrift, unterstrichen */
 .farm-meldung { min-height: 3.2em; }
 .farm-meldung p:not(.leise) { font-weight: 800; }
-.farm-rahmen { overflow-x: auto; margin-inline: calc(-1 * var(--space-xs)); }
+/* isolation: der Rahmen (z-index 10000) bleibt in diesem Kasten und rutscht beim Scrollen nicht über die Menüleiste */
+.farm-rahmen { overflow-x: auto; isolation: isolate; }
 /* Farm: Rahmen liegt über dem Rand der Karte (dort ist rundherum eine Kachel Wasser), braucht so keinen Platz */
 .farm-rahmen > .spiel-fenster { max-width: none; position: relative; border-width: 0; }
 .farm-rahmen > .spiel-fenster::after {
@@ -592,7 +629,9 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
   border: solid transparent; border-width: 32px 34px 34px; border-image: inherit;
 }
 .farm-landschaft { position: relative; isolation: isolate; margin-inline: auto; cursor: pointer; touch-action: manipulation; }
-.farm-landschaft canvas { display: block; image-rendering: pixelated; }
+/* clip-path: Das Rahmenbild ist außen 4 bis 5 Bildpunkte durchsichtig (2-fach: 8 bis 10 px); dort wird das Wasser abgeschnitten.
+   Nur am Hintergrundbild, damit die Sprechblase der Figur am oberen Rand nicht mit abgeschnitten wird. */
+.farm-landschaft canvas { display: block; image-rendering: pixelated; clip-path: inset(10px 12px 12px 12px); }
 .farm-landschaft .sprite { image-rendering: pixelated; }
 .farm-ding { position: absolute; pointer-events: none; line-height: 0; }
 .farm-feld, .farm-tier, .farm-liegt, .farm-baum {
@@ -729,3 +768,125 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 /* Einstellungen: Figurwahl, Figur über dem Namen; gewählt = gedrückter Chip mit ✓ */
 .figur-wahl { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
 .figur-wahl__knopf { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-2xs); padding: var(--space-xs) var(--space-md); }
+
+/* ---------- Spiel-Look auf allen Schülerseiten (Jazz 2026-11-14) ----------
+   Jeder Kasten ist eine helle Holztafel aus dem Sprout-Lands-UI-Pack (tafel.png). Die Tafel ist ein Bild und bleibt darum
+   auch im dunklen Modus hell; Schrift darauf immer dunkel (--color-album-tinte, 7,4 : 1 und mehr).
+   Ausnahme: Übungskästen und Erklärungen (.aufgabe) behalten den ruhigen, gut lesbaren Kasten. */
+.garten-seite .karte:not(.aufgabe) {
+  border: 10px solid transparent; border-image: url('../grafik/tafel.png') 5 fill / 10px; image-rendering: pixelated;
+  color: var(--color-album-tinte);
+}
+.garten-seite .karte:not(.aufgabe) .leise { color: inherit; }
+.garten-seite .karte:not(.aufgabe) a:not(.knopf):not(.holzknopf) { color: inherit; }
+/* Menüleiste als Holzbrett */
+.menue { background: var(--color-tafel); border-top-color: var(--color-tafel-rand); box-shadow: inset 0 var(--px) 0 var(--color-buch-leer); }
+.menue a { color: var(--color-album-tinte); }
+.menue a:hover .symbol, .menue a[aria-current='page'] .symbol { background: var(--color-buch-leer); }
+.menue a[aria-current='page'] .symbol { box-shadow: inset 0 -3px 0 var(--color-tafel-rand); }
+/* oben auf jeder Seite: links der Schalter für den dunklen Modus, ganz rechts die Münzen */
+.muenzen-stand { justify-content: space-between; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+/* Knopf zum Sammelalbum: Gold wie die Ecken des Buchs (nur dieser Knopf) */
+.knopf--album, .knopf--album:active { border-image-source: var(--rahmen-album); }
+/* Einstein auf dem Lernweg: Knopf in der Sprechblase führt zur nächsten Übung */
+.einstein-weiter { margin-top: var(--space-xs); padding-block: var(--space-2xs); line-height: 1.4; text-align: left; }
+
+/* ---------- Lernweg (Lernweg.tsx): Kästen je Kernkompetenz, darin rankt eine Pflanze hoch ---------- */
+.lernweg-kasten summary {
+  list-style: none; cursor: pointer; min-height: var(--tipp-min); display: flex; align-items: center; gap: var(--space-sm);
+  font-family: var(--font-display); font-size: var(--text-h3); font-weight: 800;
+}
+.lernweg-kasten summary::-webkit-details-marker { display: none; }
+.lernweg-kasten summary::before { content: '▸'; }
+.lernweg-kasten[open] summary::before { content: '▾'; }
+.lernweg-kasten__name { flex: 1; min-width: 0; }
+/* Ranke: je Thema ein Stück (20 × 24 Bildpunkte, 3-fach = 60 × 72 px), Stiel in Spalte 9. Ist eine Zeile höher als das Bild,
+   verlängert der Strich dahinter den Stiel (gleiche Farbe wie im Bild). Unten der Topf. */
+.ranke { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
+.ranke li > .sprite { align-self: start; }
+.ranke p { margin: 0; line-height: 1.35; } /* Name und Bereich eng beieinander (Jazz) */
+.ranke__name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); font-weight: 800; }
+/* Topf: 6 px nach oben, damit der Stiel im Topf steckt (oberste Bildzeile des Topfs ist leer) */
+.ranke li.ranke__topf { display: block; min-height: 0; background: none; line-height: 0; margin-top: -6px; position: relative; }
+
+/* ---------- Farm: Titel, Knöpfe und Hinweis in einer Textbox ---------- */
+.farm-meldung p { margin-inline: auto; }
+
+/* ---------- Leseschrift (OpenDyslexic) auf allen Schülerseiten: Überschriften brauchen mehr Zeilenabstand und die volle Breite,
+   sonst stoßen umbrochene Zeilen aneinander ---------- */
+:root[data-leseschrift='lrs'] :is(h1, h2, h3) { line-height: 1.4; max-width: none; }
+a.knopf { text-decoration: none; }
+/* Pfeile vor aufklappbaren Zeilen: auf der hellen Tafel in der dunklen Schriftfarbe (die Aktionsfarbe ist im dunklen Modus zu blass) */
+.garten-seite .karte:not(.aufgabe) summary::before { color: inherit; }
+.garten-seite .karte:not(.aufgabe) .paket-liste__nr { color: inherit; }
+
+/* ---------- Zweite Runde (Jazz 2026-11-14) ---------- */
+/* Ranke: Bild, Pflanzen-Symbol im Rahmen, dann Name und Bereich. Der Strich hinter dem Bild verlängert den Stiel bis zur nächsten Zeile. */
+.ranke li {
+  display: grid; grid-template-columns: 60px 1fr 48px; column-gap: var(--space-sm); align-items: center; min-height: 72px;
+  background: linear-gradient(#645552, #645552) 27px 60px / 3px 100% no-repeat;
+}
+/* Pflanzen-Symbol (Emoji) im kleinen Holzrahmen aus dem UI Pack: 26 × 26 Bildpunkte, Rand 5, doppelt groß */
+.pflanze-symbol {
+  display: inline-grid; place-items: center; flex: none; width: 48px; height: 48px; box-sizing: border-box;
+  border: 10px solid transparent; border-image: url('../grafik/symbol_rahmen.png') 5 fill / 10px; image-rendering: pixelated;
+  font-size: 22px; line-height: 1; font-family: system-ui, sans-serif;
+}
+.garten-seite .karte.lernweg-legende { list-style: none; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); }
+.lernweg-legende li { display: inline-flex; align-items: center; gap: var(--space-xs); font-weight: 700; }
+.lernweg-kasten summary::before { order: 2; } /* Pfeil rechts, links das Symbol der Kernkompetenz */
+/* Farm: Leiste über dem Spielfenster (Sammelalbum, Schild, Zahnrad), darunter der Hinweis in einer eigenen Box */
+.farm-leiste { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-sm); }
+.farm-leiste > :first-child { justify-self: start; }
+.farm-leiste > :last-child { justify-self: end; }
+.farm-album { flex-direction: column; gap: 0; padding: 2px var(--space-sm); font-size: var(--text-klein); line-height: 1.1; }
+.farm-meldung { text-align: center; }
+.farm-meldung p { margin-inline: auto; }
+/* Schiebeschalter aus dem UI Pack (dunkler Modus, Deko): Bahn 28 × 14, Knopf 18 × 19 Bildpunkte, 3-fach. Der Knopf gleitet nach rechts. */
+.garten-seite .schalter { padding: 0; border: 0; border-radius: 0; background: none; color: inherit; gap: var(--space-xs); }
+.garten-seite .schalter__bahn {
+  width: 84px; height: 57px; border: 0; border-radius: 0; image-rendering: pixelated;
+  background: url('../grafik/schalter_bahn_aus.png') 0 9px / 84px 42px no-repeat;
+}
+/* ganze Angabe wiederholen: die allgemeine Regel für „an“ setzt sonst Größe und Lage des Bildes zurück */
+.garten-seite .schalter[aria-checked='true'] .schalter__bahn { background: url('../grafik/schalter_bahn_an.png') 0 9px / 84px 42px no-repeat; }
+.garten-seite .schalter__knopf, .garten-seite .schalter[aria-checked='true'] .schalter__knopf {
+  top: 0; width: 54px; height: 57px; border-radius: 0;
+  background: url('../grafik/schalter_knopf.png') 0 0 / 54px 57px no-repeat;
+}
+.garten-seite .schalter__knopf { left: 0; }
+/* über left statt transform: bei „Bewegung reduzieren“ ist transform gesperrt, der Knopf muss trotzdem die Seite wechseln */
+.garten-seite .schalter__knopf { transition: left var(--dur-short) var(--ease-out); }
+.garten-seite .schalter[aria-checked='true'] .schalter__knopf { transform: none; left: 30px; }
+.garten-seite .schalter:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
+
+/* ---------- Dritte Runde (Jazz 2026-11-14) ---------- */
+/* Lernweg: Übung (Name, darunter Thema) zum Antippen, Symbol rechts in einer Spalte */
+.ranke__text { display: grid; align-content: center; min-height: var(--tipp-min); line-height: 1.35; text-decoration: none; }
+a.ranke__text .ranke__name { text-decoration: underline; text-underline-offset: 4px; }
+a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
+/* Farm: Knopf zum Sammelalbum unten in der Mitte, über dem Vorrat */
+.farm-album-zeile { display: flex; justify-content: center; margin-top: var(--space-sm); }
+/* Erklärungen: Themen zum Aufklappen */
+.erklaerungen-thema summary { font-family: var(--font-display); font-size: var(--text-h3); }
+/* Sprechblase der Figur: in der Leseschrift ist der Satz breiter als der Platz links von der Figur (sie steht in der Mitte),
+   darum darf er umbrechen; die Blase wächst nach oben */
+/* Jazz 2026-11-14: kleinere Schrift; die größte Breite setzt Farm.tsx so, dass die Blase im Holzrahmen bleibt */
+.farm-blase { white-space: normal; width: max-content; box-sizing: border-box; font-size: var(--text-klein); line-height: 22px; }
+
+/* ---------- Shop als Buch (Shop.tsx, Jazz 2026-11-14): links 3 × 3 Kästchen, rechts das gewählte Stück ---------- */
+.shop-kaestchen { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); row-gap: calc(2 * var(--bp)); justify-items: center; }
+/* Kästchen = Platz aus dem UI Pack (26 × 28 Bildpunkte) */
+.shop-kaestchen button {
+  position: relative; display: grid; place-items: center; overflow: hidden;
+  width: calc(26 * var(--bp)); height: calc(28 * var(--bp)); padding: 0 0 calc(2 * var(--bp)); border: 0; cursor: pointer;
+  background: url('../grafik/menue_platz.png') 0 0 / 100% 100% no-repeat; image-rendering: pixelated;
+  -webkit-tap-highlight-color: transparent;
+}
+/* gewählt: dunkler Rahmen um das Kästchen (Form, nicht nur Farbe) */
+.shop-kaestchen button[aria-pressed='true'] { outline: var(--bp) solid var(--color-album-tinte); outline-offset: calc(-1 * var(--bp)); }
+.shop-kaestchen button:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
+.shop-wahl { display: flex; flex-direction: column; align-items: center; gap: var(--space-2xs); text-align: center; }
+.shop-wahl h2 { margin: var(--space-2xs) 0 0; font-size: 1.25rem; line-height: 1.3; }
+.shop-wahl .knopf { --px: 2px; min-height: 48px; }
+.buch-hinweis { line-height: 1.4; } /* Leseschrift: sonst ragt die Seite 2 px über den Bildschirm */

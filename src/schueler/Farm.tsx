@@ -3,6 +3,7 @@
 // Alles bleibt auch ohne Figur bedienbar (Felder und Tiere sind Knöpfe). Wachstum und Füttern rechnet der Server.
 import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { Sprite } from '../gemeinsam/Sprite'
+import { Symbol } from '../gemeinsam/Symbol'
 import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
@@ -10,9 +11,10 @@ import {
   ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KACHEL,
   KUH_PLAETZE, nebenan, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, weg, ZEILEN, type Ort,
 } from '../lib/landschaft'
-import { artikelBild, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
+import { artikelBild, DEKO_NAME, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
 import { supabase } from '../lib/supabase'
+import { FigurWahl } from './FigurWahl'
 import { FarmTier } from './FarmTier'
 
 const TEMPO = 50 // Grafik-Pixel pro Sekunde
@@ -24,8 +26,10 @@ const mitte = (o: Ort) => ({ x: o.x * KACHEL + 8, y: o.y * KACHEL + 12 })
 const richtungZu = (dx: number, dy: number) => (Math.round(Math.atan2(dx, -dy) / (Math.PI / 4)) + 8) % 8
 
 type Menue = { art: 'feld'; feld: number } | { art: 'tier'; id: string }
+// shortcut: ausgeblendete Deko merkt sich nur dieses Gerät (wie Dunkler Modus). Soll es auf jedem iPad gelten, in die Datenbank (wie figur).
+const DEKO_AUS = 'wortsalat-farm-deko-aus'
 
-export function Farm({ token, shop, album, figur: figurName }: { token: string; shop: string; album: string; figur: string }) {
+export function Farm({ token, shop, album, figur: figurName, nachFigur }: { token: string; shop: string; album: string; figur: string; nachFigur: () => void }) {
   const [daten, setDaten] = useState<FarmDaten | null>(null)
   const [meldung, setMeldung] = useState<string | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
@@ -38,7 +42,14 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
   const leinwand = useRef<HTMLCanvasElement>(null)
   const ankunft = useRef<number>(undefined)
   const [blase, setBlase] = useState(true) // Sprechblase „… kann geerntet werden!“, bis man zum ersten Mal tippt
-  const [blasenBreite, setBlasenBreite] = useState(0) // gemessen, in Grafik-Pixeln
+  const [einrichten, setEinrichten] = useState(false) // Fenster hinter dem Zahnrad: Figur und Deko
+  const [dekoAus, setDekoAus] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(DEKO_AUS) ?? '[]') as string[]
+    } catch {
+      return []
+    }
+  })
 
   const laden = useCallback(async () => {
     const { data, error } = await supabase.rpc('schueler_farm', { p_token: token })
@@ -95,20 +106,15 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
 
   useEffect(() => () => window.clearTimeout(ankunft.current), [])
 
-  // Lehrkraft 2026-11-12: Die Blase steht immer links von der Figur. Fehlt dort Platz, läuft die Figur zuerst nach rechts.
-  const blasenPlatz = blasenBreite + 8
-  useEffect(() => {
-    if (!blase || !blasenBreite || figur.dauer > 0 || figur.x >= blasenPlatz) return
-    gehe((o) => mitte(o).x >= blasenPlatz, undefined, true)
-  }, [blase, blasenPlatz])
+  // Jazz 2026-11-14: Die Figur startet in der Mitte der Farm und bleibt stehen, bis man tippt. Die Blase steht links von ihr.
 
   /**
    * Figur auf kürzestem Weg um Hindernisse herum zur nächsten Kachel laufen lassen, für die `ziel` gilt; danach `dann`.
    * Gibt es keinen Weg, passiert `dann` sofort (alles bleibt bedienbar).
    */
-  function gehe(ziel: (o: Ort) => boolean, dann?: () => void, vonSelbst = false) {
+  function gehe(ziel: (o: Ort) => boolean, dann?: () => void) {
     window.clearTimeout(ankunft.current)
-    if (!vonSelbst) setBlase(false)
+    setBlase(false)
     const start = { x: Math.floor(figur.x / KACHEL), y: Math.floor(figur.y / KACHEL) }
     const pfad = weg(start, ziel, besetzt)
     if (!pfad) return dann?.()
@@ -161,12 +167,24 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
   }
 
   const px = (kacheln: number) => kacheln * KACHEL * mal
-  const deko = daten.dinge
+  // Deko lässt sich im Fenster „Farm einrichten“ ausblenden (gekauft bleibt sie)
+  const dekoArten = daten.dinge.map((d) => d.artikel).filter((id) => !['huhn', 'kuh'].includes(id))
+  const dinge = daten.dinge.filter((d) => !dekoAus.includes(d.artikel))
+  const deko = dinge
     .filter((d) => !['huhn', 'kuh', 'brunnen', 'boot'].includes(d.artikel))
     .flatMap((d) => Array(d.anzahl).fill(d.artikel) as string[])
     .slice(0, DEKO_PLAETZE.length)
-  const hatBrunnen = daten.dinge.some((d) => d.artikel === 'brunnen')
-  const hatBoot = daten.dinge.some((d) => d.artikel === 'boot')
+  const hatBrunnen = dinge.some((d) => d.artikel === 'brunnen')
+  const hatBoot = dinge.some((d) => d.artikel === 'boot')
+  function dekoSchalten(id: string) {
+    const neu = dekoAus.includes(id) ? dekoAus.filter((x) => x !== id) : [...dekoAus, id]
+    setDekoAus(neu)
+    try {
+      localStorage.setItem(DEKO_AUS, JSON.stringify(neu))
+    } catch {
+      // Speicher gesperrt (privater Modus): gilt dann nur, bis die Seite neu lädt
+    }
+  }
   const baeume = daten.baeume.filter((b) => BAUM_PLAETZE[b.art])
   const besetzt = hindernisse({
     deko: deko.length, brunnen: hatBrunnen, huehner: huehner.length, kuehe: kuehe.length, obstbaeume: baeume.map((b) => b.art),
@@ -269,13 +287,23 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
     ...daten.pflanzen.filter((p) => p.feld < felder && p.reif).map((p) => SORTE_NAME[p.sorte]),
     ...daten.baeume.filter((b) => b.tage === 0 && b.art in BAUM_PLAETZE).map((b) => OBSTBAUM[b.art].name),
   ]
-  const blasenText = reifes.length > 1 ? 'Ich kann heute vieles ernten!' : reifes.length ? `${reifes[0]} kann geerntet werden!` : null
+  const blasenText = reifes.length > 1 ? 'Ich kann mehrere Dinge ernten!' : reifes.length ? `${reifes[0]} kann geerntet werden!` : null
 
   return (
-    <section className="karte farm">
-      <h2>Deine Farm</h2>
+    // Jazz 2026-11-14: Spiel-Oberfläche statt Karte. Leiste (Sammelalbum, Zahnrad), Spielfenster in voller Breite, Vorrat als Tafel.
+    <section className="farm" style={{ ['--farm-breite' as string]: `${px(SPALTEN)}px` }}>
+      {/* Jazz 2026-11-14: Leiste mit Sammelalbum-Knopf (Buch über dem Wort, Flieder), Titel als Holzschild wie auf den anderen Seiten, Zahnrad */}
+      <div className="farm-leiste">
+        <span />
+        <header className="pixel-schild">
+          <h2>Meine Farm</h2>
+        </header>
+        <button type="button" className="holzknopf" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
+          <Symbol name="einstellungen" />
+        </button>
+      </div>
       {/* Usability-Test 2026-11-13: Meldungen stehen über der Karte (unter ihr waren sie am iPad außer Sicht); fester Platz, damit die Karte nicht springt */}
-      <div className="farm-meldung">
+      <div className="karte farm-meldung">
         {fehler ? (
           <p role="alert">{fehler}</p>
         ) : (
@@ -367,16 +395,12 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
           {blase && blasenText && (
             <span
               className="farm-blase"
-              ref={(el) => {
-                const b = el ? Math.ceil(el.offsetWidth / mal) : 0
-                if (b && b !== blasenBreite) setBlasenBreite(b)
-              }}
               style={{
                 ['--bild' as string]: `url(${GRAFIK.dialog_blase.url})`,
                 right: (SPALTEN * KACHEL - figur.x + 6) * mal,
                 top: (figur.y - 22) * mal,
-                // erst zeigen, wenn die Figur steht und links genug Platz ist
-                visibility: figur.dauer === 0 && figur.x >= blasenPlatz ? undefined : 'hidden',
+                // Jazz 2026-11-14: nie über den Holzrahmen hinaus (links 34 px Rahmen, dazu etwas Luft)
+                maxWidth: (figur.x - 6) * mal - 48,
               }}
             >
               {blasenText}
@@ -451,9 +475,43 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
         </FarmMenue>
       )}
 
-      {daten.vorrat.length > 0 && (
-        <>
-          <h3>Dein Vorrat</h3>
+      {einrichten && (
+        <FarmMenue titel="Farm einrichten" schliessen={() => setEinrichten(false)}>
+          <h4>Deine Figur</h4>
+          <FigurWahl token={token} figur={figurName} nachWahl={nachFigur} />
+          <h4>Deko auf der Farm</h4>
+          {dekoArten.length === 0 ? (
+            <p>
+              Du hast noch keine Deko. <a href={shop}>Im Shop</a> gibt es welche.
+            </p>
+          ) : (
+            <div className="farm-deko-wahl">
+              {dekoArten.map((id) => (
+                <button key={id} type="button" role="switch" aria-checked={!dekoAus.includes(id)} className="schalter" onClick={() => dekoSchalten(id)}>
+                  <span className="schalter__bahn" aria-hidden="true">
+                    <span className="schalter__knopf" />
+                  </span>
+                  {DEKO_NAME[id] ?? id}
+                </button>
+              ))}
+            </div>
+          )}
+        </FarmMenue>
+      )}
+
+      {/* Jazz 2026-11-14: Knopf zum Sammelalbum unten in der Mitte, über dem Vorrat */}
+      <div className="farm-album-zeile">
+        <a className="knopf knopf--album farm-album" href={album}>
+          <Symbol name="sammelbuch" />
+          Sammelalbum
+        </a>
+      </div>
+
+      <div className="pixel-tafel farm-vorrat-tafel">
+        <h3>Dein Vorrat</h3>
+        {daten.vorrat.length === 0 ? (
+          <p>Noch leer. Was du erntest und einsammelst, liegt hier.</p>
+        ) : (
           <ul className="farm-vorrat">
             {daten.vorrat.map((v) => {
               const d = vorratDing(v.sorte)
@@ -468,12 +526,7 @@ export function Farm({ token, shop, album, figur: figurName }: { token: string; 
               )
             })}
           </ul>
-        </>
-      )}
-      <div className="knopf-reihe">
-        <a className="knopf" href={album}>
-          Mein Sammelalbum
-        </a>
+        )}
       </div>
     </section>
   )
