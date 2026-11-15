@@ -906,9 +906,17 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 /* Farm ohne Scrollen: weniger Abstand oben, Schild mit einfachem statt doppeltem Rahmen */
 .farm { margin-top: 0; }
 .farm-leiste__knoepfe .knopf { --px: 2px; min-height: 48px; }
-.farm-leiste { margin-bottom: var(--space-xs); }
-.farm-leiste .pixel-schild { border-width: 16px 17px 17px; border-image-width: 16px 17px 17px; padding-block: 0; }
-.farm-leiste .pixel-schild h2 { font-size: 1.35rem; }
+.farm-leiste { margin-bottom: var(--space-xs); display: flex; justify-content: space-between; }
+.muenzen-stand .pixel-schild { border-width: 16px 17px 17px; border-image-width: 16px 17px 17px; padding-block: 0; margin: 0; }
+.muenzen-stand .pixel-schild h2 { font-size: 1.35rem; }
+/* Jazz 2026-11-15: Titel in der Mitte (drei Spalten), Dunkel-Schalter 2-fach statt 3-fach (Tippfläche bleibt 48 px hoch) */
+.muenzen-stand--titel { display: grid; grid-template-columns: 1fr auto 1fr; }
+.muenzen-stand--titel > :last-child { justify-self: end; } /* ohne :has, Safari 15.0 */
+.muenzen-stand .schalter { min-height: 48px; font-size: var(--text-klein); }
+.garten-seite .muenzen-stand .schalter__bahn { width: 56px; height: 38px; background: url('../grafik/schalter_bahn_aus.png') 0 6px / 56px 28px no-repeat; }
+.garten-seite .muenzen-stand .schalter[aria-checked='true'] .schalter__bahn { background: url('../grafik/schalter_bahn_an.png') 0 6px / 56px 28px no-repeat; }
+.garten-seite .muenzen-stand .schalter__knopf, .garten-seite .muenzen-stand .schalter[aria-checked='true'] .schalter__knopf { width: 36px; height: 38px; background-size: 36px 38px; }
+.garten-seite .muenzen-stand .schalter[aria-checked='true'] .schalter__knopf { left: 20px; }
 /* Meldung als Papier-Banner unten im Spielfenster wie ein Dialogfeld (liegt über Rahmen und Wasser); Papier bleibt hell, Schrift dunkel */
 .farm-rahmen .farm-meldung {
   position: absolute; z-index: 10001; bottom: 6px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 48px);

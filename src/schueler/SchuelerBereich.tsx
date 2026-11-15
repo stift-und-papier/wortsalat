@@ -259,7 +259,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
   // Jazz 2026-11-14: Die Farm ist ein eigener Menüpunkt; Startseite ist der Lernweg (unten)
   if (bereich === 'farm') {
     return (
-      <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster}>
+      <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster} titel="Meine Farm">
         {wartendHinweis}
         <Farm key={farmStand} token={token} figur={daten.figur ?? 'gruen'} nachFigur={() => void laden()} shop={`#${basis}/shop`} album={`#${basis}/album`} />
       </Rahmen>
@@ -556,19 +556,25 @@ function BelohnungFenster({ belohnungen, schliessen }: { belohnungen: Belohnung[
   )
 }
 
-function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, children }: { basis: string; aktiv: string; menue?: boolean; muenzen?: number | null; fenster?: ReactNode; children: ReactNode }) {
+function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, children }: { basis: string; aktiv: string; menue?: boolean; muenzen?: number | null; fenster?: ReactNode; titel?: string; children: ReactNode }) {
   const [dunkel, setDunkel] = useDunkel()
   return (
     <div className="garten-seite">
       <main className="garten-seite__inhalt">
         {/* Jazz 2026-11-14: auf jeder Seite oben links der Schalter für den dunklen Modus, ganz rechts die Münzen */}
-        <div className="muenzen-stand">
+        <div className={`muenzen-stand${titel ? ' muenzen-stand--titel' : ''}`}>
           <button type="button" role="switch" aria-checked={dunkel} className="schalter" onClick={() => setDunkel(!dunkel)}>
             <span className="schalter__bahn" aria-hidden="true">
               <span className="schalter__knopf" />
             </span>
             Dunkel
           </button>
+          {/* Jazz 2026-11-15: Titel (Farm) in der Mitte zwischen Dunkel-Schalter und Münzen, spart eine Zeile */}
+          {titel && (
+            <header className="pixel-schild">
+              <h2>{titel}</h2>
+            </header>
+          )}
           {muenzen !== null && (
             <span className="muenzen" role="img" aria-label={`Du hast ${muenzen} Münzen`}>
               <Sprite grafik={GRAFIK.muenze} mal={2} /> {muenzen}

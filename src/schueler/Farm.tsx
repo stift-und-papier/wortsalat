@@ -331,9 +331,6 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             Vorrat
           </button>
         </div>
-        <header className="pixel-schild">
-          <h2>Meine Farm</h2>
-        </header>
         <button type="button" className="holzknopf" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
           <Symbol name="einstellungen" />
         </button>
@@ -407,7 +404,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
                 )
               }
             >
-              <FarmTier art="monster" grafik={farmMonster.grafik} mal={monsterMal} wegMal={mal} von={-KACHEL} bis={2 * KACHEL}>
+              <FarmTier art="monster" grafik={farmMonster.grafik} mal={monsterMal} wegMal={mal} von={0} bis={2 * KACHEL}>
                 {monsterGeschenk && <Ausruf mal={mal} />}
               </FarmTier>
             </button>
