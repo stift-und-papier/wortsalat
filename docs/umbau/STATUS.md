@@ -421,5 +421,5 @@
   **Getestet** (Browser, Lehrkraft 1180 × 820 und 820 × 1180): neue Lückentext-Übung (nicht gespeichert) mit 3 Lücken, Vorschau zeigt sie; Text davor
   ergänzt → Lücken bleiben; Wechsel zu Klammern zeigt `[dass] … [weil] [das]`; Fehler finden, Auswahl, Zuordnen (Gruppe, neue und vorhandene Kategorie)
   ergeben gültige Klammern ohne Meldung; bestehende Übung „Test: Zwei Formate ohne Monster“ lädt richtig. Alle vier Excel-Dateien abgefangen und gelesen
-  (Kopfzeilen ohne Knopf- und Pfeiltexte). `npm test` 150, lint, build ohne Fehler. **Nicht getestet:** Öffnen der Dateien in Excel (kein Excel hier),
+  (Kopfzeilen ohne Knopf- und Pfeiltexte). `npm test` 149, lint, build ohne Fehler. **Nicht getestet:** Öffnen der Dateien in Excel (kein Excel hier),
   Antippen mit dem Finger am echten iPad, Speichern einer im Antipp-Modus angelegten Übung (Speichern selbst unverändert).
