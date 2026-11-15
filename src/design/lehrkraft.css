@@ -291,3 +291,8 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 .lk-knopf--gut { background: var(--color-lk-gut); border-color: var(--color-lk-gut); color: var(--color-lk-gut-text); }
 .lk-knopf--gut:hover { background: var(--color-lk-gut-2); }
 .lk-auswahl .lk-knopf[aria-pressed='true'] { background: var(--color-lk-aktion); border-color: var(--color-lk-aktion); color: var(--color-lk-aktion-text); }
+/* Runden einer Übung untereinander; die zuletzt angeklickte (Vorschau) hat einen blauen Rand links */
+.lk-runden { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-sm); }
+.lk-runde { display: grid; gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--color-lk-linie); border-left-width: 4px; border-radius: var(--radius-lk); }
+.lk-runde[data-aktiv] { border-left-color: var(--color-lk-aktion); }
+.lk-runde__kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs); }

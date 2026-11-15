@@ -145,6 +145,46 @@ function ErklaerSeite({ aufgabe, pruefen, weiter }: Props) {
   )
 }
 
+type Teile = SchuelerAufgabe['inhalt']['teile']
+
+/** Sind alle Stellen beantwortet? Lücken, Auswahl, Reihen und Versionen alle; beim Zuordnen und Fehlerfinden
+ * mindestens ein Wort markiert (die übrigen gehören zu keiner Kategorie bzw. sind fehlerfrei). */
+export function alleBeantwortet(teile: Teile, antworten: Antworten): boolean {
+  const beantwortet = (id: number) => {
+    const a = antworten[id]
+    if (a === true) return true
+    const reihe = teile.find((t) => t.t === 'reihe' && t.id === id)
+    if (reihe && reihe.t === 'reihe') {
+      // Reihenfolge: in jeder geforderten Variante liegen alle Bausteine
+      const varianten = Math.max(1, reihe.varianten ?? 1)
+      const listen = !Array.isArray(a) ? [] : Array.isArray(a[0]) ? (a as string[][]) : [a as string[]]
+      return Array.from({ length: varianten }, (_, j) => listen[j]?.length === reihe.bausteine.length).every(Boolean)
+    }
+    return Array.isArray(a) ? a.length > 0 : typeof a === 'string' && a.trim() !== ''
+  }
+  const luecken = teile.filter((t) => t.t === 'luecke' || t.t === 'auswahl' || t.t === 'reihe' || t.t === 'versionen')
+  const einheiten = teile.filter((t) => t.t === 'einheit' || t.t === 'wort')
+  return luecken.every((l) => beantwortet(l.id)) && (einheiten.length === 0 || einheiten.some((e) => beantwortet(e.id)))
+}
+
+/** Satz unter dem Knopf, solange noch etwas fehlt */
+export function nochOffenText(teile: Teile): string {
+  const hat = (art: string) => teile.some((t) => t.t === art)
+  return (
+    (hat('reihe')
+      ? 'Lege alle Bausteine in die Reihe'
+      : hat('versionen')
+        ? 'Wähle bei jedem Satz eine Version'
+        : hat('wort')
+          ? 'Tippe die Fehlerwörter an'
+          : hat('einheit')
+            ? 'Markiere die passenden Wörter'
+            : hat('luecke')
+              ? 'Fülle alles aus'
+              : 'Wähle überall eine Antwort') + ', dann kannst du prüfen.'
+  )
+}
+
 function AufgabeUeben({ aufgabe, pruefen, loesungHolen, weiter, startAntworten, onAntwortenGeaendert }: Props) {
   const [antworten, setAntworten] = useState<Antworten>(startAntworten ?? {})
   const [ergebnis, setErgebnis] = useState<PruefAntwort | null>(null)
@@ -159,19 +199,7 @@ function AufgabeUeben({ aufgabe, pruefen, loesungHolen, weiter, startAntworten, 
   // mindestens ein Wort markiert (die übrigen gehören zu keiner Kategorie bzw. sind fehlerfrei).
   const luecken = aufgabe.inhalt.teile.filter((t) => t.t === 'luecke' || t.t === 'auswahl' || t.t === 'reihe' || t.t === 'versionen')
   const einheiten = aufgabe.inhalt.teile.filter((t) => t.t === 'einheit' || t.t === 'wort')
-  const beantwortet = (id: number) => {
-    const a = antworten[id]
-    if (a === true) return true
-    const reihe = aufgabe.inhalt.teile.find((t) => t.t === 'reihe' && t.id === id)
-    if (reihe && reihe.t === 'reihe') {
-      // Reihenfolge: in jeder geforderten Variante liegen alle Bausteine
-      const varianten = Math.max(1, reihe.varianten ?? 1)
-      const listen = !Array.isArray(a) ? [] : Array.isArray(a[0]) ? (a as string[][]) : [a as string[]]
-      return Array.from({ length: varianten }, (_, j) => listen[j]?.length === reihe.bausteine.length).every(Boolean)
-    }
-    return Array.isArray(a) ? a.length > 0 : typeof a === 'string' && a.trim() !== ''
-  }
-  const alleAusgefuellt = luecken.every((l) => beantwortet(l.id)) && (einheiten.length === 0 || einheiten.some((e) => beantwortet(e.id)))
+  const alleAusgefuellt = alleBeantwortet(aufgabe.inhalt.teile, antworten)
   const allesRichtig = ergebnis?.ergebnis.richtig === true
 
   async function beimPruefen() {
@@ -344,22 +372,7 @@ function AufgabeUeben({ aufgabe, pruefen, loesungHolen, weiter, startAntworten, 
           </button>
         )}
       </div>
-      {!alleAusgefuellt && !allesRichtig && (
-        <p className="leise">
-          {arten.has('reihe')
-            ? 'Lege alle Bausteine in die Reihe'
-            : arten.has('versionen')
-              ? 'Wähle bei jedem Satz eine Version'
-              : arten.has('wort')
-                ? 'Tippe die Fehlerwörter an'
-                : arten.has('einheit')
-                  ? 'Markiere die passenden Wörter'
-                  : arten.has('luecke')
-                    ? 'Fülle alles aus'
-                    : 'Wähle überall eine Antwort'}
-          , dann kannst du prüfen.
-        </p>
-      )}
+      {!alleAusgefuellt && !allesRichtig && <p className="leise">{nochOffenText(aufgabe.inhalt.teile)}</p>}
       {loesungAngesehen && !loesungen && <p className="leise">Du hast dir die Lösung schon einmal angesehen.</p>}
     </form>
   )

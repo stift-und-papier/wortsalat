@@ -136,10 +136,47 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   const [farbig, setFarbig] = useState(true)
   const [grossKlein, setGrossKlein] = useState(true)
   // Übungsumbau: eine Übung hat mehrere Runden (Reiter), jede Runde ist ein eigener Aufgabentext im bisherigen Format
-  const [runden, setRunden] = useState<string[]>([''])
+  // k = fester Schlüssel der Runde im Editor (bleibt beim Umsortieren, damit Formularfelder zu ihrer Runde gehören)
+  const naechsterK = useRef(1)
+  const neueRunde = (text = '') => ({ k: naechsterK.current++, text })
+  const [runden, setRunden] = useState<{ k: number; text: string }[]>(() => [{ k: 0, text: '' }])
   const [aktiv, setAktiv] = useState(0)
-  const text = runden[aktiv] ?? ''
-  const setText = (neu: string) => setRunden((alt) => alt.map((r, i) => (i === aktiv ? neu : r)))
+  const text = runden[aktiv]?.text ?? ''
+  const setRundeText = (i: number, neu: string) => setRunden((alt) => alt.map((r, j) => (j === i ? { ...r, text: neu } : r)))
+  const setText = (neu: string) => setRundeText(aktiv, neu)
+  // Gibt es schon Durchgänge von Schüler:innen zu dieser Übung? Dann fragt „Entfernen“ nach.
+  const [hatErgebnisse, setHatErgebnisse] = useState(false)
+  // Nach „+ Runde“ und „Kopieren“ steht der Cursor gleich im neuen Textfeld
+  const [fokusK, setFokusK] = useState<number | null>(null)
+  useEffect(() => {
+    if (fokusK === null) return
+    document.getElementById(`runde-${fokusK}`)?.focus()
+    setFokusK(null)
+  }, [fokusK])
+
+  function rundeEinfuegen(nach: number, text = '') {
+    const neu = neueRunde(text)
+    setRunden([...runden.slice(0, nach + 1), neu, ...runden.slice(nach + 1)])
+    setAktiv(nach + 1)
+    setFokusK(neu.k)
+  }
+  function rundeVerschieben(i: number, richtung: -1 | 1) {
+    const neu = [...runden]
+    const [r] = neu.splice(i, 1)
+    neu.splice(i + richtung, 0, r)
+    setRunden(neu)
+    setAktiv(i + richtung)
+  }
+  function rundeEntfernen(i: number) {
+    if (hatErgebnisse) {
+      const ok = window.confirm(
+        `Zu dieser Übung gibt es schon Ergebnisse von Schüler:innen.\n\nRunde ${i + 1} trotzdem entfernen? Sterne, Münzen und Lernstand bleiben erhalten.`,
+      )
+      if (!ok) return
+    } else if (runden[i].text.trim() && !window.confirm(`Runde ${i + 1} mit ihrem Text entfernen?`)) return
+    setRunden(runden.filter((_, j) => j !== i))
+    setAktiv(Math.max(0, Math.min(aktiv, runden.length - 2)))
+  }
   const [rundenJe, setRundenJe] = useState(6)
   const [monsterName, setMonsterName] = useState<string>('ruebchen')
   const [modus, setModus] = useState<'text' | 'formular'>('text')
@@ -165,6 +202,11 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         setKompetenzIdsAlt(ids)
       })
     void supabase
+      .from('durchgaenge')
+      .select('id', { count: 'exact', head: true })
+      .eq('aufgabe_id', aufgabeId)
+      .then(({ count }) => setHatErgebnisse((count ?? 0) > 0))
+    void supabase
       .from('aufgaben')
       .select('id, typ, titel, anweisung, farbig, hinweis, rueckmeldung_fehler, stufe, loesung, geaendert_am, monster, runden_je_durchgang')
       .eq('id', aufgabeId)
@@ -179,7 +221,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         setRundenJe(a.runden_je_durchgang ?? 6)
         // Einstellungen gelten für die ganze Übung und stehen in jeder Runde gleich; gelesen aus der ersten
         const l = a.loesung.runden?.[0] ?? a.loesung
-        setRunden((a.loesung.runden ?? [a.loesung]).map((r) => r.text ?? teileZuText(r.teile)))
+        setRunden((a.loesung.runden ?? [a.loesung]).map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile) })))
         setDarstellung(l.darstellung ?? 'antippen')
         setKategorienText((l.kategorien ?? []).join(', '))
         setKorrigieren(l.korrigieren ?? false)
@@ -215,7 +257,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Jede Runde einzeln zerlegen; angezeigt (Formular, Vorschau) wird die gewählte Runde
   const zerlegt = useMemo(
     () =>
-      runden.map((t) =>
+      runden.map(({ text: t }) =>
         typ === 'erklaerung'
           ? { teile: [], fehler: [] }
           : typ === 'diktat'
@@ -230,7 +272,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   )
   const { teile, fehler: textFehler } = zerlegt[aktiv] ?? zerlegt[0]
   // Runden mit Fehlern (außer der gewählten, deren Fehler direkt unter dem Textfeld stehen)
-  const fehlerRunden = zerlegt.flatMap((z, i) => (z.fehler.length || !runden[i].trim() ? [i + 1] : []))
+  const fehlerRunden = zerlegt.flatMap((z, i) => (z.fehler.length || !runden[i].text.trim() ? [i + 1] : []))
   const kategorien = typ === 'zuordnen' ? kategorienAus(zerlegt.flatMap((z) => z.teile), kategorienText.split(',')) : undefined
   const fehlerOptionen = typ === 'fehler' ? { korrigieren, anzahl_zeigen: anzahlZeigen } : {}
   // Spalte loesung (mit Lösungen); die Schüler-Fassung (inhalt) erzeugt die Datenbank daraus
@@ -267,7 +309,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
       rueckmeldung_fehler: rueckmeldung.trim() || null,
       farbig,
       stufe,
-      loesung: istErklaerung ? loesung : { runden: runden.map((t, i) => rundeLoesung(t, zerlegt[i].teile)) },
+      loesung: istErklaerung ? loesung : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile)) },
       monster: monsterName,
       runden_je_durchgang: Math.min(50, Math.max(1, Math.round(rundenJe) || 6)),
     }
@@ -379,39 +421,6 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
 
           <fieldset>
             <legend>{istDiktat ? 'Aufgabentext' : 'Runden'}</legend>
-            {!istDiktat && (
-              <div className="lk-reiter" role="group" aria-label="Runden der Übung">
-                {runden.map((_, i) => (
-                  <button key={i} type="button" className="lk-knopf" aria-pressed={i === aktiv} onClick={() => setAktiv(i)}>
-                    Runde {i + 1}
-                    {fehlerRunden.includes(i + 1) && i !== aktiv && runden[i].trim() ? ' (Fehler)' : ''}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="lk-knopf"
-                  disabled={runden.length >= 100}
-                  onClick={() => {
-                    setRunden([...runden, ''])
-                    setAktiv(runden.length)
-                  }}
-                >
-                  + Runde
-                </button>
-                {runden.length > 1 && (
-                  <button
-                    type="button"
-                    className="lk-knopf"
-                    onClick={() => {
-                      setRunden(runden.filter((_, i) => i !== aktiv))
-                      setAktiv(Math.max(0, aktiv - 1))
-                    }}
-                  >
-                    Runde {aktiv + 1} entfernen
-                  </button>
-                )}
-              </div>
-            )}
             {istDiktat ? (
               <div className="lk-reiter" role="group" aria-label="Art des Diktats">
                 <button type="button" className="lk-knopf" aria-pressed={diktatModus === 'abschreiben'} onClick={() => setDiktatModus('abschreiben')}>
@@ -434,7 +443,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
 
             {modus === 'text' ? (
               <>
-                <Erklaerung offen={!text}>
+                <Erklaerung offen={!runden.some((r) => r.text)}>
                   {istDiktat ? (
                     <p>
                       Fügen Sie den Text ein. Beim <strong>Abschreiben</strong> steht er die ganze Zeit da; bei einem falschen
@@ -497,49 +506,94 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                     </button>
                   </p>
                 </Erklaerung>
-                <textarea className="lk-feld"
-                  rows={7}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder={BEISPIEL}
-                  spellCheck={false}
-                  aria-label={istDiktat ? 'Aufgabentext' : `Aufgabentext Runde ${aktiv + 1}`}
-                />
-                {istDiktat && diktatModus === 'merken' && text.trim() && <TrennAnsicht text={text} onChange={setText} />}
+                {istDiktat && (
+                  <>
+                    <textarea className="lk-feld"
+                      rows={7}
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      placeholder={BEISPIEL}
+                      spellCheck={false}
+                      aria-label="Aufgabentext"
+                    />
+                    {diktatModus === 'merken' && text.trim() && <TrennAnsicht text={text} onChange={setText} />}
+                  </>
+                )}
+              </>
+            ) : null}
+
+            {istDiktat ? (
+              <>
+                {text && textFehler.length > 0 && (
+                  <ul className="lk-hinweis" role="alert">
+                    {textFehler.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
+                )}
+                {text && textFehler.length === 0 && (
+                  <p className="lk-leise">
+                    {diktatModus === 'merken' ? `✓ ${saetze.length === 1 ? '1 Teil' : `${saetze.length} Teile`} zum Merken.` : '✓ Text erkannt.'}
+                  </p>
+                )}
               </>
             ) : (
-              typ === 'reihenfolge' ? (
-                <ReihenFormular key={aktiv} text={text} onChange={setText} />
-              ) : typ === 'ueberarbeiten' ? (
-                <VersionenFormular key={aktiv} text={text} onChange={setText} />
-              ) : (
-                <FormularModus key={aktiv} teile={teile} onChange={setText} />
-              )
-            )}
-
-            {text && textFehler.length > 0 && (
-              <ul className="lk-hinweis" role="alert">
-                {textFehler.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            )}
-            {text && textFehler.length === 0 && (typ === 'reihenfolge' || typ === 'ueberarbeiten') && (
-              <p className="lk-leise">
-                ✓ {teile.length === 1 ? '1 Satz' : `${teile.length} Sätze`} {typ === 'reihenfolge' ? 'zum Ordnen' : 'mit Versionen'}{' '}
-                erkannt.
-              </p>
-            )}
-            {text && textFehler.length === 0 && istDiktat && (
-              <p className="lk-leise">
-                {diktatModus === 'merken' ? `✓ ${saetze.length === 1 ? '1 Teil' : `${saetze.length} Teile`} zum Merken.` : '✓ Text erkannt.'}
-              </p>
-            )}
-            {text && textFehler.length === 0 && typ !== 'reihenfolge' && typ !== 'ueberarbeiten' && !istDiktat && (
-              <p className="lk-leise">
-                ✓ {teile.filter((t) => t.t === 'luecke').length} Lücke(n) und {teile.filter((t) => t.t === 'auswahl').length}{' '}
-                Auswahl-Stelle(n) erkannt.
-              </p>
+              <>
+                {/* Alle Runden untereinander (Jazz 2026-11-15): kopieren, verschieben, entfernen; die Vorschau zeigt die zuletzt angeklickte */}
+                <ol className="lk-runden">
+                  {runden.map((r, i) => (
+                    <li key={r.k} className="lk-runde" data-aktiv={i === aktiv || undefined} onFocusCapture={() => setAktiv(i)}>
+                      <div className="lk-runde__kopf">
+                        <strong>Runde {i + 1}</strong>
+                        <span className="lk-knopfreihe">
+                          <button type="button" className="lk-knopf" onClick={() => rundeEinfuegen(i, r.text)} disabled={runden.length >= 100} aria-label={`Runde ${i + 1} kopieren`}>
+                            Kopieren
+                          </button>
+                          <button type="button" className="lk-knopf" disabled={i === 0} onClick={() => rundeVerschieben(i, -1)} aria-label={`Runde ${i + 1} nach oben`}>
+                            ↑
+                          </button>
+                          <button type="button" className="lk-knopf" disabled={i === runden.length - 1} onClick={() => rundeVerschieben(i, 1)} aria-label={`Runde ${i + 1} nach unten`}>
+                            ↓
+                          </button>
+                          <button type="button" className="lk-knopf" disabled={runden.length === 1} onClick={() => rundeEntfernen(i)} aria-label={`Runde ${i + 1} entfernen`}>
+                            Entfernen
+                          </button>
+                        </span>
+                      </div>
+                      {modus === 'text' ? (
+                        <textarea className="lk-feld"
+                          id={`runde-${r.k}`}
+                          rows={3}
+                          value={r.text}
+                          onChange={(e) => setRundeText(i, e.target.value)}
+                          placeholder={BEISPIEL}
+                          spellCheck={false}
+                          aria-label={`Aufgabentext Runde ${i + 1}`}
+                        />
+                      ) : typ === 'reihenfolge' ? (
+                        <ReihenFormular text={r.text} onChange={(t) => setRundeText(i, t)} />
+                      ) : typ === 'ueberarbeiten' ? (
+                        <VersionenFormular text={r.text} onChange={(t) => setRundeText(i, t)} />
+                      ) : (
+                        <FormularModus teile={zerlegt[i].teile} onChange={(t) => setRundeText(i, t)} />
+                      )}
+                      {r.text && zerlegt[i].fehler.length > 0 && (
+                        <ul className="lk-hinweis" role="alert">
+                          {zerlegt[i].fehler.map((f) => (
+                            <li key={f}>{f}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {r.text && zerlegt[i].fehler.length === 0 && <p className="lk-leise">✓ {rundeInfo(typ, zerlegt[i].teile)} erkannt.</p>}
+                    </li>
+                  ))}
+                </ol>
+                <div className="lk-knopfreihe">
+                  <button type="button" className="lk-knopf" disabled={runden.length >= 100} onClick={() => rundeEinfuegen(runden.length - 1)}>
+                    + Runde
+                  </button>
+                </div>
+              </>
             )}
 
             {hatLuecke && (
@@ -714,6 +768,18 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
       </div>
     </>
   )
+}
+
+/** Was in einer Runde erkannt wurde, z. B. „2 Lücken“ (steht unter jeder Runde) */
+function rundeInfo(typ: AufgabenTyp, teile: LueckentextTeil[]): string {
+  const zahl = (n: number, eins: string, viele: string) => `${n} ${n === 1 ? eins : viele}`
+  if (typ === 'reihenfolge') return `${zahl(teile.length, 'Satz', 'Sätze')} zum Ordnen`
+  if (typ === 'ueberarbeiten') return `${zahl(teile.length, 'Satz', 'Sätze')} mit Versionen`
+  if (typ === 'zuordnen') return zahl(teile.filter((t) => t.t === 'einheit' && t.kategorie).length, 'Zuordnung', 'Zuordnungen')
+  if (typ === 'fehler') return zahl(teile.filter((t) => t.t === 'wort' && t.korrekturen).length, 'Fehler', 'Fehler')
+  const luecken = teile.filter((t) => t.t === 'luecke').length
+  const auswahl = teile.filter((t) => t.t === 'auswahl').length
+  return [luecken ? zahl(luecken, 'Lücke', 'Lücken') : '', auswahl ? zahl(auswahl, 'Auswahl-Stelle', 'Auswahl-Stellen') : ''].filter(Boolean).join(' und ') || 'Text ohne Lücke'
 }
 
 // Formular: Textstücke, Lücken, Auswahl-Stellen und Zuordnungen nacheinander.

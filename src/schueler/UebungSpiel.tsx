@@ -1,8 +1,9 @@
-// Übungsumbau Schritt 8: eine Übung spielen (Pilot: Lückentext). Ablauf (Konzept Abschnitt 10):
+// Übungsumbau Schritt 8 und 9: eine Übung spielen (alle Formate außer Diktat und Fallende Wörter). Ablauf (Konzept Abschnitt 10):
 // uebung_starten → je Runde einmal „Prüfen“ (runde_pruefen), danach Lösung sichtbar und „Weiter“ → Abschluss mit Münzen.
 // Der Server wertet alles; die App zeigt nur. Ohne Internet bleibt die Eingabe stehen („Nochmal senden“).
 import { useEffect, useState } from 'react'
 import { Anweisung } from '../gemeinsam/Anweisung'
+import { alleBeantwortet, nochOffenText } from '../gemeinsam/AufgabeBearbeiten'
 import { EinsteinSagt } from '../gemeinsam/Einstein'
 import { LueckentextAnzeige } from '../gemeinsam/LueckentextAnzeige'
 import { MuenzenPlus } from '../gemeinsam/MuenzenPlus'
@@ -11,8 +12,8 @@ import { supabase } from '../lib/supabase'
 import type { Antwort, Antworten, Durchgang, Loesung, Pruefergebnis, RundeErgebnis, SchuelerAufgabe } from '../lib/typen'
 import { Spielszene, type Schuss } from './Spielszene'
 
-// Formate, die schon als Spiel laufen (Schritt 9 bindet die übrigen an)
-const IM_SPIEL = new Set(['lueckentext'])
+// Formate, die schon als Spiel laufen (Diktat und Fallende Wörter folgen)
+const IM_SPIEL = new Set(['lueckentext', 'auswahl', 'zuordnen', 'fehler', 'reihenfolge', 'ueberarbeiten'])
 
 // Texte von Jazz (Schritt 3 und 8)
 const TEXT_FREUND = 'Juhu, ihr seid jetzt Freunde! Das Monster hat sich über deine Herzen gefreut.'
@@ -126,11 +127,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   }
 
   // ---------- eine Runde ----------
-  const luecken = runde.inhalt.teile.filter((t) => t.t === 'luecke' || t.t === 'auswahl')
-  const alleAusgefuellt = luecken.every((l) => {
-    const a = antworten[l.id]
-    return Array.isArray(a) ? a.length > 0 : typeof a === 'string' && a.trim() !== ''
-  })
+  const alleAusgefuellt = alleBeantwortet(runde.inhalt.teile, antworten)
 
   async function pruefen() {
     if (!daten || daten.status !== 'offen') return
@@ -195,7 +192,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
           antworten={antworten}
           onAntwort={(id: number, wert: Antwort) => {
             const neu: Antworten = { ...antworten, [id]: wert }
-            if (wert === '' || (Array.isArray(wert) && wert.length === 0)) delete neu[id]
+            if (wert === '' || wert === false || (Array.isArray(wert) && wert.length === 0)) delete neu[id]
             setAntworten(neu)
           }}
           ergebnis={jetzt?.ergebnis}
@@ -246,7 +243,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
             </button>
           )}
         </div>
-        {!alleAusgefuellt && !jetzt && <p className="leise">Fülle alles aus, dann kannst du prüfen.</p>}
+        {!alleAusgefuellt && !jetzt && <p className="leise">{nochOffenText(runde.inhalt.teile)}</p>}
       </form>
     </>
   )

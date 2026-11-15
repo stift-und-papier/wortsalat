@@ -160,6 +160,32 @@
   was Daten ändert (Speichern, Paket füllen, Zuweisen); Klickzahlen aus dem Code gezählt.
   Achtung: `uebungsumbau` liegt 9 Commits hinter `main`; drei eingespielte Migrationen gibt es nur auf `main`.
 
+- **Leseschrift Andika** (2026-11-15): ersetzt OpenDyslexic auf allen Schülerseiten (`andika-latin-400/700-normal.woff2` aus
+  `@fontsource/andika` 5.3.0, je 19 KB, OFL; OpenDyslexic-Dateien entfernt). **Getestet** (Browser, Dachs-19, 1024 × 768): Text und
+  Überschriften in Andika, beide Schnitte geladen, kein Scrollen zur Seite, Konsole ohne Fehler.
+- **Lehrkraftseite, Teilaufgabe 2 – Runden in allen Formaten** (2026-11-15, keine Migration, Speicherformat unverändert):
+  - Editor: alle Runden **untereinander** statt Reiter; je Runde „Kopieren“ (Kopie direkt darunter, Cursor darin), ↑, ↓, „Entfernen“.
+    Nach „+ Runde“ steht der Cursor im neuen Feld. Unter jeder Runde steht, was erkannt wurde, oder ihr Fehler. Die Vorschau zeigt die
+    zuletzt angeklickte Runde (blauer Rand links). Text- und Formular-Modus gelten für alle Runden. Diktat unverändert ohne Runden.
+  - Entfernen fragt nach: mit Ergebnissen „Zu dieser Übung gibt es schon Ergebnisse … Sterne, Münzen und Lernstand bleiben erhalten.“,
+    sonst bei Runden mit Text „Runde n mit ihrem Text entfernen?“. Bekannte Grenze: Ergebnisse hängen an der Rundennummer; nach Entfernen
+    oder Umsortieren stimmt nur „welche Runden kamen schon dran“ beim Wiederholen nicht mehr genau.
+  - Spiel: Auswahl, Zuordnen, Fehler finden, Reihenfolge und Sätze verbessern laufen jetzt wie Lückentext (einmal „Prüfen“ je Runde,
+    danach Lösung, Herz trifft oder fliegt vorbei). `alleBeantwortet` und `nochOffenText` aus `AufgabeBearbeiten.tsx` für beide Ansichten.
+  **Getestet** (Browser): Lehrkraft 1180 × 820 (Editor auch 1024 × 768, kein Scrollen zur Seite): „Test: Auswahl das oder dass“ von Hand
+  angelegt (tippen, „+ Runde“ und weitertippen ohne Klick, Kopieren, ↑, Entfernen mit Nein und Ja, Speichern, neu geladen: 3 Runden in
+  der neuen Reihenfolge). Fünf weitere Testübungen (Lückentext, Zuordnen, Fehler finden, Reihenfolge, Sätze verbessern, je 3 Runden)
+  per Skript in dieselben Felder eingetragen und gespeichert; Formular-Modus bei „Reihenfolge“ zeigt je Runde ihre Sätze, ↑ verschiebt
+  sie mit. Nachfrage bei Übung mit Ergebnissen erscheint. „Testpaket Formate“ angelegt und Klasse „Test“ zugewiesen.
+  Dachs-19 (1024 × 768) hat alle sechs Übungen durchgespielt: Auswahl, Zuordnen, Fehler finden, Reihenfolge je eine Runde absichtlich
+  falsch (Lösung erscheint, „Daneben“, +20 Münzen, „Morgen wieder“); Sätze verbessern und Lückentext alles richtig („Juhu, ihr seid jetzt
+  Freunde!“, +45). Münzen 65 → 235. Runde mit zwei Sätzen (Reihenfolge) geht. Konsole der Schülerseite ohne Fehler.
+  `npm test` 140, lint, build ohne Fehler. **Nicht getestet:** `npm run test:datenbank` (keine Datenbank-Änderung), iPad, Ziehen der
+  Bausteine mit dem Finger (nur Antippen), „Fehler finden“ mit Verbessern (eintippen), Dropdown-Auswahl, Mehrfachauswahl im Spiel.
+  Aufgefallen: Beim Zuordnen steht die Lösung des letzten Wortes hinter dem Satzpunkt. In der Lehrkraft-Konsole steht weiter ein
+  ungeklärter Fehler „400“ (schon vor den Änderungen).
+  Testdaten: sechs Übungen „Test: …“, „Testpaket Formate“ (Klasse Test), sechs Durchgänge und 170 Münzen mehr bei Dachs-19.
+
 ## Datenorte
 - **Datenbank Supabase** (Projekt `diwpqkxhmuetdpxxcoar`, Frankfurt): Klassen, Pseudonyme, Aufgaben, Pakete, Zuweisungen,
   Versuche, Lernstände, Münzen, Farm, Besitz. Aufbau nur über `supabase/migrations/` (31 Migrationen).
@@ -222,6 +248,9 @@
   Gesucht: Ersatz für OpenDyslexic, LRS-freundlich, passend zum Look der Schülerseiten (Vorschläge gemacht, Entscheidung offen).
 
 ## Geänderte Dateien
+- Andika: `src/design/fonts/` (2 neu, Lizenz neu, 3 OpenDyslexic entfernt), `src/design/tokens.css`, `src/design/bausteine.css`, `CLAUDE.md`
+- Lehrkraftseite Teilaufgabe 2: `src/lehrkraft/AufgabeEditor.tsx`, `src/design/lehrkraft.css`, `src/gemeinsam/AufgabeBearbeiten.tsx`,
+  `src/schueler/UebungSpiel.tsx`, `docs/umbau/STATUS.md`
 - Lehrkraftseite Teilaufgabe 1: `docs/umbau/analyse-lehrkraftseite.md` (neu), `docs/umbau/STATUS.md`
 - Schritt 0: `docs/umbau/STATUS.md`, `docs/umbau/ARBEITSPLAN.md` (neu), `.gitignore`, `CLAUDE.md`
 - Schritt 1: `docs/umbau/analyse-wortsalat.md` (neu), `docs/umbau/STATUS.md`
@@ -274,5 +303,6 @@
   für die fünf fehlenden Formate, 3 Diktat und Fallende Wörter, 4 Erklärungen als eigener Menüpunkt, 5 Paket mit Suche/Filter/Sortierung,
   6 Eingabe verbessern). Leseschrift: **Andika** ersetzt OpenDyslexic (noch nicht eingebaut, Schriftdatei muss erst geholt werden).
   Die Arbeit an der Lehrkraftseite läuft auf `lehrkraftseite`, nicht mehr auf `uebungsumbau` (Wunsch von Jazz, weicht von A.5 ab).
-  Als Nächstes: Rückfragen zu Teilaufgabe 2 beantworten lassen, dann bauen.
+  Teilaufgabe 2 ist fertig (Jazz 2026-11-15: alle acht Vorschläge angenommen). Als Nächstes: **Teilaufgabe 3** (Diktat, Merkdiktat,
+  Fallende Wörter). Zuerst klären: „Diktat mit fallenden Wörtern“ gemeinsam oder getrennt; Modus ohne Zeitdruck (am 13.11. zurückgestellt).
 - Jazz testet auf dem iPad (Checkliste D im Arbeitsplan), danach Schritt 9 – alle bestehenden Aufgabenformate anbinden.
