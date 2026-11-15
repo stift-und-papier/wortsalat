@@ -411,7 +411,7 @@ type AufgabeSeiteProps = {
 
 function AufgabeSeite({ token, paketId, aufgabe, neuesFormat, nachAbgabe, onWartend, weiter }: AufgabeSeiteProps) {
   // Beim Öffnen festhalten, ob das Format neu ist – sonst verschwände Einsteins Erklärung nach der ersten Abgabe
-  const [erklaerung] = useState(() => (neuesFormat ? EINSTEIN[formatKennung(aufgabe.typ, aufgabe.inhalt.modus)] : undefined))
+  const [erklaerung] = useState(() => (neuesFormat ? EINSTEIN[formatKennung(aufgabe.typ, aufgabe.inhalt.modus ?? aufgabe.inhalt.runden?.[0]?.modus)] : undefined))
   const [start] = useState(() => entwurfLesen(token, aufgabe.id))
 
   return (

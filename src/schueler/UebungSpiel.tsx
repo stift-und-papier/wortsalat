@@ -1,7 +1,11 @@
-// Übungsumbau Schritt 8 und 9: eine Übung spielen (alle Formate außer Diktat und Fallende Wörter). Ablauf (Konzept Abschnitt 10):
+// Übungsumbau Schritt 8 und 9, Lehrkraftseite Teilaufgabe 3 (Diktat, Fallende Wörter): eine Übung spielen. Ablauf (Konzept Abschnitt 10):
 // uebung_starten → je Runde einmal „Prüfen“ (runde_pruefen), danach Lösung sichtbar und „Weiter“ → Abschluss mit Münzen.
 // Der Server wertet alles; die App zeigt nur. Ohne Internet bleibt die Eingabe stehen („Nochmal senden“).
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Abschreiben } from '../gemeinsam/DiktatAnzeige'
+import { Eingabe } from '../gemeinsam/Eingabe'
+import { FallendeWoerter, type WortErgebnis } from '../gemeinsam/FallendeWoerter'
+import { falscheWoerter, vereinheitliche } from '../lib/diktat'
 import { Anweisung } from '../gemeinsam/Anweisung'
 import { alleBeantwortet, nochOffenText } from '../gemeinsam/AufgabeBearbeiten'
 import { EinsteinSagt } from '../gemeinsam/Einstein'
@@ -12,8 +16,8 @@ import { supabase } from '../lib/supabase'
 import type { Antwort, Antworten, Durchgang, Loesung, Pruefergebnis, RundeErgebnis, SchuelerAufgabe } from '../lib/typen'
 import { Spielszene, type Schuss } from './Spielszene'
 
-// Formate, die schon als Spiel laufen (Diktat und Fallende Wörter folgen)
-const IM_SPIEL = new Set(['lueckentext', 'auswahl', 'zuordnen', 'fehler', 'reihenfolge', 'ueberarbeiten'])
+// Formate, die als Spiel laufen
+const IM_SPIEL = new Set(['lueckentext', 'auswahl', 'zuordnen', 'fehler', 'reihenfolge', 'ueberarbeiten', 'diktat', 'fallende_woerter'])
 
 // Texte von Jazz (Schritt 3 und 8)
 const TEXT_FREUND = 'Juhu, ihr seid jetzt Freunde! Das Monster hat sich über deine Herzen gefreut.'
@@ -33,7 +37,7 @@ type Props = {
   zumPaket: string
 }
 
-type Gespielt = { richtig: boolean; ergebnis: Pruefergebnis; loesung: Loesung }
+type Gespielt = { richtig: boolean; ergebnis: Pruefergebnis; loesung: Loesung; antworten?: Antworten }
 
 const loesungenAus = (l: Loesung) => Object.fromEntries(l.luecken.map((x) => [x.id, x.loesungen]))
 
@@ -50,6 +54,16 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   const [abschlussDaten, setAbschlussDaten] = useState<RundeErgebnis['abschluss']>(null)
   const [abschluss, setAbschluss] = useState<RundeErgebnis['abschluss']>(null)
   const [tippOffen, setTippOffen] = useState(false)
+  // Diktat und Fallende Wörter: jedes Herz ist ein eigener Schuss (Zähler startet die Animation neu)
+  const schussNr = useRef(0)
+  const schiessen = (treffer: boolean) => setSchuss({ nr: ++schussNr.current, treffer })
+  const richtigeZeichen = useRef(0)
+  // Merkdiktat: Teil ansehen → tippen
+  const [merkPhase, setMerkPhase] = useState<'merken' | 'tippen'>('merken')
+  const [merkText, setMerkText] = useState('')
+  // Fallende Wörter: alle Wörter sind weg; noch nicht gesendete Ergebnisse (ohne Internet)
+  const [regenFertig, setRegenFertig] = useState(false)
+  const [offen, setOffen] = useState<{ nr: number; antworten: Antworten }[]>([])
 
   const imSpiel = IM_SPIEL.has(aufgabe.typ)
   useEffect(() => {
@@ -71,6 +85,23 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
       aus = true
     }
   }, [token, paketId, aufgabe.id, imSpiel])
+
+  const merkdiktatSichtbar = daten?.status === 'offen' && aufgabe.typ === 'diktat' && daten.runden[index]?.inhalt.modus === 'merken' && !gespielt[index] && merkPhase === 'merken' && !abschluss
+  useEffect(() => {
+    if (!merkdiktatSichtbar) return
+    const taste = (e: KeyboardEvent) => {
+      if (e.key !== ' ' || (e.target as HTMLElement | null)?.closest?.('input, textarea, button')) return
+      e.preventDefault()
+      setMerkPhase('tippen')
+    }
+    window.addEventListener('keydown', taste)
+    return () => window.removeEventListener('keydown', taste)
+  }, [merkdiktatSichtbar])
+
+  // Fallende Wörter: Abschluss erst, wenn auch die Wiederholungen weg sind
+  useEffect(() => {
+    if (regenFertig && abschlussDaten && !abschluss) setAbschluss(abschlussDaten)
+  }, [regenFertig, abschlussDaten, abschluss])
 
   if (!imSpiel) return <p className="karte">Diese Übung kommt bald.</p>
   if (ladeFehler) return <p className="karte" role="alert">{ladeFehler}</p>
@@ -97,7 +128,8 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
 
   // ---------- Abschluss ----------
   if (abschluss) {
-    const allesRichtig = gespielt.every((g) => g.richtig)
+    // Diktat: Freundschaft ab 95 % rechnet nur der Server
+    const allesRichtig = aufgabe.typ === 'diktat' ? abschluss.neu_befreundet : gespielt.every((g) => g.richtig)
     const text = allesRichtig ? TEXT_FREUND : abschluss.befreundet ? TEXT_SCHON_FREUND : TEXT_MORGEN
     return (
       <>
@@ -129,11 +161,12 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   // ---------- eine Runde ----------
   const alleAusgefuellt = alleBeantwortet(runde.inhalt.teile, antworten)
 
-  async function pruefen() {
-    if (!daten || daten.status !== 'offen') return
+  // Eine Runde an den Server; i = Stelle im Durchgang. Ergebnis null = nicht angekommen (Meldung steht da)
+  async function senden(i: number, a: Antworten): Promise<RundeErgebnis | null> {
+    if (!daten || daten.status !== 'offen') return null
     setBeschaeftigt(true)
     setMeldung(null)
-    const { data, error } = await supabase.rpc('runde_pruefen', { p_token: token, p_durchgang: daten.durchgang, p_nr: runde.nr, p_antworten: antworten })
+    const { data, error } = await supabase.rpc('runde_pruefen', { p_token: token, p_durchgang: daten.durchgang, p_nr: daten.runden[i].nr, p_antworten: a })
     setBeschaeftigt(false)
     if (error) {
       setMeldung(
@@ -141,17 +174,36 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
           ? { text: 'Gerade ist kein Internet da. Deine Eingabe bleibt stehen. Tippe gleich auf „Nochmal senden“.', offline: true }
           : { text: fehlerText(error), offline: false },
       )
-      return
+      return null
     }
     const r = data as RundeErgebnis
-    const neu = [...gespielt]
-    neu[index] = { richtig: r.richtig, ergebnis: r.ergebnis, loesung: r.loesung }
-    setGespielt(neu)
-    setSchuss({ nr: index, treffer: r.richtig })
+    setGespielt((alt) => {
+      const neu = [...alt]
+      neu[i] = { richtig: r.richtig, ergebnis: r.ergebnis, loesung: r.loesung, antworten: a }
+      return neu
+    })
     if (r.abschluss) {
       setAbschlussDaten(r.abschluss)
       nachAbschluss()
     }
+    return r
+  }
+
+  async function pruefen() {
+    const r = await senden(index, antworten)
+    if (r) setSchuss({ nr: index, treffer: r.richtig })
+  }
+
+  // Fallende Wörter: jedes Wort sofort senden; ohne Internet sammeln
+  async function wortSenden(i: number, e: WortErgebnis) {
+    const a = { fehler: e.fehler, gelandet: e.gelandet }
+    schiessen(e.fehler === 0 && !e.gelandet)
+    if (!(await senden(i, a))) setOffen((alt) => [...alt, { nr: i, antworten: a }])
+  }
+  async function nochmalSenden() {
+    const liste = offen
+    setOffen([])
+    for (const o of liste) if (!(await senden(o.nr, o.antworten))) setOffen((alt) => [...alt, o])
   }
 
   function weiter() {
@@ -163,6 +215,189 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
     setAntworten({})
     setTippOffen(false)
     setMeldung(null)
+    setMerkPhase('merken')
+    setMerkText('')
+  }
+
+  const kopf = (
+    <>
+      <header className="aufgabe__kopf">
+        <h2>{aufgabe.titel}</h2>
+        {aufgabe.typ === 'diktat' && runde.inhalt.modus !== 'merken' ? null : (
+          <span className="leise">
+            {aufgabe.typ === 'fallende_woerter' ? `${daten.runden.length} Wörter` : aufgabe.typ === 'diktat' ? 'Teil' : 'Runde'}
+            {aufgabe.typ === 'fallende_woerter' ? '' : ` ${index + 1} von ${daten.runden.length}`}
+          </span>
+        )}
+      </header>
+      {aufgabe.anweisung && (
+        <div className="aufgabe__anweisung">
+          <Anweisung text={aufgabe.anweisung} farbig={aufgabe.farbig} />
+        </div>
+      )}
+    </>
+  )
+  const weiterKnopf = (
+    <button type="button" className="knopf knopf--haupt" onClick={weiter} autoFocus>
+      Weiter
+    </button>
+  )
+
+  // ---------- Fallende Wörter: ein Regen für den ganzen Durchgang ----------
+  if (aufgabe.typ === 'fallende_woerter') {
+    // angefangener Durchgang: nur die noch offenen Wörter fallen
+    const start = daten.gespielt.length
+    return (
+      <>
+        <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />
+        <div className="karte aufgabe">
+          {kopf}
+          <FallendeWoerter
+            woerter={daten.runden.slice(start).map((x) => x.inhalt.wort ?? '')}
+            einstellungen={daten.spiel ?? {}}
+            onWort={(i, e) => void wortSenden(start + i, e)}
+            onFertig={() => setRegenFertig(true)}
+          />
+          {meldung && <p role="alert">{meldung.text}</p>}
+          {offen.length > 0 && (
+            <div className="knopf-reihe">
+              <button type="button" className="knopf knopf--haupt" onClick={() => void nochmalSenden()} disabled={beschaeftigt}>
+                Nochmal senden
+              </button>
+            </div>
+          )}
+        </div>
+      </>
+    )
+  }
+
+  // ---------- Diktat ----------
+  if (aufgabe.typ === 'diktat') {
+    const merken = runde.inhalt.modus === 'merken'
+    const soll = vereinheitliche((runde.inhalt.saetze ?? []).join(' '))
+    const zeichenJeHerz = daten.spiel?.zeichen_je_herz ?? 10
+    const fehlerZahl = jetzt
+      ? merken
+        ? falscheWoerter(soll, String(jetzt.antworten?.[0] ?? '')).length
+        : Array.isArray(jetzt.antworten?.fehler)
+          ? jetzt.antworten.fehler.length
+          : 0
+      : 0
+    const markiert = jetzt && merken && !jetzt.richtig ? falscheWoerter(soll, String(jetzt.antworten?.[0] ?? '')) : []
+    return (
+      <>
+        <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />
+        <div className="karte aufgabe">
+          {kopf}
+          {!jetzt && !merken && (
+            <Abschreiben
+              key={runde.nr}
+              text={soll}
+              onZeichen={(art) => {
+                if (art === 'falsch') return schiessen(false)
+                if (art === 'richtig' && ++richtigeZeichen.current % zeichenJeHerz === 0) schiessen(true)
+              }}
+              onFertig={(a) => {
+                setAntworten(a)
+                void senden(index, a)
+              }}
+            />
+          )}
+          {!jetzt && merken && merkPhase === 'merken' && (
+            <div className="diktat">
+              <p className="diktat__satz">{soll}</p>
+              <div className="knopf-reihe">
+                <button type="button" className="knopf knopf--haupt" autoFocus onClick={() => setMerkPhase('tippen')}>
+                  Gemerkt
+                </button>
+              </div>
+              <p className="leise">Du kannst auch die Leertaste drücken.</p>
+            </div>
+          )}
+          {!jetzt && merken && merkPhase === 'tippen' && (
+            <form
+              className="diktat__formular"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (!merkText.trim() || beschaeftigt) return
+                setAntworten({ 0: merkText })
+                void senden(index, { 0: merkText }).then((r) => r && setSchuss({ nr: ++schussNr.current, treffer: r.richtig }))
+              }}
+            >
+              <Eingabe className="luecke diktat__feld" aria-label={`Teil ${index + 1} aus dem Gedächtnis`} autoFocus value={merkText} onChange={(e) => setMerkText(e.target.value)} />
+              <div className="knopf-reihe">
+                <button
+                  type="button"
+                  className="knopf"
+                  onClick={() => {
+                    setMerkText('')
+                    setMerkPhase('merken')
+                  }}
+                >
+                  Nochmal ansehen
+                </button>
+                <button type="submit" className="knopf knopf--haupt" disabled={!merkText.trim() || beschaeftigt}>
+                  {beschaeftigt ? 'Wird geprüft …' : meldung?.offline ? 'Nochmal senden' : 'Prüfen'}
+                </button>
+              </div>
+              <p className="leise">„Nochmal ansehen“ löscht, was du schon getippt hast.</p>
+            </form>
+          )}
+          {!jetzt && !merken && meldung?.offline && (
+            <div className="knopf-reihe">
+              <button type="button" className="knopf knopf--haupt" onClick={() => void senden(index, antworten)} disabled={beschaeftigt}>
+                Nochmal senden
+              </button>
+            </div>
+          )}
+          {meldung && <p role="alert">{meldung.text}</p>}
+
+          {jetzt && markiert.length > 0 && (
+            <div className="diktat__loesung">
+              <h3>So ist es richtig</h3>
+              <p className="diktat__satz">
+                {soll.split(' ').map((w, j) => (
+                  <span key={j}>
+                    {j > 0 && ' '}
+                    {markiert.includes(j) ? (
+                      <span className="diktat__wort--nochmal">
+                        {w}
+                        <span className="marke marke--nochmal" aria-label="hier war ein Fehler">↻</span>
+                      </span>
+                    ) : (
+                      w
+                    )}
+                  </span>
+                ))}
+              </p>
+              <p className="leise">Die Wörter mit ↻ hast du anders geschrieben.</p>
+            </div>
+          )}
+          {jetzt && (
+            <div className="knopf-reihe spiel-zeile">
+              {jetzt.richtig ? (
+                <div className="rueckmeldung rueckmeldung--richtig" role="status">
+                  <span className="rueckmeldung__zeichen" aria-hidden="true">✓</span>
+                  <p>
+                    <strong>{fehlerZahl === 0 ? 'Fehlerfrei, super!' : 'Gut gemacht!'}</strong>
+                    {fehlerZahl > 0 && ` Du hast ${fehlerZahl === 1 ? 'einen Fehler' : `${fehlerZahl} Fehler`} gemacht.`}
+                  </p>
+                </div>
+              ) : (
+                <div className="rueckmeldung rueckmeldung--nochmal" role="status">
+                  <span className="rueckmeldung__zeichen" aria-hidden="true">!</span>
+                  <p>
+                    <strong>{merken ? 'Daneben.' : 'Geschafft, aber noch nicht genau genug.'}</strong> Du hast{' '}
+                    {fehlerZahl === 1 ? 'einen Fehler' : `${fehlerZahl} Fehler`} gemacht.
+                  </p>
+                </div>
+              )}
+              {weiterKnopf}
+            </div>
+          )}
+        </div>
+      </>
+    )
   }
 
   return (

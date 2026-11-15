@@ -24,11 +24,13 @@ import {
   type Darstellung,
   type LueckentextTeil,
   type Pruefergebnis,
+  type SpielEinstellungen,
   type Stufe,
 } from '../lib/typen'
 import { Sprite } from '../gemeinsam/Sprite'
 import { MONSTER, type MonsterName } from '../lib/monster'
 import { KompetenzAuswahl } from './KompetenzAuswahl'
+import { FallendeWoerter } from '../gemeinsam/FallendeWoerter'
 
 // Je Format: Name, kurze Beschreibung und Mini-Beispiel (Format-Kacheln), Standard-Arbeitsanweisung und
 // Beispiel für den Texteingabe-Modus. Die Reihenfolge hier ist die Reihenfolge der Kacheln.
@@ -91,7 +93,17 @@ export const FORMATE: Record<AufgabenTyp, { name: string; kurz: string; mini: st
     anweisung: 'Tippe den Text genau ab.',
     beispiel: 'Gestern war ich mit meiner Klasse im Zoo. | Die Affen turnten in den Bäumen, | während die Löwen schliefen. | Wann gehen wir wieder hin?',
   },
+  fallende_woerter: {
+    name: 'Fallende Wörter',
+    kurz: 'Wörter fallen von oben. Schüler:innen tippen sie ab, bevor sie landen.',
+    mini: 'Fahrrad ↓ → tippen',
+    anweisung: 'Tippe die Wörter, bevor sie landen.',
+    beispiel: 'Fahrrad\nRad fahren\nder Fußball\nschwimmen',
+  },
 }
+
+/** Fallende Wörter: ein Wort oder eine Wortgruppe pro Zeile */
+const woerterAus = (t: string) => t.split('\n').map((w) => w.replace(/\s+/g, ' ').trim()).filter(Boolean)
 
 /** Aufgabenformat aus der Adresse („neu-auswahl“ → auswahl), sonst null */
 export function formatAusAdresse(id: string): AufgabenTyp | null {
@@ -177,7 +189,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
     setRunden(runden.filter((_, j) => j !== i))
     setAktiv(Math.max(0, Math.min(aktiv, runden.length - 2)))
   }
-  const [rundenJe, setRundenJe] = useState(6)
+  const [rundenJe, setRundenJe] = useState(neuerTyp === 'fallende_woerter' ? 10 : 6)
+  // Einstellungen je Übung (Abschreiben: Zeichen je Herz; Fallende Wörter: Tempo, gleichzeitig, ohne Zeitdruck)
+  const [spiel, setSpiel] = useState<SpielEinstellungen>({})
   const [monsterName, setMonsterName] = useState<string>('ruebchen')
   const [modus, setModus] = useState<'text' | 'formular'>('text')
   const [fehler, setFehler] = useState<string | null>(null)
@@ -208,7 +222,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
       .then(({ count }) => setHatErgebnisse((count ?? 0) > 0))
     void supabase
       .from('aufgaben')
-      .select('id, typ, titel, anweisung, farbig, hinweis, rueckmeldung_fehler, stufe, loesung, geaendert_am, monster, runden_je_durchgang')
+      .select('id, typ, titel, anweisung, farbig, hinweis, rueckmeldung_fehler, stufe, loesung, geaendert_am, monster, runden_je_durchgang, spiel')
       .eq('id', aufgabeId)
       .eq('archiviert', false)
       .maybeSingle()
@@ -221,7 +235,12 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         setRundenJe(a.runden_je_durchgang ?? 6)
         // Einstellungen gelten für die ganze Übung und stehen in jeder Runde gleich; gelesen aus der ersten
         const l = a.loesung.runden?.[0] ?? a.loesung
-        setRunden((a.loesung.runden ?? [a.loesung]).map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile) })))
+        setSpiel(a.spiel ?? {})
+        const gespeichert = a.loesung.runden ?? [a.loesung]
+        // Merkdiktat (ein Teil je Runde) und Fallende Wörter (ein Wort je Runde) bearbeitet man in einem Textfeld
+        if (a.typ === 'diktat') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.text).join(' | ') }])
+        else if (a.typ === 'fallende_woerter') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.wort ?? r.text).join('\n') }])
+        else setRunden(gespeichert.map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile) })))
         setDarstellung(l.darstellung ?? 'antippen')
         setKategorienText((l.kategorien ?? []).join(', '))
         setKorrigieren(l.korrigieren ?? false)
@@ -245,6 +264,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   function formatWechseln(neu: AufgabenTyp) {
     if (anweisung === FORMATE[typ].anweisung) setAnweisung(FORMATE[neu].anweisung)
     setModus('text')
+    if (neu === 'fallende_woerter' && rundenJe === 6) setRundenJe(10)
     setTyp(neu)
   }
 
@@ -262,6 +282,15 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
           ? { teile: [], fehler: [] }
           : typ === 'diktat'
             ? { teile: [], fehler: saetzeTeilen(t).length ? [] : ['Bitte fügen Sie einen Text ein.'] }
+            : typ === 'fallende_woerter'
+            ? {
+                teile: [],
+                fehler: [
+                  ...(woerterAus(t).length ? [] : ['Bitte schreiben Sie mindestens ein Wort.']),
+                  ...(woerterAus(t).length > 100 ? ['Höchstens 100 Wörter.'] : []),
+                  ...woerterAus(t).filter((w) => w.length > 60).map((w) => `„${w.slice(0, 20)}…“ ist zu lang (höchstens 60 Zeichen).`),
+                ],
+              }
             : typ === 'reihenfolge'
               ? reihenZuTeilen(t)
               : typ === 'ueberarbeiten'
@@ -277,7 +306,12 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   const fehlerOptionen = typ === 'fehler' ? { korrigieren, anzahl_zeigen: anzahlZeigen } : {}
   // Spalte loesung (mit Lösungen); die Schüler-Fassung (inhalt) erzeugt die Datenbank daraus
   const istDiktat = typ === 'diktat'
+  const istFallend = typ === 'fallende_woerter'
+  // Diktat und Fallende Wörter: ein Textfeld statt Runden-Liste
+  const einFeld = istDiktat || istFallend
   const saetze = istDiktat ? saetzeTeilen(text) : []
+  const woerter = istFallend ? woerterAus(text) : []
+  const zeichenJeHerz = spiel.zeichen_je_herz ?? 10
   const rundeLoesung = (t: string, tl: LueckentextTeil[]) =>
     istDiktat
       ? { text: t, gross_klein_beachten: true, teile: [], modus: diktatModus, saetze: saetzeTeilen(t) }
@@ -309,9 +343,23 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
       rueckmeldung_fehler: rueckmeldung.trim() || null,
       farbig,
       stufe,
-      loesung: istErklaerung ? loesung : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile)) },
+      loesung: istErklaerung
+        ? loesung
+        : istDiktat && diktatModus === 'merken'
+          ? // Merkdiktat: jeder Teil eine Runde (Jazz 2026-11-15)
+            { runden: saetze.map((t) => ({ text: t, gross_klein_beachten: true, teile: [], modus: 'merken', saetze: [t] })) }
+          : istFallend
+            ? { runden: woerter.map((w) => ({ wort: w, text: w, gross_klein_beachten: true, teile: [] })) }
+            : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile)) },
       monster: monsterName,
       runden_je_durchgang: Math.min(50, Math.max(1, Math.round(rundenJe) || 6)),
+      spiel: istDiktat
+        ? diktatModus === 'abschreiben'
+          ? { zeichen_je_herz: Math.min(30, Math.max(5, Math.round(zeichenJeHerz) || 10)) }
+          : {}
+        : istFallend
+          ? { tempo: spiel.tempo ?? 'mittel', gleichzeitig: spiel.gleichzeitig ?? 1, ohne_zeitdruck: spiel.ohne_zeitdruck ?? false }
+          : {},
     }
     const id = aufgabeId ?? angelegt.current
     const { data, error } = id
@@ -420,7 +468,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
           </label>
 
           <fieldset>
-            <legend>{istDiktat ? 'Aufgabentext' : 'Runden'}</legend>
+            <legend>{istDiktat ? 'Aufgabentext' : istFallend ? 'Wortliste' : 'Runden'}</legend>
             {istDiktat ? (
               <div className="lk-reiter" role="group" aria-label="Art des Diktats">
                 <button type="button" className="lk-knopf" aria-pressed={diktatModus === 'abschreiben'} onClick={() => setDiktatModus('abschreiben')}>
@@ -430,7 +478,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                   Merkdiktat
                 </button>
               </div>
-            ) : (
+            ) : istFallend ? null : (
             <div className="lk-reiter" role="group">
               <button type="button" className="lk-knopf" aria-pressed={modus === 'text'} onClick={() => setModus('text')}>
                 Als Text mit [Klammern]
@@ -450,7 +498,14 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                       Zeichen wartet der Cursor auf das richtige. Beim <strong>Merkdiktat</strong> erscheint immer ein Teil,
                       nach „gemerkt“ verschwindet er und wird aus dem Gedächtnis getippt. <strong>Sie bestimmen, wo getrennt wird:</strong>{' '}
                       mit <strong>|</strong> im Text oder per Klick zwischen zwei Wörter in der Ansicht unter dem Textfeld. Es zählen Buchstaben,
-                      Groß-/Kleinschreibung und Satzzeichen; „ “ und der lange Strich gelten wie " und -. Geschafft ab 90 % richtig.
+                      Groß-/Kleinschreibung und Satzzeichen; „ “ und der lange Strich gelten wie " und -. Freundschaft mit dem
+                      Monster ab 95 % richtig getippter Zeichen.
+                    </p>
+                  ) : istFallend ? (
+                    <p>
+                      Schreiben Sie <strong>jedes Wort oder jede Wortgruppe in eine eigene Zeile</strong>. Die Wörter fallen
+                      nacheinander von oben; Schüler:innen tippen sie ab, bevor sie landen. Bei einem falschen Zeichen wartet der
+                      Cursor. Ein Herz trifft nur, wenn das Wort ohne falsche Taste getippt wurde und nicht gelandet ist.
                     </p>
                   ) : typ === 'ueberarbeiten' ? (
                     <p>
@@ -506,15 +561,15 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                     </button>
                   </p>
                 </Erklaerung>
-                {istDiktat && (
+                {einFeld && (
                   <>
                     <textarea className="lk-feld"
-                      rows={7}
+                      rows={istFallend ? 10 : 7}
                       value={text}
                       onChange={(e) => setText(e.target.value)}
                       placeholder={BEISPIEL}
                       spellCheck={false}
-                      aria-label="Aufgabentext"
+                      aria-label={istFallend ? 'Wortliste' : 'Aufgabentext'}
                     />
                     {diktatModus === 'merken' && text.trim() && <TrennAnsicht text={text} onChange={setText} />}
                   </>
@@ -522,7 +577,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
               </>
             ) : null}
 
-            {istDiktat ? (
+            {einFeld ? (
               <>
                 {text && textFehler.length > 0 && (
                   <ul className="lk-hinweis" role="alert">
@@ -533,8 +588,48 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                 )}
                 {text && textFehler.length === 0 && (
                   <p className="lk-leise">
-                    {diktatModus === 'merken' ? `✓ ${saetze.length === 1 ? '1 Teil' : `${saetze.length} Teile`} zum Merken.` : '✓ Text erkannt.'}
+                    {istFallend
+                      ? `✓ ${woerter.length === 1 ? '1 Wort' : `${woerter.length} Wörter`} erkannt.`
+                      : diktatModus === 'merken'
+                        ? `✓ ${saetze.length === 1 ? '1 Teil' : `${saetze.length} Teile`} zum Merken.`
+                        : '✓ Text erkannt.'}
                   </p>
+                )}
+                {istDiktat && diktatModus === 'abschreiben' && (
+                  <label>
+                    Ein Herz je richtig getippte Zeichen
+                    <input className="lk-feld lk-feld--zahl" type="number" min={5} max={30} value={zeichenJeHerz}
+                      onChange={(e) => setSpiel({ ...spiel, zeichen_je_herz: Number(e.target.value) })} />
+                    <span className="lk-leise">Leerzeichen und Satzzeichen zählen mit. Erlaubt sind 5 bis 30.</span>
+                  </label>
+                )}
+                {istFallend && (
+                  <>
+                    <div>
+                      <p className="lk-leise" style={{ margin: 0 }}>Tempo (Zeit bis zum Boden)</p>
+                      <div className="lk-reiter" role="group" aria-label="Tempo">
+                        {([['langsam', 'Langsam (25 s)'], ['mittel', 'Mittel (18 s)'], ['schnell', 'Schnell (12 s)']] as const).map(([t, name]) => (
+                          <button type="button" key={t} className="lk-knopf" aria-pressed={(spiel.tempo ?? 'mittel') === t} onClick={() => setSpiel({ ...spiel, tempo: t })}>
+                            {name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="lk-leise" style={{ margin: 0 }}>Wie viele Wörter fallen gleichzeitig?</p>
+                      <div className="lk-reiter" role="group" aria-label="Wörter gleichzeitig">
+                        {([1, 2] as const).map((g) => (
+                          <button type="button" key={g} className="lk-knopf" aria-pressed={(spiel.gleichzeitig ?? 1) === g} onClick={() => setSpiel({ ...spiel, gleichzeitig: g })}>
+                            {g === 1 ? 'Eins' : 'Zwei'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <label className="lk-haken">
+                      <input type="checkbox" checked={spiel.ohne_zeitdruck ?? false} onChange={(e) => setSpiel({ ...spiel, ohne_zeitdruck: e.target.checked })} />
+                      Ohne Zeitdruck: Die Wörter sinken nur bis zur Mitte und warten dort, bis sie getippt sind.
+                    </label>
+                  </>
                 )}
               </>
             ) : (
@@ -646,12 +741,16 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
             )}
             {!istDiktat && (
               <label>
-                Runden pro Durchgang
+                {istFallend ? 'Wörter pro Durchgang' : 'Runden pro Durchgang'}
                 <input className="lk-feld lk-feld--zahl" type="number" min={1} max={50} value={rundenJe} onChange={(e) => setRundenJe(Number(e.target.value))} />
                 <span className="lk-leise">
-                  {runden.length > rundenJe
-                    ? `Jeder Durchgang zieht ${rundenJe} von ${runden.length} Runden, bevorzugt neue und früher falsche.`
-                    : 'Tragen Sie mehr Runden ein, kommen beim Wiederholen andere Beispiele.'}
+                  {istFallend
+                    ? woerter.length > rundenJe
+                      ? `Jeder Durchgang zieht ${rundenJe} von ${woerter.length} Wörtern, bevorzugt neue und früher falsche.`
+                      : 'Tragen Sie mehr Wörter ein, kommen beim Wiederholen andere.'
+                    : runden.length > rundenJe
+                      ? `Jeder Durchgang zieht ${rundenJe} von ${runden.length} Runden, bevorzugt neue und früher falsche.`
+                      : 'Tragen Sie mehr Runden ein, kommen beim Wiederholen andere Beispiele.'}
                 </span>
               </label>
             )}
@@ -662,8 +761,13 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
 
             {/* Live-Vorschau: so sehen es Schüler:innen; „Prüfen“ prüft wie echt, speichert aber nichts */}
             <div className="lk-editor__vorschau">
-              <h3>So sehen es Schüler:innen{!istErklaerung && !istDiktat && runden.length > 1 ? ` (Runde ${aktiv + 1})` : ''}</h3>
-              {(istErklaerung ? !erklaerungLeer : text && textFehler.length === 0) ? (
+              <h3>So sehen es Schüler:innen{!istErklaerung && !einFeld && runden.length > 1 ? ` (Runde ${aktiv + 1})` : ''}</h3>
+              {istFallend && text && textFehler.length === 0 ? (
+                <div className="lk-vorschau">
+                  <FallendeWoerter key={JSON.stringify([woerter, spiel])} woerter={woerter} einstellungen={spiel} onWort={() => undefined} autoFocus={false} />
+                  <p className="lk-leise">Probieren Sie die Wörter hier aus. In der Vorschau wird nichts gespeichert.</p>
+                </div>
+              ) : (istErklaerung ? !erklaerungLeer : text && textFehler.length === 0) ? (
                 <div className="lk-vorschau">
                   <AufgabeBearbeiten
                     key={JSON.stringify([loesung, anweisung, hinweis, farbig, diktatModus])}

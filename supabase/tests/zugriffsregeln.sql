@@ -1527,6 +1527,72 @@ begin
     n := n + 1;
   end;
 
+  -- Block 19: Diktat und Fallende Wörter als Übung (Lehrkraftseite Teilaufgabe 3, Jazz 2026-11-15)
+  declare
+    v_s public.schueler := (select s from public.schueler s where s.pseudonym = 'Fuchs-01');
+    v_paket uuid;
+    v_ab uuid;
+    v_merk uuid;
+    v_fall uuid;
+    v jsonb;
+    v_d uuid;
+    r jsonb;
+  begin
+    insert into public.aufgaben (owner, typ, titel, stufe, loesung) values
+      (c_lk_a, 'diktat', 'D19-ab', 1, '{"runden":[{"modus":"abschreiben","text":"Wir gehen heute.","saetze":["Wir gehen heute."],"teile":[]}]}'),
+      (c_lk_a, 'diktat', 'D19-merk', 1, '{"runden":[{"modus":"merken","text":"Ja.","saetze":["Ja."],"teile":[]},{"modus":"merken","text":"Der Hund bellt laut.","saetze":["Der Hund bellt laut."],"teile":[]}]}'),
+      (c_lk_a, 'fallende_woerter', 'F19', 1, '{"runden":[{"wort":"Hund","teile":[]},{"wort":"Katze","teile":[]},{"wort":"Maus","teile":[]}]}');
+    v_ab := (select id from public.aufgaben where titel = 'D19-ab' and owner = c_lk_a);
+    v_merk := (select id from public.aufgaben where titel = 'D19-merk' and owner = c_lk_a);
+    v_fall := (select id from public.aufgaben where titel = 'F19' and owner = c_lk_a);
+    insert into public.pakete (owner, titel, jahrgaenge, zweige) values (c_lk_a, 'P-19', '{7}', '{Realschule}') returning id into v_paket;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position) values (v_paket, v_ab, 1), (v_paket, v_merk, 2), (v_paket, v_fall, 3);
+    insert into public.zuweisungen (owner, paket_id, klasse_id) values (c_lk_a, v_paket, c_kl_a);
+
+    -- 19.1 Abschreiben: 1 Fehler bei 16 Zeichen = 93,75 % → Runde nicht richtig, nicht befreundet
+    v := public.uebung_starten_um(v_s, v_paket, v_ab, '2026-04-01 08:00+02');
+    v_d := (v ->> 'durchgang')::uuid;
+    v := public.runde_pruefen_um(v_s, v_d, 0, '{"fehler":[0]}', '2026-04-01 08:01+02');
+    if (v ->> 'richtig')::boolean or (v -> 'abschluss' ->> 'befreundet')::boolean then raise exception 'Block 19.1: 93,75 %% zählt als geschafft: %', v; end if;
+    v := public.uebung_starten_um(v_s, v_paket, v_ab, '2026-04-02 08:00+02');
+    v := public.runde_pruefen_um(v_s, (v ->> 'durchgang')::uuid, 0, '{"fehler":[]}', '2026-04-02 08:01+02');
+    if not (v ->> 'richtig')::boolean or not (v -> 'abschluss' ->> 'befreundet')::boolean then raise exception 'Block 19.1: fehlerfrei nicht befreundet: %', v; end if;
+    n := n + 1;
+
+    -- 19.2 Merkdiktat: jeder Teil eine Runde; Herz nur ganz richtig; Genauigkeit über alle Zeichen (2 + 20) / 23 ≥ 95 %
+    v := public.uebung_starten_um(v_s, v_paket, v_merk, '2026-04-01 09:00+02');
+    v_d := (v ->> 'durchgang')::uuid;
+    if jsonb_array_length(v -> 'runden') <> 2 or (v -> 'runden' -> 0 ->> 'nr')::int <> 0 then raise exception 'Block 19.2: Teile nicht als Runden: %', v; end if;
+    v := public.runde_pruefen_um(v_s, v_d, 0, '{"0":"Je."}', '2026-04-01 09:01+02');
+    if (v ->> 'richtig')::boolean then raise exception 'Block 19.2: Teil mit Fehler trifft'; end if;
+    v := public.runde_pruefen_um(v_s, v_d, 1, '{"0":"Der Hund bellt laut."}', '2026-04-01 09:02+02');
+    if not (v ->> 'richtig')::boolean or not (v -> 'abschluss' ->> 'befreundet')::boolean
+       or (select anteil from public.durchgaenge where id = v_d) <> 0.957 then
+      raise exception 'Block 19.2: Genauigkeit nicht über alle Zeichen: % / %', v, (select anteil from public.durchgaenge where id = v_d);
+    end if;
+    n := n + 1;
+
+    -- 19.3 Fallende Wörter: Inhalt = nur das Wort; ohne Fehltaste richtig, Fehltaste oder gelandet falsch
+    v := public.uebung_starten_um(v_s, v_paket, v_fall, '2026-04-01 10:00+02');
+    v_d := (v ->> 'durchgang')::uuid;
+    if jsonb_array_length(v -> 'runden') <> 3 or v -> 'runden' -> 0 -> 'inhalt' ->> 'wort' is null then raise exception 'Block 19.3: Start falsch: %', v; end if;
+    for r in select * from jsonb_array_elements(v -> 'runden') loop
+      v := public.runde_pruefen_um(v_s, v_d, (r ->> 'nr')::int,
+        case r -> 'inhalt' ->> 'wort' when 'Hund' then '{"fehler":0}' when 'Katze' then '{"fehler":2}' else '{"fehler":0,"gelandet":true}' end::jsonb,
+        '2026-04-01 10:01+02');
+      if (v ->> 'richtig')::boolean <> (r -> 'inhalt' ->> 'wort' = 'Hund') then raise exception 'Block 19.3: % falsch geprüft: %', r, v; end if;
+    end loop;
+    if (select anteil from public.durchgaenge where id = v_d) <> 0.333 or (v -> 'abschluss' ->> 'befreundet')::boolean then
+      raise exception 'Block 19.3: Abschluss falsch: %', v;
+    end if;
+    begin
+      insert into public.aufgaben (owner, typ, titel, loesung) values (c_lk_a, 'fallende_woerter', 'F-leer', '{"runden":[{"wort":" "}]}');
+      raise exception 'Block 19.3: leeres Wort angenommen';
+    exception when sqlstate '22023' then null;
+    end;
+    n := n + 1;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;

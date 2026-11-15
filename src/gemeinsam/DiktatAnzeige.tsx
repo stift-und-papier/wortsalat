@@ -15,7 +15,7 @@ type Props = {
 }
 
 // Diktat (docs/SPEC-diktat.md): Abschreiben oder Merkdiktat. Nach dem letzten Zeichen bzw. Satz prüft der Server.
-// Schüler:innen sehen nie Prozente: fehlerfrei / geschafft (ab 90 %) / nochmal üben.
+// Nur noch Vorschau im Editor. Schüler:innen sehen nie Prozente: fehlerfrei / geschafft (ab 95 %, Jazz 2026-11-15) / nochmal üben.
 export function DiktatAufgabe({ aufgabe, pruefen, weiter }: Props) {
   const [durchgang, setDurchgang] = useState(0)
   const [ergebnis, setErgebnis] = useState<PruefAntwort | null>(null)
@@ -46,7 +46,8 @@ export function DiktatAufgabe({ aufgabe, pruefen, weiter }: Props) {
     setDurchgang((d) => d + 1)
   }
 
-  const e = ergebnis?.ergebnis
+  // Vorschau mit derselben Schwelle wie die Übung (pruefe_diktat sagt noch 90 %)
+  const e = ergebnis?.ergebnis && { ...ergebnis.ergebnis, richtig: ergebnis.ergebnis.anteil >= 0.95 }
   return (
     <section className="karte aufgabe">
       <header className="aufgabe__kopf">
@@ -133,7 +134,8 @@ export function DiktatAufgabe({ aufgabe, pruefen, weiter }: Props) {
 // ---------- Abschreiben: Textzeile nach TastenHeld (js/modes/textline.js, race.js; ChalkJunkie/TastenHeld) ----------
 // Erledigt = Tinte, aktuelles Zeichen umrandet, Rest blass. Bei einem falschen Zeichen wartet der Cursor;
 // je Zeichenstelle zählt höchstens ein Fehler. Ein zusätzliches Leerzeichen ist kein Fehler.
-function Abschreiben({ text, onFertig }: { text: string; onFertig: (a: Antworten) => void }) {
+// onZeichen (Übung): je Tastendruck, ob das Zeichen beim ersten Tippen richtig war (Herz je N solcher Zeichen)
+export function Abschreiben({ text, onFertig, onZeichen }: { text: string; onFertig: (a: Antworten) => void; onZeichen?: (art: 'richtig' | 'verbessert' | 'falsch') => void }) {
   const zeichen = [...text]
   const [pos, setPos] = useState(0)
   const [fehler, setFehler] = useState<number[]>([])
@@ -162,11 +164,13 @@ function Abschreiben({ text, onFertig }: { text: string; onFertig: (a: Antworten
       for (const z of roh === ' ' ? [' '] : [...vereinheitliche(roh)]) {
         if (p >= zeichen.length) break
         if (z === zeichen[p]) {
+          onZeichen?.(f.includes(p) ? 'verbessert' : 'richtig')
           p++
           falsch = false
         } else if (z === ' ' && (p === 0 || zeichen[p - 1] === ' ')) continue
         else {
           if (!f.includes(p)) f.push(p)
+          onZeichen?.('falsch')
           setWackeln((w) => w + 1)
           falsch = true
         }

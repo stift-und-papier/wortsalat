@@ -286,3 +286,7 @@
 - 2026-11-15 (Lehrkraft): Leseschrift **Andika** statt OpenDyslexic (LRS-freundlich, passt besser zum Look; Dateien aus `@fontsource/andika`,
   OpenDyslexic-Dateien entfernt). Lehrkraftseite wird auf Branch `lehrkraftseite` überarbeitet (sechs Teilaufgaben, `docs/umbau/STATUS.md`).
   Eine Runde darf mehrere Sätze enthalten (schwerere Runden).
+- 2026-11-15 (Lehrkraft, Teilaufgabe 3): Diktat und **Fallende Wörter** sind getrennte Formate. Abschreiben: Herz je 10 beim ersten Mal
+  richtige Zeichen (5–30 einstellbar), Freundschaft ab 95 %. Merkdiktat: ein Teil = eine Runde, Herz nur ganz richtig, 95 % über alle Zeichen.
+  Fallende Wörter: Wortliste, Tempo, 1/2 gleichzeitig, Haken „Ohne Zeitdruck“ (Wörter warten in der Mitte), alles stellt die Lehrkraft ein
+  (Migration `diktat_fallende`). Gewünscht: Übungen auch ohne Monsterkampf.

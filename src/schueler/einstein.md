@@ -43,3 +43,6 @@ Beim Abschreiben zählt jedes Zeichen: große und kleine Buchstaben und die Satz
 
 ## diktat-merken
 Lies den Satz und merk ihn dir gut. Tippe auf „Gemerkt“, dann verschwindet er. Schreib ihn danach aus dem Kopf auf.
+
+## fallende_woerter
+Von oben fallen Wörter. Tippe das unterste Wort ab, bevor es unten ankommt. Schau genau hin: Das Wort wartet, bis du den passenden Buchstaben tippst.

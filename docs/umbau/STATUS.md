@@ -185,6 +185,28 @@
   Aufgefallen: Beim Zuordnen steht die Lösung des letzten Wortes hinter dem Satzpunkt. In der Lehrkraft-Konsole steht weiter ein
   ungeklärter Fehler „400“ (schon vor den Änderungen).
   Testdaten: sechs Übungen „Test: …“, „Testpaket Formate“ (Klasse Test), sechs Durchgänge und 170 Münzen mehr bei Dachs-19.
+- **Lehrkraftseite, Teilaufgabe 3 – Diktat, Merkdiktat, Fallende Wörter** (2026-11-15, Jazz: alle sieben Vorschläge angenommen):
+  - Migration `20261115120000_diktat_fallende.sql` (eingespielt): Abschreiben = eine Runde, richtig und befreundet ab 95 %;
+    Merkdiktat = **ein Teil je Runde**, Herz nur bei ganz richtigem Teil, Genauigkeit des Durchgangs über **alle Zeichen** (gewichtet);
+    Fallende Wörter = ein Wort je Runde, Antwort `{fehler, gelandet}`, richtig nur ohne Fehltaste und nicht gelandet; Inhalt = nur das Wort.
+    Bestehende Merkdiktate umgerechnet („Test: Merkdiktat“ hat jetzt 2 Runden). Einstellungen in `aufgaben.spiel` (keine neue Spalte).
+  - Editor: neues Format „Fallende Wörter“ (Wortliste, Tempo langsam/mittel/schnell, 1 oder 2 Wörter gleichzeitig, Haken „Ohne Zeitdruck“,
+    „Wörter pro Durchgang“, Standard 10) mit spielbarer Vorschau; Abschreiben mit Feld „Ein Herz je … richtig getippte Zeichen“ (5–30, Standard 10).
+    Merkdiktat und Wortliste bleiben je ein Textfeld. Hilfetext „Geschafft ab 90 %“ → „Freundschaft ab 95 %“.
+  - Spiel: Abschreiben (Laufband, Herz je N beim ersten Mal richtige Zeichen, Fehltaste = Fehlschuss), Merkdiktat (Teil zeigen, „Gemerkt“ oder
+    Leertaste, tippen, Prüfen, danach richtiger Text mit ↻), Fallende Wörter (`src/gemeinsam/FallendeWoerter.tsx`, Fall-Logik nach TastenHeld
+    rain.js; gelandete Wörter kommen einmal wieder, danach langsamer; ohne Zeitdruck warten sie in der Mitte). Einstein erklärt das neue Format.
+  **Getestet** (Browser): `npm run test:datenbank` ALLE TESTS BESTANDEN (151, Block 19 neu), `npm test` 140, lint, build ohne Fehler.
+  Lehrkraft (1180 × 820, Editor auch 1024 × 768 ohne Scrollen zur Seite): „Test: Abschreiben“ (5 Zeichen je Herz), „Test: Merkdiktat drei
+  Teile“, „Test: Fallende Wörter“ (schnell, zwei) angelegt, gespeichert, neu geladen: alles bleibt. Vorschau der Fallenden Wörter läuft und holt
+  den Cursor nicht aus der Wortliste. „Testpaket Diktat“ der Klasse Test zugewiesen. Dachs-19 (1024 × 768): Abschreiben mit einem Fehler
+  (24/25 = 96 %) → befreundet, +43; Merkdiktat Teil 1 falsch („Je.“ statt „Ja.“, ↻ markiert), Teile 2 und 3 per Leertaste und Enter richtig →
+  97,7 % → befreundet, +44 (Durchschnitt der Teile wäre 88,9 % gewesen); Fallende Wörter: 1 Treffer, 1 Fehltaste, 2 gelandet (kamen einmal
+  wieder) → 25 %, +7, nicht befreundet. Danach „Ohne Zeitdruck“ gesetzt, Versuch freigegeben: nach 20 s ohne Tippen warten beide Wörter in
+  der Mitte; alle vier richtig → befreundet, +38. Gespeicherte Durchgänge in der Datenbank nachgesehen (Anteile 0,96 / 0,977 / 0,25).
+  **Nicht getestet:** iPad und Bildschirmtastatur (Tottasten ^ ´), Abschreiben und Merkdiktat ohne Internet („Nochmal senden“),
+  Schüleransicht bei 1180 × 820, „Bewegung reduzieren“ (die Wörter fallen trotzdem, das ist das Spiel).
+  Testdaten: drei Übungen „Test: …“, „Testpaket Diktat“ (Klasse Test), vier Durchgänge bei Dachs-19.
 
 ## Datenorte
 - **Datenbank Supabase** (Projekt `diwpqkxhmuetdpxxcoar`, Frankfurt): Klassen, Pseudonyme, Aufgaben, Pakete, Zuweisungen,
@@ -246,8 +268,17 @@
   mit einem Bildeditor umgefärbt. Gespenst, Maus, Spinnen gespiegelt; Sätze siehe Erledigt.
 - 2026-11-15 (Jazz, Lehrkraftseite Teilaufgabe 1): Eine Runde darf mehrere Sätze enthalten (schwerere Runden).
   Gesucht: Ersatz für OpenDyslexic, LRS-freundlich, passend zum Look der Schülerseiten (Vorschläge gemacht, Entscheidung offen).
+- 2026-11-15 (Jazz, Teilaufgabe 3, alle Vorschläge): Diktat und Fallende Wörter sind **zwei getrennte Formate**; Abschreiben ein Herz je
+  10 beim ersten Mal richtige Zeichen (Lehrkraft stellt 5–30 ein); 95 % = richtige Stellen ÷ alle Stellen; Merkdiktat Herz je ganz richtigem
+  Teil, Freundschaft ab 95 % über alle Zeichen; Fallende Wörter mit Wortliste, Tempo, 1/2 gleichzeitig, 10 je Durchgang, alles stellt die
+  Lehrkraft ein; **Modus ohne Zeitdruck** als Haken je Übung (Wörter warten in der Mitte), Freundschaft nur wenn alle Wörter richtig;
+  Migration freigegeben. Neu gewünscht: **Übungen ohne Monsterkampf anlegen** (noch nicht gebaut, Rückfrage offen).
 
 ## Geänderte Dateien
+- Lehrkraftseite Teilaufgabe 3: `supabase/migrations/20261115120000_diktat_fallende.sql` (neu), `supabase/tests/zugriffsregeln.sql`,
+  `src/gemeinsam/FallendeWoerter.tsx` (neu), `src/gemeinsam/DiktatAnzeige.tsx`, `src/schueler/UebungSpiel.tsx`, `src/schueler/SchuelerBereich.tsx`,
+  `src/schueler/einstein.md`, `src/lehrkraft/AufgabeEditor.tsx`, `src/lehrkraft/AufgabenListe.tsx`, `src/lib/typen.ts`, `src/design/bausteine.css`,
+  `docs/umbau/STATUS.md`, `CLAUDE.md`
 - Andika: `src/design/fonts/` (2 neu, Lizenz neu, 3 OpenDyslexic entfernt), `src/design/tokens.css`, `src/design/bausteine.css`, `CLAUDE.md`
 - Lehrkraftseite Teilaufgabe 2: `src/lehrkraft/AufgabeEditor.tsx`, `src/design/lehrkraft.css`, `src/gemeinsam/AufgabeBearbeiten.tsx`,
   `src/schueler/UebungSpiel.tsx`, `docs/umbau/STATUS.md`
@@ -280,8 +311,9 @@
   `src/grafik/monster_maus.png`, `src/grafik/monster_spinne_*.png`
 
 ## Offene Fragen
-- Ganz ohne Zeitdruck bei „Fallende Wörter“ ist zurückgestellt. Steht in Abschnitt B von ARBEITSPLAN.md noch als Wunsch;
-  im Konzept (Schritt 3) als „später“ führen.
+- Übungen ohne Monsterkampf (Wunsch Jazz 2026-11-15): Was zeigt die Übung statt Monster und Herzen, zählt Freundschaft/Sammelalbum? Rückfrage gestellt.
+- Merkdiktat: Die Arbeitsanweisung bleibt „Tippe den Text genau ab.“, wenn man im Editor auf „Merkdiktat“ umschaltet (von Hand ändern).
+- Editor-Vorschau des Merkdiktats nutzt noch den alten Ablauf (Teil mit Fehler wird neu gemerkt); im Spiel gilt der neue.
 
 - Bitte im Browser als Lehrkraft prüfen: Aufgabenliste zeigt nur die 71 Erklärseiten, Paketliste ist leer.
 - „Mein Lernweg“ sagt unter „Dein nächster Schritt“ weiter „Mach weiter mit deinen Übungen. Weiter üben“, auch wenn es gerade
@@ -289,12 +321,10 @@
 - DB-Test Block 15 (Belohnungen, Igel-11) schlug einmal fehl (1 / 1) und lief danach dreimal durch; vermutlich zeitabhängig. Beobachten.
 - Erklärungen sind innerhalb einer Klassenstufe alphabetisch nach Bereich geordnet (Rechtschreibung, Satzglieder …).
 
-- Merkdiktat: Genauigkeit des Durchgangs ist vorerst der Durchschnitt der Runden; genaue Zählung (alle Zeichen) in Schritt 10.
 - Einstein „schießt“ entfällt (die Spielfigur kämpft). `assets/einstein-schiessend.webp` bleibt ungenutzt liegen.
 - Die blaue Figur ist aus einem unscharfen Großbild zurückgerechnet; einzelne Bilder haben kleine Pixelfehler. Bei Bedarf sauberere Vorlage
   (16 × 32 je Bild, durchsichtig) nach `assets/` legen.
 - Einsteins Format-Erklärung beim ersten Mal entfällt im Spiel (Platz); ggf. in Schritt 9 wieder einbauen.
-- Diktat: Server zählt Merkdiktat und Abschreiben vorerst als eine Runde; Herzen und Genauigkeit richtig in Schritt 10.
 
 ## Nächster Schritt
 - Lehrkraftseite (Branch **`lehrkraftseite`**, ab 2026-11-15; `main` ist in `uebungsumbau` geholt, Commit 820a2d0, danach
@@ -303,6 +333,6 @@
   für die fünf fehlenden Formate, 3 Diktat und Fallende Wörter, 4 Erklärungen als eigener Menüpunkt, 5 Paket mit Suche/Filter/Sortierung,
   6 Eingabe verbessern). Leseschrift: **Andika** ersetzt OpenDyslexic (noch nicht eingebaut, Schriftdatei muss erst geholt werden).
   Die Arbeit an der Lehrkraftseite läuft auf `lehrkraftseite`, nicht mehr auf `uebungsumbau` (Wunsch von Jazz, weicht von A.5 ab).
-  Teilaufgabe 2 ist fertig (Jazz 2026-11-15: alle acht Vorschläge angenommen). Als Nächstes: **Teilaufgabe 3** (Diktat, Merkdiktat,
-  Fallende Wörter). Zuerst klären: „Diktat mit fallenden Wörtern“ gemeinsam oder getrennt; Modus ohne Zeitdruck (am 13.11. zurückgestellt).
+  Teilaufgabe 2 und 3 sind fertig. Offen aus Teilaufgabe 3: **Übungen ohne Monsterkampf** (Rückfrage an Jazz gestellt, danach bauen).
+  Danach **Teilaufgabe 4** (Erklärungen als eigener Menüpunkt der Lehrkraft), zuerst Rückfragen.
 - Jazz testet auf dem iPad (Checkliste D im Arbeitsplan), danach Schritt 9 – alle bestehenden Aufgabenformate anbinden.

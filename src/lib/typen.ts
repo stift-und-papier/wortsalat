@@ -34,7 +34,7 @@ export interface Kompetenz {
 // ---- Aufgaben (alt: Übungswiese, src/lib/typen.ts) ----
 
 export type Stufe = 1 | 2 | 3
-export type AufgabenTyp = 'lueckentext' | 'auswahl' | 'zuordnen' | 'fehler' | 'reihenfolge' | 'ueberarbeiten' | 'erklaerung' | 'diktat'
+export type AufgabenTyp = 'lueckentext' | 'auswahl' | 'zuordnen' | 'fehler' | 'reihenfolge' | 'ueberarbeiten' | 'erklaerung' | 'diktat' | 'fallende_woerter'
 
 /** Erklärseite: Erklärtext (Absätze durch Leerzeile), Merkkasten, Beispielsätze ([Wort] = hervorgehoben) */
 export type Erklaerung = { text: string; merke: string; beispiele: string[] }
@@ -59,6 +59,9 @@ export type LueckentextTeil = TextTeil | LueckenTeil | AuswahlTeil | EinheitTeil
 
 export type Darstellung = 'antippen' | 'dropdown'
 
+/** Spalte aufgaben.spiel: Einstellungen je Übung (Diktat, Fallende Wörter; Jazz 2026-11-15) */
+export type SpielEinstellungen = { zeichen_je_herz?: number; tempo?: 'langsam' | 'mittel' | 'schnell'; gleichzeitig?: 1 | 2; ohne_zeitdruck?: boolean }
+
 /** Spalte aufgaben.loesung: alles, was die Lehrkraft eingibt (mit Lösungen). Schüler:innen bekommen sie nie. */
 export type LueckentextInhalt = {
   /** Eingabetext der Lehrkraft mit [Klammern] – nur für die Bearbeitung */
@@ -75,6 +78,8 @@ export type LueckentextInhalt = {
   /** nur beim Diktat: Art und (Teil-)Sätze (docs/SPEC-diktat.md) */
   modus?: 'abschreiben' | 'merken'
   saetze?: string[]
+  /** nur bei Fallenden Wörtern: das Wort dieser Runde */
+  wort?: string
   /** Übungsumbau: eine Übung besteht aus Runden, jede Runde im bisherigen Format (Diktat: genau eine, ohne Runden-Reiter) */
   runden?: LueckentextInhalt[]
 }
@@ -92,6 +97,7 @@ export type LueckentextInhaltSchueler = {
   /** nur beim Diktat: Art und (Teil-)Sätze (docs/SPEC-diktat.md) */
   modus?: 'abschreiben' | 'merken'
   saetze?: string[]
+  wort?: string
   teile: (
     | TextTeil
     | { t: 'luecke'; id: number; hinweis?: string }
@@ -106,8 +112,8 @@ export type LueckentextInhaltSchueler = {
 }
 
 /** Antwort je Stelle: Text (Lücke, Kategorie, Verbesserung), Nummern (Auswahl), true (Fehler markiert),
- *  Kennungen (Reihenfolge, bei mehreren Varianten je Variante eine Liste) */
-export type Antwort = string | number[] | boolean | string[] | string[][]
+ *  Kennungen (Reihenfolge, bei mehreren Varianten je Variante eine Liste), Zahl (Fallende Wörter: Fehltasten) */
+export type Antwort = string | number | number[] | boolean | string[] | string[][]
 export type Antworten = Record<string, Antwort>
 
 export interface Aufgabe {
@@ -124,6 +130,7 @@ export interface Aufgabe {
   /** Übungsumbau: Monster (src/lib/monster.ts) und Runden je Durchgang (leer = alle) */
   monster: string
   runden_je_durchgang: number | null
+  spiel: SpielEinstellungen
 }
 
 export type Pruefergebnis = {
@@ -165,6 +172,7 @@ export type Durchgang =
       durchgang: string
       typ: AufgabenTyp
       monster: string
+      spiel: SpielEinstellungen
       befreundet: boolean
       runden: { nr: number; inhalt: LueckentextInhaltSchueler }[]
       gespielt: { nr: number; richtig: boolean; ergebnis: Pruefergebnis; loesung: Loesung }[]

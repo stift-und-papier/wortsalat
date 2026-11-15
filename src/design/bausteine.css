@@ -463,6 +463,21 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 @media (prefers-reduced-motion: reduce) { .diktat__z[data-wackeln] { animation: none; } .diktat__band { transition: none; } }
 .diktat__loesung { display: grid; gap: var(--space-xs); }
 
+/* ---------- Fallende Wörter (Lehrkraftseite Teilaufgabe 3) ---------- */
+.fallen { position: relative; display: grid; gap: var(--space-xs); }
+.fallen__feld {
+  position: relative; height: 15rem; overflow: hidden; cursor: text;
+  border-radius: var(--radius-feld); background: var(--color-papier);
+}
+.fallen__wort {
+  position: absolute; font-size: 1.75rem; line-height: 1.4; white-space: nowrap;
+  padding: 0 var(--space-xs); border-radius: var(--radius-feld); background: var(--color-papier);
+}
+/* Ziel: Holzrahmen wie das aktuelle Zeichen beim Abschreiben */
+.fallen__wort--ziel { outline: var(--kontur) solid var(--color-holz); }
+.fallen__wort--daneben { background: var(--color-nochmal-flaeche); outline-color: var(--color-nochmal-tinte); }
+.fallen__boden { position: absolute; left: 0; right: 0; bottom: 0; height: var(--space-xs); background: var(--color-holz); }
+
 /* ---------- Schüleransicht: Pakete und Aufgaben (src/schueler) ---------- */
 .paket-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-sm); }
 .paket-liste__eintrag {
