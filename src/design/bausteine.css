@@ -653,6 +653,8 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .farm-rahmen > .spiel-fenster::after {
   content: ''; position: absolute; inset: 0; z-index: 10000; pointer-events: none;
   border: solid transparent; border-width: 32px 34px 34px; border-image: inherit;
+  /* Jazz 2026-11-16: Safari am iPad legte das Kartenbild (eigene Ebene) über den Rahmen; eigene Ebene auch für den Rahmen */
+  transform: translateZ(0);
 }
 .farm-landschaft { position: relative; isolation: isolate; margin-inline: auto; cursor: pointer; touch-action: manipulation; }
 /* clip-path: Das Rahmenbild ist außen 4 bis 5 Bildpunkte durchsichtig (2-fach: 8 bis 10 px); dort wird das Wasser abgeschnitten.

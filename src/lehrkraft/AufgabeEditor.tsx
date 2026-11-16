@@ -171,8 +171,11 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
     setFokusK(null)
   }, [fokusK])
 
+  // Jazz 2026-11-16: eine neue Runde klappt die bisherigen ein (Schlüssel r.k); von Hand wieder aufklappbar
+  const [zu, setZu] = useState<number[]>([])
   function rundeEinfuegen(nach: number, text = '', rtyp?: AufgabenTyp) {
     const neu = neueRunde(text, rtyp)
+    setZu(runden.map((r) => r.k))
     setRunden([...runden.slice(0, nach + 1), neu, ...runden.slice(nach + 1)])
     setAktiv(nach + 1)
     setFokusK(neu.k)
@@ -437,8 +440,52 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
       </div>
 
       <div className="lk-formular">
+        {/* Jazz 2026-11-16: Einordnung zuerst (legt die Grundlagen fest) */}
         <section className="lk-abschnitt">
-          <h2>1 · Inhalt</h2>
+          <h2>1 · Einordnen</h2>
+          <label>
+            Titel (sehen auch die Schüler:innen)
+            <input className="lk-feld" value={titel} onChange={(e) => setTitel(e.target.value)} maxLength={120} placeholder="z. B. das oder dass?" />
+          </label>
+          {istErklaerung ? (
+            <p className="lk-leise">
+              Erklärseiten zählen im Paket als erledigt, sobald Schüler:innen „Verstanden“ antippen, aber nie für den
+              Lernstand. Darum gibt es hier keine Stufe und keine Kompetenzen.
+            </p>
+          ) : (
+            <>
+          <fieldset>
+            <legend>Stufe</legend>
+            <div className="lk-reiter" role="group">
+              {([1, 2, 3] as const).map((s) => (
+                <button type="button" key={s} className="lk-knopf" aria-pressed={stufe === s} onClick={() => setStufe(s)} aria-label={`Stufe ${s} von 3`}>
+                  {'★'.repeat(s) + '☆'.repeat(3 - s)}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Monster</legend>
+            <div className="lk-reiter lk-monster" role="group" aria-label="Monster der Übung">
+              {(Object.keys(MONSTER) as MonsterName[]).map((m) => (
+                <button type="button" key={m} className="lk-knopf" aria-pressed={monsterName === m} onClick={() => setMonsterName(m)}>
+                  <Sprite grafik={MONSTER[m].grafik} mal={MONSTER[m].mal} />
+                  {MONSTER[m].name}
+                </button>
+              ))}
+              {/* Jazz 2026-11-15: Übung ohne Monsterkampf (zählt nicht fürs Sammelalbum) */}
+              <button type="button" className="lk-knopf" aria-pressed={monsterName === 'kein'} onClick={() => setMonsterName('kein')}>
+                Ohne Monster
+              </button>
+            </div>
+          </fieldset>
+          <KompetenzAuswahl ausgewaehlt={kompetenzIds} onChange={setKompetenzIds} />
+            </>
+          )}
+        </section>
+
+        <section className="lk-abschnitt">
+          <h2>2 · Inhalt</h2>
           <div className="lk-editor">
             <div className="lk-formular">
           {istErklaerung ? (
@@ -651,7 +698,14 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                   {runden.map((r, i) => (
                     <li key={r.k} className="lk-runde" data-aktiv={i === aktiv || undefined} onFocusCapture={() => setAktiv(i)}>
                       <div className="lk-runde__kopf">
-                        <strong>Runde {i + 1}</strong>
+                        <button
+                          type="button"
+                          className="lk-aufklapp lk-runde__klapp"
+                          aria-expanded={!zu.includes(r.k)}
+                          onClick={() => setZu(zu.includes(r.k) ? zu.filter((k) => k !== r.k) : [...zu, r.k])}
+                        >
+                          <span aria-hidden="true">{zu.includes(r.k) ? '▸' : '▾'}</span> <strong>Runde {i + 1}</strong>
+                        </button>
                         <select
                           className="lk-feld lk-feld--klein"
                           value={r.typ ?? typ}
@@ -679,7 +733,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                           </button>
                         </span>
                       </div>
-                      {modus === 'text' ? (
+                      {zu.includes(r.k) ? (
+                        <p className="lk-leise lk-runde__kurz">{ausText(r.text).klar.replace(/s+/g, ' ').trim() || '(noch leer)'}</p>
+                      ) : modus === 'text' ? (
                         <textarea className="lk-feld"
                           id={`runde-${r.k}`}
                           rows={3}
@@ -842,49 +898,6 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
           </div>
         </section>
 
-        <section className="lk-abschnitt">
-          <h2>2 · Einordnen</h2>
-          <label>
-            Titel (sehen auch die Schüler:innen)
-            <input className="lk-feld" value={titel} onChange={(e) => setTitel(e.target.value)} maxLength={120} placeholder="z. B. das oder dass?" />
-          </label>
-          {istErklaerung ? (
-            <p className="lk-leise">
-              Erklärseiten zählen im Paket als erledigt, sobald Schüler:innen „Verstanden“ antippen, aber nie für den
-              Lernstand. Darum gibt es hier keine Stufe und keine Kompetenzen.
-            </p>
-          ) : (
-            <>
-          <fieldset>
-            <legend>Stufe</legend>
-            <div className="lk-reiter" role="group">
-              {([1, 2, 3] as const).map((s) => (
-                <button type="button" key={s} className="lk-knopf" aria-pressed={stufe === s} onClick={() => setStufe(s)} aria-label={`Stufe ${s} von 3`}>
-                  {'★'.repeat(s) + '☆'.repeat(3 - s)}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend>Monster</legend>
-            <div className="lk-reiter lk-monster" role="group" aria-label="Monster der Übung">
-              {(Object.keys(MONSTER) as MonsterName[]).map((m) => (
-                <button type="button" key={m} className="lk-knopf" aria-pressed={monsterName === m} onClick={() => setMonsterName(m)}>
-                  <Sprite grafik={MONSTER[m].grafik} mal={MONSTER[m].mal} />
-                  {MONSTER[m].name}
-                </button>
-              ))}
-              {/* Jazz 2026-11-15: Übung ohne Monsterkampf (zählt nicht fürs Sammelalbum) */}
-              <button type="button" className="lk-knopf" aria-pressed={monsterName === 'kein'} onClick={() => setMonsterName('kein')}>
-                Ohne Monster
-              </button>
-            </div>
-          </fieldset>
-          <KompetenzAuswahl ausgewaehlt={kompetenzIds} onChange={setKompetenzIds} />
-            </>
-          )}
-        </section>
-
         {!istErklaerung && (
         <Aufklappbar
           offen={Boolean(hinweis || rueckmeldung)}
@@ -972,7 +985,7 @@ function ReihenFormular({ text, onChange }: { text: string; onChange: (text: str
   return (
     <div className="lk-formular">
       {saetze.map((s, i) => (
-        <div key={i} className="lk-teil">
+        <div key={i} className="lk-teil lk-teil--spalte">
           <label>
             Satz {i + 1}: Satzart
             <select className="lk-feld" value={s.satzart} onChange={(e) => aendern(i, { satzart: e.target.value })}>

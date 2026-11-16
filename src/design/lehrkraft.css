@@ -338,3 +338,9 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 /* Hochformat: Menü liegt unten, die Leiste „hinzufügen“ bleibt darüber */
 /* shortcut: feste Höhe des unteren Menüs (zwei Zeilen, 108 px bei 820 px Breite); bricht das Menü in mehr Zeilen um, liegt die Leiste darunter */
 @media (max-width: 900px) { .lk-auswahl__leiste { bottom: 108px; } }
+/* Runde ein- und ausklappen (Jazz 2026-11-16) */
+.lk-runde__klapp { gap: var(--space-xs); padding: 0; border: 0; background: none; color: var(--color-lk-tinte); font: inherit; }
+.lk-runde__kurz { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Reihenfolge-Formular: alles untereinander, sonst quetscht die lange Frage das Textfeld am iPad (Jazz 2026-11-16) */
+.lk-teil--spalte { grid-template-columns: minmax(0, 1fr); }
+.lk-teil--spalte > .lk-knopf { justify-self: end; }

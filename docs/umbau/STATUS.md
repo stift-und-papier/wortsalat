@@ -448,3 +448,18 @@
     `npm test` 151, lint, build ohne Fehler.
   - **Nicht getestet:** Ziehen mit dem Finger am echten iPad; Sortierung „zuletzt geändert“ mit echten Unterschieden (alle Testübungen haben
     dieselbe Uhrzeit, Test im Code); „Ansehen“ einer Übung mit mehreren Runden; Fehlerfall beim Speichern der Reihenfolge.
+- **Wünsche von Jazz vom 2026-11-16, schnelle Punkte** (keine Migration):
+  - Editor: **„1 · Einordnen“ steht oben**, „2 · Inhalt“ danach. **„+ Runde“ und „Kopieren“ klappen die bisherigen Runden ein**
+    (▸/▾ am Rundennamen, eingeklappt zeigt eine Zeile den Text). **Reihenfolge im Antipp-Modus**: Formular untereinander (`.lk-teil--spalte`),
+    vorher quetschte die lange Frage das Textfeld am iPad-Hochformat zusammen.
+  - Farm: **Boot** in die Bucht oben (`BOOT` 10/1, Karte Zeile 2 um zwei Wasserkacheln breiter, kleiner Baum nach 12/3, Grasbüschel nach 10/4);
+    unten verdeckte es das Meldungs-Banner. **Holzrahmen** bekommt eine eigene Ebene (`transform: translateZ(0)`), weil Safari am iPad das Kartenbild darüberlegte.
+  - **Testdaten Lernstand:** 390 Versuche für alle 13 Schüler:innen der Klassen „Test“ und „AES - Zum Ausprobieren“ (je 5 Kompetenzen, je 6 Versuche über
+    6 Wochen, Profile schwach / mittel / stark / wird deutlich besser). Markiert mit `antworten = {"testdaten":"lernstand"}`, löschbar mit
+    `delete from versuche where antworten = '{"testdaten":"lernstand"}'`.
+  - **Testfarm:** Schüler **Pfau-99** (Klasse „Test“): 12 Felder in allen Wachstumsstufen, 3 Obstbäume, Boot, Brunnen, 16 Deko, 4 Hühner, 4 Kühe,
+    Monster Schleim blau, Vorrat mit 11 Dingen, 6180 Münzen. Link über die Linkliste der Klasse „Test“.
+  - **Getestet** (Browser): Editor 820 × 1180 (Einordnen oben, Reihenfolge-Formular lesbar, nach „+ Runde“ ist Runde 1 eingeklappt mit Textzeile);
+    Farm Dachs-19 bei 820 × 1180 und 1180 × 820 (Boot ganz sichtbar, Rahmen oben); Lernstand Klasse „Test“ mit Stufen und Verlauf je Kompetenz;
+    Farm Pfau-99 bei 1180 × 820. `npm test` 151, lint, build ohne Fehler.
+  - **Nicht getestet:** Holzrahmen am echten iPad (Fehler hier nicht nachstellbar; Lösung ist die übliche für Safari), Lernstand der Klasse „AES“ im Browser.

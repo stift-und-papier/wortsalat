@@ -7,7 +7,7 @@ export const KACHEL = 16
 const KARTE = [
   '.....................',
   '...#######....####...',
-  '..##########.######..',
+  '..########...######..',
   '.###################.',
   '.###################.',
   '..##################.',
@@ -41,14 +41,15 @@ export const KUH_PLAETZE: Ort[] = [{ x: 14, y: 4 }, { x: 16, y: 4 }, { x: 9, y: 
 export const BAEUME: (Ort & { grafik: 'baum' | 'baum_klein' })[] = [
   { grafik: 'baum', x: 8, y: 1 },
   { grafik: 'baum_klein', x: 1, y: 7 },
-  { grafik: 'baum_klein', x: 10, y: 2 },
+  { grafik: 'baum_klein', x: 12, y: 3 }, // Jazz 2026-11-16: von (10, 2) weg, dort ist jetzt die Bucht fürs Boot
   { grafik: 'baum_klein', x: 2, y: 3 }, // Jazz 2026-11-15: von (4, 12) weg, dort läuft jetzt das Monster
 ]
 export const BRUNNEN: Ort = { x: 8, y: 6 } // 2 × 2
 // Obstbäume (je einer, 2 × 2 Kacheln Stamm und Krone; das Bild ist 48 × 48 und ragt darüber hinaus): zwei über dem Acker, einer vor dem Stall
 export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: { x: 3, y: 1 }, pfirsichbaum: { x: 5, y: 1 }, birnenbaum: { x: 11, y: 9 } }
-// Boot (3 × 2 Kacheln) liegt im Wasser unten, am Ufer festgebunden; kein Hindernis (Wasser ist es schon)
-export const BOOT: Ort = { x: 8, y: 13 }
+// Boot (3 × 2 Kacheln) liegt im Wasser; kein Hindernis (Wasser ist es schon)
+// Jazz 2026-11-16: in der Bucht oben (unten verdeckt es die Meldung, am Rand der Holzrahmen)
+export const BOOT: Ort = { x: 10, y: 1 }
 export const DEKO_PLAETZE: Ort[] = [
   // Jazz 2026-11-15: drei Plätze links unten für die Monster-Hütte verschoben ((2, 8) → (1, 9), (3, 10) → (15, 1), (5, 9) → (7, 2))
   { x: 8, y: 4 }, { x: 10, y: 5 }, { x: 11, y: 3 }, { x: 1, y: 9 }, { x: 15, y: 1 }, { x: 7, y: 2 },
@@ -64,7 +65,7 @@ export const MONSTER_PLATZ: Ort = { x: 4, y: 12 }
 export const FIGUR_START: Ort = { x: 10, y: 7 } // Mitte der Karte (21 × 15 Kacheln), Jazz 2026-11-14
 // Kleine Halme und Blümchen auf dem Gras (nur innen, nie am Rand)
 export const GRAS_DEKO: (Ort & { nummer: number })[] = [
-  { x: 7, y: 3 }, { x: 10, y: 3 }, { x: 4, y: 9 }, { x: 7, y: 8 }, { x: 11, y: 6 }, { x: 3, y: 7 },
+  { x: 7, y: 3 }, { x: 10, y: 4 }, { x: 4, y: 9 }, { x: 7, y: 8 }, { x: 11, y: 6 }, { x: 3, y: 7 },
   { x: 8, y: 10 }, { x: 12, y: 8 }, { x: 11, y: 8 }, { x: 6, y: 10 },
 ].map((o, i) => ({ ...o, nummer: [0, 3, 5, 1, 9, 7, 4, 11, 2, 10][i] }))
 
