@@ -319,3 +319,22 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 .lk-schalter[aria-checked='true'] .lk-schalter__bahn::after { left: calc(100% - 1rem - 2px); background: var(--color-lk-aktion-text); }
 .lk-schalter:focus-visible { outline: 3px solid var(--color-lk-aktion); outline-offset: 2px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) { .lk-schalter__bahn, .lk-schalter__bahn::after { transition: none; } }
+/* Paket zusammenstellen (Teilaufgabe 4 und 5, Jazz 2026-11-15) */
+.lk-griff { min-width: 44px; min-height: 44px; margin-right: var(--space-xs); border: 0; background: none; color: var(--color-lk-leise); font: inherit; font-size: 1.25rem; cursor: grab; touch-action: none; }
+.lk-griff:focus-visible { outline: 3px solid var(--color-lk-aktion); border-radius: 4px; }
+.lk-eintrag[data-zieht] { position: relative; z-index: 1; background: var(--color-lk-papier); box-shadow: 0 4px 12px rgb(0 0 0 / 0.2); }
+.lk-auswahl { display: grid; gap: var(--space-sm); margin-top: var(--space-md); }
+.lk-auswahl h3 { margin: 0; }
+.lk-auswahl__sortieren { display: grid; gap: var(--space-2xs, 4px); justify-self: start; }
+.lk-auswahl__liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xs); }
+.lk-auswahl__zeile { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs) var(--space-md); padding: var(--space-xs) var(--space-md); border: 1px solid var(--color-lk-linie); border-radius: var(--radius-lk); }
+.lk-auswahl__zeile[data-gewaehlt] { background: var(--color-lk-papier-2); border-color: var(--color-lk-aktion); }
+.lk-auswahl__wahl { display: flex; align-items: center; gap: var(--space-sm); min-height: 48px; flex: 1 1 18rem; cursor: pointer; }
+.lk-auswahl__wahl input { width: 1.25rem; height: 1.25rem; flex: none; }
+.lk-auswahl__wahl > span { display: grid; }
+.lk-auswahl__tags { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs, 4px); }
+.lk-auswahl__vorschau { flex: 1 1 100%; }
+.lk-auswahl__leiste { position: sticky; bottom: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: var(--space-xs); padding: var(--space-sm) 0; background: var(--color-lk-papier); border-top: 1px solid var(--color-lk-linie); }
+/* Hochformat: Menü liegt unten, die Leiste „hinzufügen“ bleibt darüber */
+/* shortcut: feste Höhe des unteren Menüs (zwei Zeilen, 108 px bei 820 px Breite); bricht das Menü in mehr Zeilen um, liegt die Leiste darunter */
+@media (max-width: 900px) { .lk-auswahl__leiste { bottom: 108px; } }

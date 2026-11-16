@@ -9,12 +9,15 @@ import { Sprite } from '../gemeinsam/Sprite'
 import { monster } from '../lib/monster'
 import { TYP_NAMEN } from './AufgabenListe'
 import { PaketTags, TagAuswahl } from './PaketTags'
+import { UebungAuswahl } from './UebungAuswahl'
+import { closestCenter, DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-type PaketAufgabe = Aufgabe & { inhalt: LueckentextInhaltSchueler }
+export type PaketAufgabe = Aufgabe & { inhalt: LueckentextInhaltSchueler }
 type Daten = {
   paket: Paket
   inhalt: { aufgabe_id: string; position: number; aufgabe: PaketAufgabe }[]
-  alleAufgaben: Pick<Aufgabe, 'id' | 'typ' | 'titel' | 'stufe' | 'monster'>[]
   zuweisungen: Zuweisung[]
   klassen: Klasse[]
   schueler: Pick<Schueler, 'id' | 'klasse_id' | 'pseudonym'>[]
@@ -22,26 +25,66 @@ type Daten = {
 
 const sterne = (s: Stufe) => '★'.repeat(s) + '☆'.repeat(3 - s)
 
+/** Ein Eintrag im Paket: ziehen (Griff ⠿) oder mit ↑ ↓ verschieben, entfernen */
+function PaketEintrag(props: { aufgabe: PaketAufgabe; erste: boolean; letzte: boolean; hoch: () => void; runter: () => void; entfernen: () => void }) {
+  const a = props.aufgabe
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: a.id })
+  return (
+    <li ref={setNodeRef} className="lk-eintrag" data-zieht={isDragging || undefined} style={{ transform: CSS.Transform.toString(transform), transition }}>
+      <span>
+        <button type="button" className="lk-griff" aria-label={`${a.titel} ziehen, um die Reihenfolge zu ändern`} {...attributes} {...listeners}>
+          ⠿
+        </button>
+        {a.typ !== 'erklaerung' && a.monster !== 'kein' && (
+          <span className="lk-monster-klein" title={monster(a.monster).name}>
+            <Sprite grafik={monster(a.monster).grafik} mal={Math.max(1, monster(a.monster).mal - 1)} />
+          </span>
+        )}
+        <a href={`#/lehrkraft/${a.typ === 'erklaerung' ? 'erklaerungen' : 'aufgaben'}/${a.id}`}>{a.titel}</a>
+        <span className="lk-leise">
+          {' '}
+          · {TYP_NAMEN[a.typ]}
+          {a.typ !== 'erklaerung' && <span aria-label={`Stufe ${a.stufe} von 3`}> · {sterne(a.stufe)}</span>}
+        </span>
+      </span>
+      <span className="lk-knopfreihe">
+        <button type="button" className="lk-knopf" disabled={props.erste} onClick={props.hoch} aria-label={`${a.titel} nach oben`}>
+          ↑
+        </button>
+        <button type="button" className="lk-knopf" disabled={props.letzte} onClick={props.runter} aria-label={`${a.titel} nach unten`}>
+          ↓
+        </button>
+        <button type="button" className="lk-knopf" onClick={props.entfernen}>
+          Entfernen
+        </button>
+      </span>
+    </li>
+  )
+}
+
 export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: boolean }) {
+  const sensoren = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
   const [daten, setDaten] = useState<Daten | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
 
   const laden = useCallback(async () => {
-    const [p, pa, a, z, k, s] = await Promise.all([
+    const [p, pa, z, k, s] = await Promise.all([
       supabase.from('pakete').select('*').eq('id', paketId).eq('archiviert', false).maybeSingle(),
       supabase.from('paket_aufgaben').select('aufgabe_id, position, aufgabe:aufgaben(*)').eq('paket_id', paketId).order('position'),
-      supabase.from('aufgaben').select('id, typ, titel, stufe, monster').eq('archiviert', false).order('titel'),
       supabase.from('zuweisungen').select('*').eq('paket_id', paketId).order('erstellt_am'),
       supabase.from('klassen').select('id, name, kerncurriculum').order('name'),
       supabase.from('schueler').select('id, klasse_id, pseudonym').order('pseudonym'),
     ])
-    const fehlerhaft = [p, pa, a, z, k, s].find((r) => r.error)
+    const fehlerhaft = [p, pa, z, k, s].find((r) => r.error)
     if (fehlerhaft?.error) return setFehler(fehlerText(fehlerhaft.error))
     if (!p.data) return setFehler('Dieses Paket gibt es nicht mehr oder es ist archiviert.')
     setDaten({
       paket: p.data as Paket,
       inhalt: pa.data as unknown as Daten['inhalt'],
-      alleAufgaben: a.data as Daten['alleAufgaben'],
       zuweisungen: z.data as Zuweisung[],
       klassen: k.data as Klasse[],
       schueler: s.data as Daten['schueler'],
@@ -55,9 +98,8 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
   if (!daten) return fehler ? <p className="lk-hinweis" role="alert">{fehler}</p> : <p className="lk-leise" role="status">Lädt …</p>
   if (vorschau) return <PaketVorschau daten={daten} />
 
-  const { paket, inhalt, alleAufgaben, zuweisungen, klassen, schueler } = daten
+  const { paket, inhalt, zuweisungen, klassen, schueler } = daten
   const imPaket = new Set(inhalt.map((i) => i.aufgabe_id))
-  const verfuegbar = alleAufgaben.filter((a) => !imPaket.has(a.id))
   const klassenName = (id: string | null) => klassen.find((k) => k.id === id)?.name ?? '?'
 
   async function ausfuehren(aktion: PromiseLike<{ error: unknown }>) {
@@ -69,12 +111,16 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
     }
   }
 
-  async function verschieben(index: number, richtung: -1 | 1) {
-    const neu = [...inhalt]
-    const [eintrag] = neu.splice(index, 1)
-    neu.splice(index + richtung, 0, eintrag)
-    await ausfuehren(supabase.from('paket_aufgaben').upsert(neu.map((e, i) => ({ paket_id: paket.id, aufgabe_id: e.aufgabe_id, position: i }))))
+  // Teilaufgabe 5: neue Reihenfolge sofort zeigen, dann speichern (ohne alles neu zu laden); bei einem Fehler wieder laden
+  async function neueReihenfolge(neu: Daten['inhalt']) {
+    setDaten({ ...daten!, inhalt: neu.map((e, i) => ({ ...e, position: i })) })
+    const { error } = await supabase.from('paket_aufgaben').upsert(neu.map((e, i) => ({ paket_id: paket.id, aufgabe_id: e.aufgabe_id, position: i })))
+    if (error) {
+      setFehler(fehlerText(error))
+      void laden()
+    } else setFehler(null)
   }
+  const verschieben = (von: number, nach: number) => void neueReihenfolge(arrayMove(inhalt, von, nach))
 
   return (
     <>
@@ -89,75 +135,38 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
         {inhalt.length === 0 ? (
           <p>Noch keine Übungen.</p>
         ) : (
-          <ol className="lk-liste">
-            {inhalt.map((e, i) => (
-              <li key={e.aufgabe_id} className="lk-eintrag">
-                <span>
-                  {e.aufgabe.typ !== 'erklaerung' && e.aufgabe.monster !== 'kein' && (
-                    <span className="lk-monster-klein" title={monster(e.aufgabe.monster).name}>
-                      <Sprite grafik={monster(e.aufgabe.monster).grafik} mal={Math.max(1, monster(e.aufgabe.monster).mal - 1)} />
-                    </span>
-                  )}
-                  <a href={`#/lehrkraft/aufgaben/${e.aufgabe_id}`}>{e.aufgabe.titel}</a>
-                  <span className="lk-leise">
-                    {' '}
-                    · {TYP_NAMEN[e.aufgabe.typ]}
-                    {e.aufgabe.typ !== 'erklaerung' && <span aria-label={`Stufe ${e.aufgabe.stufe} von 3`}> · {sterne(e.aufgabe.stufe)}</span>}
-                  </span>
-                </span>
-                <span className="lk-knopfreihe">
-                  <button type="button" className="lk-knopf" disabled={i === 0} onClick={() => void verschieben(i, -1)} aria-label={`${e.aufgabe.titel} nach oben`}>
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    className="lk-knopf"
-                    disabled={i === inhalt.length - 1}
-                    onClick={() => void verschieben(i, 1)}
-                    aria-label={`${e.aufgabe.titel} nach unten`}
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    className="lk-knopf"
-                    onClick={() => void ausfuehren(supabase.from('paket_aufgaben').delete().eq('paket_id', paket.id).eq('aufgabe_id', e.aufgabe_id))}
-                  >
-                    Entfernen
-                  </button>
-                </span>
-              </li>
-            ))}
-          </ol>
-        )}
-        {verfuegbar.length > 0 ? (
-          <form
-            className="lk-zeile"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const id = new FormData(e.currentTarget).get('aufgabe') as string
-              const position = Math.max(-1, ...inhalt.map((x) => x.position)) + 1
-              if (id) void ausfuehren(supabase.from('paket_aufgaben').insert({ paket_id: paket.id, aufgabe_id: id, position }))
-            }}
-          >
-            <label>
-              Übung hinzufügen
-              <select className="lk-feld" name="aufgabe">
-                {verfuegbar.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.titel} ({TYP_NAMEN[a.typ]}
-                    {a.typ !== 'erklaerung' && `, ${sterne(a.stufe)}`})
-                  </option>
+          <DndContext sensors={sensoren} collisionDetection={closestCenter} onDragEnd={(e) => {
+            const von = inhalt.findIndex((x) => x.aufgabe_id === e.active.id)
+            const nach = inhalt.findIndex((x) => x.aufgabe_id === e.over?.id)
+            if (von >= 0 && nach >= 0 && von !== nach) verschieben(von, nach)
+          }}>
+            <SortableContext items={inhalt.map((e) => e.aufgabe_id)} strategy={verticalListSortingStrategy}>
+              <ol className="lk-liste">
+                {inhalt.map((e, i) => (
+                  <PaketEintrag
+                    key={e.aufgabe_id}
+                    aufgabe={e.aufgabe}
+                    erste={i === 0}
+                    letzte={i === inhalt.length - 1}
+                    hoch={() => verschieben(i, i - 1)}
+                    runter={() => verschieben(i, i + 1)}
+                    entfernen={() => void ausfuehren(supabase.from('paket_aufgaben').delete().eq('paket_id', paket.id).eq('aufgabe_id', e.aufgabe_id))}
+                  />
                 ))}
-              </select>
-            </label>
-            <button className="lk-knopf">Hinzufügen</button>
-          </form>
-        ) : (
-          <p className="lk-leise">
-            Alle Ihre Übungen sind schon in diesem Paket. <a href="#/lehrkraft/aufgaben/neu">Neue Übung anlegen</a>
-          </p>
+              </ol>
+            </SortableContext>
+          </DndContext>
         )}
+        <UebungAuswahl
+          paketId={paket.id}
+          imPaket={imPaket}
+          naechstePosition={Math.max(-1, ...inhalt.map((x) => x.position)) + 1}
+          onHinzugefuegt={() => {
+            setFehler(null)
+            void laden()
+          }}
+          onFehler={setFehler}
+        />
         <p className="lk-leise">
           Schüler:innen sehen je Themenbereich nur die Übungen ihrer Sterne-Stufe (Erklärseiten sehen alle). Legen Sie
           dieselbe Übung in mehreren Stufen an, bekommt jede:r die passende.
@@ -331,9 +340,25 @@ function loesungAus(a: Aufgabe): Record<number, string[]> {
 
 // Vorschau: das Paket so durcharbeiten, wie Schüler:innen es sehen (alle Stufen). Es wird nichts gespeichert.
 function PaketVorschau({ daten }: { daten: Daten }) {
+  return (
+    <>
+      <a className="lk-zurueck" href={`#/lehrkraft/pakete/${daten.paket.id}`}>
+        ← Vorschau beenden
+      </a>
+      <h1>{daten.paket.titel}</h1>
+      <Durchgehen
+        aufgaben={daten.inhalt.map((i) => i.aufgabe)}
+        ende={{ text: 'Vorschau beenden', ziel: () => gehe(`/lehrkraft/pakete/${daten.paket.id}`) }}
+      />
+    </>
+  )
+}
+
+/** Übungen Schritt für Schritt so zeigen, wie Schüler:innen sie sehen (Paket-Vorschau und „Ansehen“ beim Zusammenstellen) */
+export function Durchgehen({ aufgaben, ende }: { aufgaben: PaketAufgabe[]; ende: { text: string; ziel: () => void } }) {
   const [index, setIndex] = useState(0)
   // Übungen: jede Runde als eigener Schritt (wie im Spiel); Erklärseiten als ein Schritt
-  const schritte = daten.inhalt.flatMap(({ aufgabe: a }) =>
+  const schritte = aufgaben.flatMap((a) =>
     a.loesung.runden
       ? a.loesung.runden.map((r, i) => ({
           a: { ...a, loesung: r, inhalt: a.inhalt.runden?.[i] ?? { teile: [] } },
@@ -347,10 +372,6 @@ function PaketVorschau({ daten }: { daten: Daten }) {
   let versuche = 0
   return (
     <>
-      <a className="lk-zurueck" href={`#/lehrkraft/pakete/${daten.paket.id}`}>
-        ← Vorschau beenden
-      </a>
-      <h1>{daten.paket.titel}</h1>
       <p className="lk-leise">
         Vorschau: Schritt {index + 1} von {schritte.length}{schritt.runde}. Hier sehen Sie alle Stufen; es wird nichts gespeichert.
       </p>
@@ -369,7 +390,7 @@ function PaketVorschau({ daten }: { daten: Daten }) {
           weiter={
             index + 1 < schritte.length
               ? { text: 'Weiter', ziel: () => setIndex(index + 1) }
-              : { text: 'Vorschau beenden', ziel: () => gehe(`/lehrkraft/pakete/${daten.paket.id}`) }
+              : ende
           }
         />
       </div>

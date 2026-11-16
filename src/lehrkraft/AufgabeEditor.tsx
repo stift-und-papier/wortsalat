@@ -274,6 +274,8 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   }
 
   const istErklaerung = typ === 'erklaerung'
+  // Teilaufgabe 4: Erklärseiten haben einen eigenen Menüpunkt
+  const liste = istErklaerung ? '/lehrkraft/erklaerungen' : '/lehrkraft/aufgaben'
   const erklaerung = {
     text: erkl.text.trim(),
     merke: erkl.merke.trim(),
@@ -396,7 +398,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
     setKompetenzIdsAlt(new Set(kompetenzIds))
     setGespeichert(true)
     window.setTimeout(() => setGespeichert(false), 2500)
-    if (!aufgabeId) gehe(`/lehrkraft/aufgaben/${data.id}`)
+    if (!aufgabeId) gehe(`${liste}/${data.id}`)
   }
 
   async function loeschen() {
@@ -407,24 +409,24 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
     if (!ok) return
     const { error } = await supabase.from('aufgaben').delete().eq('id', aufgabeId)
     if (error) setFehler(fehlerText(error))
-    else gehe('/lehrkraft/aufgaben')
+    else gehe(liste)
   }
 
   if (!geladen) return fehler ? <p className="lk-hinweis" role="alert">{fehler}</p> : <p>Lädt …</p>
 
   return (
     <>
-      <a className="lk-zurueck" href="#/lehrkraft/aufgaben">
-        ← Alle Übungen
+      <a className="lk-zurueck" href={`#${liste}`}>
+        {istErklaerung ? '← Alle Erklärungen' : '← Alle Übungen'}
       </a>
       <div className="lk-zeile">
         <h1>{aufgabeId ? `${format.name} bearbeiten` : istErklaerung ? 'Neue Erklärseite' : 'Neue Übung'}</h1>
         {/* Format nur bei neuen Aufgaben umschaltbar – gespeicherte Antworten passen sonst nicht mehr */}
-        {!aufgabeId && (
+        {!aufgabeId && !istErklaerung && (
           <label>
             Format
             <select className="lk-feld" value={typ} onChange={(e) => formatWechseln(e.target.value as AufgabenTyp)}>
-              {(Object.keys(FORMATE) as AufgabenTyp[]).map((t) => (
+              {(Object.keys(FORMATE) as AufgabenTyp[]).filter((t) => t !== 'erklaerung').map((t) => (
                 <option key={t} value={t}>
                   {FORMATE[t].name}
                 </option>

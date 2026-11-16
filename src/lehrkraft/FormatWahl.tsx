@@ -11,7 +11,7 @@ export function FormatWahl() {
       <h1>Neue Übung</h1>
       <p>Welches Format soll die Übung haben? Sie können es beim Erstellen noch ändern.</p>
       <ul className="lk-kacheln">
-        {(Object.keys(FORMATE) as AufgabenTyp[]).map((typ) => (
+        {(Object.keys(FORMATE) as AufgabenTyp[]).filter((typ) => typ !== 'erklaerung').map((typ) => (
           <li key={typ}>
             <a className="lk-eintrag lk-kachel" href={`#/lehrkraft/aufgaben/neu-${typ}`}>
               <strong>{FORMATE[typ].name}</strong>

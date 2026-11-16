@@ -426,3 +426,25 @@
 - **Nachtrag Jazz (2026-11-15):** „Für Excel speichern“ nur noch bei Lernstand und Linkliste (bei Übungen und Paketen entfernt). Statt der zwei Reiter
   ein **Schalter „Textmodus“** (`.lk-schalter`, `role="switch"`): aus = Wörter antippen (Standard), an = Text mit [Klammern].
   Getestet bei 1024 × 768 (dunkel) und 820 × 1180 (hell): Schalter wechselt die Ansicht, Übungs- und Paketliste ohne Excel-Knopf. `npm test` 149, lint ohne Fehler.
+- **Lehrkraftseite, Teilaufgabe 4 und 5** (2026-11-16, Jazz: alle Vorschläge angenommen, keine Migration, Speicherformat unverändert):
+  - **Menüpunkt „Erklärungen“** (`AufgabenListe` mit `erklaerungen`): eigene Liste mit Suche, Schulform, Jahrgang, Kernkompetenz, „+ Neue Erklärung“.
+    Die Übungsliste zeigt nur noch Übungen; „Neue Übung“ und das Format-Feld im Editor bieten keine Erklärung mehr an. Editor einer Erklärung:
+    Zurück, Speichern und Löschen führen zur Erklärungsliste.
+  - **Paket zusammenstellen** (`src/lehrkraft/UebungAuswahl.tsx`): Reiter Übungen/Erklärungen, Suche in Titel, Anweisung und Kompetenz,
+    Filter Format, Stufe (neu), Jahrgang, Schulform, Kernkompetenz, Kompetenz; Sortieren nach zuletzt geändert, Titel, Format, Stufe;
+    je Zeile Format, Sterne, Anzahl Runden und Tags (Jahrgang aus der KC-Stufe der Kompetenzen, Schulform); Kästchen und „N ausgewählte
+    hinzufügen“ (Leiste bleibt unten sichtbar); „Ansehen“ zeigt die Übung wie im Spiel (`Durchgehen`, aus der Paket-Vorschau gelöst);
+    „Keine Übung passt zu Ihrer Suche“ mit „Filter zurücksetzen“. Archivierte erscheinen nicht.
+  - **Reihenfolge**: ziehen am Griff ⠿ (@dnd-kit, schon im Projekt) oder ↑ ↓; die Seite lädt dabei nicht mehr neu.
+  - **Gemerkt** bis zum Schließen des Fensters (sessionStorage, `useGemerkt`): Suche/Filter/Sortierung der Übungs- und Erklärungsliste, Reiter,
+    Filter und Sortierung der Auswahl im Paket.
+  - **Testdaten:** 20 Übungen „Test 5: …“ (Inhalt aus vorhandenen Testübungen kopiert, Stufen 1–3, verschiedene Kompetenzen, drei ohne),
+    Paket „Test 5: Paket zusammenstellen“. Nach dem Test archiviert.
+  - **Getestet** (Browser, Lehrkraft, 1180 × 820; 1024 × 768 und 820 × 1180 nur Auswahl-Liste und Leiste): Erklärungen 71 / Übungen 32 getrennt;
+    Suche „Komma“ findet Titel und Kompetenz; Unsinn-Suche zeigt den Hinweis; Stufe ★★★ und Jahrgang 7/8 mit Sortierung nach Stufe;
+    3 Übungen auf einmal hinzugefügt (verschwinden aus der Auswahl); Erklärung über den Reiter hinzugefügt (Link führt zu „Erklärungen“);
+    Erklärung per Ziehen an Platz 1, nach Neuladen gespeichert; ↓ verschiebt ohne Neuladen; „Ansehen“ zeigt die Erklärseite;
+    Suche der Übungsliste nach Seitenwechsel noch da; kein seitliches Scrollen; Leiste im Hochformat direkt über dem Menü.
+    `npm test` 151, lint, build ohne Fehler.
+  - **Nicht getestet:** Ziehen mit dem Finger am echten iPad; Sortierung „zuletzt geändert“ mit echten Unterschieden (alle Testübungen haben
+    dieselbe Uhrzeit, Test im Code); „Ansehen“ einer Übung mit mehreren Runden; Fehlerfall beim Speichern der Reihenfolge.

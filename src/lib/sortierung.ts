@@ -2,11 +2,12 @@
 import type { Aufgabe } from './typen'
 
 // Sortierung der Aufgabenliste (Lehrkraft): nach Titel, Format, Stufe, Kompetenz oder KC, auf- oder absteigend.
-export type Spalte = 'titel' | 'format' | 'stufe' | 'kompetenz' | 'kc'
+// geaendert: zuletzt geändert zuerst (Paket zusammenstellen, Teilaufgabe 5)
+export type Spalte = 'titel' | 'format' | 'stufe' | 'kompetenz' | 'kc' | 'geaendert'
 export type Sortierung = { spalte: Spalte; absteigend: boolean } | null
 
 /** kompetenz/kc: Kurznamen bzw. Kerncurricula der zugeordneten Kompetenzen als Text ('' = keine Zuordnung) */
-type Sortierbar = Pick<Aufgabe, 'titel' | 'typ' | 'stufe'> & { kompetenz?: string; kc?: string }
+type Sortierbar = Pick<Aufgabe, 'titel' | 'typ' | 'stufe'> & { kompetenz?: string; kc?: string; geaendert_am?: string }
 
 const text = (a: string, b: string) => a.localeCompare(b, 'de', { numeric: true, sensitivity: 'base' })
 
@@ -26,6 +27,9 @@ export function sortiere<T extends Sortierbar>(liste: T[], s: Sortierung, format
       const va = a[s.spalte] ?? '', vb = b[s.spalte] ?? ''
       if (!va !== !vb) return va ? -1 : 1
       const d = text(va, vb)
+      if (d) return d * richtung
+    } else if (s.spalte === 'geaendert') {
+      const d = (b.geaendert_am ?? '').localeCompare(a.geaendert_am ?? '')
       if (d) return d * richtung
     } else {
       const d = s.spalte === 'titel' ? text(a.titel, b.titel) : text(formatName(a.typ), formatName(b.typ))

@@ -5,9 +5,9 @@ import type { Kompetenz } from './typen'
 // (KC-Stufe „Ende Jg. 6/8/10“ → Doppeljahrgang). Alle gewählten Merkmale müssen bei DERSELBEN Kompetenz zutreffen.
 
 export type Doppeljahrgang = '5/6' | '7/8' | '9/10'
-// art: Aufgabenart (nur Aufgabenliste); passt() prüft sie nicht, das macht die Liste selbst
-export type Filter = { suche: string; schulform: string; art: string; jahrgang: '' | Doppeljahrgang | 'ohne'; bereich: string; kompetenz: string }
-export const LEERER_FILTER: Filter = { suche: '', schulform: '', art: '', jahrgang: '', bereich: '', kompetenz: '' }
+// art und stufe: Aufgabenart und Sterne (nur Aufgabenlisten); passt() prüft sie nicht, das macht die Liste selbst
+export type Filter = { suche: string; schulform: string; art: string; stufe: string; jahrgang: '' | Doppeljahrgang | 'ohne'; bereich: string; kompetenz: string }
+export const LEERER_FILTER: Filter = { suche: '', schulform: '', art: '', stufe: '', jahrgang: '', bereich: '', kompetenz: '' }
 export const DOPPELJAHRGAENGE: Doppeljahrgang[] = ['5/6', '7/8', '9/10']
 
 export type FilterKompetenz = Pick<Kompetenz, 'id' | 'bereich' | 'stufe'>
@@ -33,4 +33,10 @@ export function passt(titel: string, kompetenzIds: string[], f: Filter, kompeten
       (!f.bereich || k.bereich === f.bereich) &&
       (!f.kompetenz || k.id === f.kompetenz),
   )
+}
+
+/** Doppeljahrgänge aus den KC-Stufen der Kompetenzen (Tags neben einer Übung), feste Reihenfolge */
+export function jahrgaengeVon(ks: Pick<Kompetenz, 'stufe'>[]): Doppeljahrgang[] {
+  const alle = ks.flatMap((k) => JAHRGAENGE[k.stufe] ?? [])
+  return DOPPELJAHRGAENGE.filter((j) => alle.includes(j))
 }

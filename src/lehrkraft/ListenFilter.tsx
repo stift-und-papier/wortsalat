@@ -25,6 +25,33 @@ export function useKompetenzen(setFehler: (text: string) => void) {
   return kompetenzen
 }
 
+/**
+ * Wie useState, aber bis zum Schließen des Browserfensters gemerkt (Suche, Filter, Sortierung beim Wechsel der Seiten, Teilaufgabe 5).
+ * Ohne sessionStorage (z. B. privates Fenster) gilt einfach der Startwert.
+ */
+export function useGemerkt<T>(schluessel: string, start: T): [T, (neu: T) => void] {
+  const [wert, setWert] = useState<T>(() => {
+    try {
+      const roh = sessionStorage.getItem(`wortsalat-${schluessel}`)
+      if (roh === null) return start
+      const gespeichert = JSON.parse(roh) as T
+      // neue Felder (z. B. ein neuer Filter) bekommen ihren Startwert
+      return start && typeof start === 'object' && !Array.isArray(start) ? { ...start, ...gespeichert } : gespeichert
+    } catch {
+      return start
+    }
+  })
+  const setzen = (neu: T) => {
+    setWert(neu)
+    try {
+      sessionStorage.setItem(`wortsalat-${schluessel}`, JSON.stringify(neu))
+    } catch {
+      // nicht speicherbar: gilt nur auf dieser Seite
+    }
+  }
+  return [wert, setzen]
+}
+
 type Props = {
   filter: Filter
   onChange: (f: Filter) => void
@@ -35,10 +62,12 @@ type Props = {
   suchText: string
   /** Aufgabenarten (Kennung → Name): zeigt die Auswahl „Aufgabenart“ */
   arten?: Record<string, string>
+  /** zeigt die Auswahl „Stufe“ (Sterne) */
+  stufen?: boolean
 }
 
 // Filterleiste: Titelsuche, Jahrgang (aus der KC-Stufe der Kompetenzen), Bereich (heißt in der Oberfläche „Kernkompetenz“, Jazz 2026-11-13), einzelne Kompetenz.
-export function ListenFilter({ filter, onChange, verwendet, treffer, gesamt, suchText, arten }: Props) {
+export function ListenFilter({ filter, onChange, verwendet, treffer, gesamt, suchText, arten, stufen }: Props) {
   const bereiche = [...new Set(verwendet.map((k) => k.bereich))].sort((a, b) => a.localeCompare(b, 'de'))
   const imBereich = verwendet.filter(
     (k) => k.bereich === filter.bereich && passt('', [k.id], { ...LEERER_FILTER, jahrgang: filter.jahrgang }, new Map([[k.id, k]])),
@@ -72,6 +101,17 @@ export function ListenFilter({ filter, onChange, verwendet, treffer, gesamt, suc
                   {name}
                 </option>
               ))}
+            </select>
+          </label>
+        )}
+        {stufen && (
+          <label>
+            Stufe
+            <select className="lk-feld" value={filter.stufe} onChange={(e) => onChange({ ...filter, stufe: e.target.value })}>
+              <option value="">alle</option>
+              <option value="1">★☆☆ leicht</option>
+              <option value="2">★★☆ mittel</option>
+              <option value="3">★★★ schwer</option>
             </select>
           </label>
         )}

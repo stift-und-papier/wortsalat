@@ -303,3 +303,6 @@
   aktives blinkt. Hinweis mit Tastenbild, wenn die Feststelltaste an ist (Fallende Wörter, Abschreiben, Merkdiktat).
 - 2026-11-15 (Jazz, Teilaufgabe 6): Editor-Standard ist **„Wörter antippen“** (Text schreiben, Wörter antippen → Lücke, Auswahl, Fehler, Zuordnung);
   Schalter „Textmodus“ (an = Text mit [Klammern]), „Per Formular“ entfällt. Lernstand und Linkliste **für Excel speichern** als CSV ohne Bibliothek.
+- 2026-11-16 (Jazz, Teilaufgabe 4 und 5): **Erklärungen** sind ein eigener Menüpunkt; im Paket über Reiter Übungen/Erklärungen hinzufügen. Auswahl im Paket
+  mit Suche (Titel, Anweisung, Kompetenz), Filtern (auch Stufe), Sortierung, Tags, Kästchen, „Ansehen“; Reihenfolge ziehen. Suche und Filter bleiben
+  bis zum Schließen des Fensters gemerkt. Keine Stichwort-Spalte (Suche ohne Datenbankänderung).

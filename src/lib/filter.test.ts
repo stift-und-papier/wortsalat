@@ -1,6 +1,6 @@
 // alt (Übungswiese)
 import { describe, expect, it } from 'vitest'
-import { LEERER_FILTER, passt, type FilterKompetenz } from './filter'
+import { jahrgaengeVon, LEERER_FILTER, passt, type FilterKompetenz } from './filter'
 
 const k = new Map<string, FilterKompetenz>([
   ['r6', { id: 'r6', bereich: 'Rechtschreibung', stufe: '6' }],
@@ -35,5 +35,13 @@ describe('Filter für Aufgaben und Pakete', () => {
     expect(passt('a', ['r6', 'w8'], f({ bereich: 'Rechtschreibung', jahrgang: '7/8' }), k)).toBe(false)
     expect(passt('a', ['r6', 'w8'], f({ bereich: 'Wortarten', kompetenz: 'w8' }), k)).toBe(true)
     expect(passt('a', ['r6'], f({ kompetenz: 'w8' }), k)).toBe(false)
+  })
+})
+
+describe('jahrgaengeVon (Tags neben einer Übung)', () => {
+  it('Doppeljahrgänge in fester Reihenfolge, ohne Doppelte', () => {
+    expect(jahrgaengeVon([{ stufe: '10' }, { stufe: '6' }, { stufe: '6-10' }])).toEqual(['5/6', '7/8', '9/10'])
+    expect(jahrgaengeVon([{ stufe: '8' }])).toEqual(['7/8'])
+    expect(jahrgaengeVon([])).toEqual([])
   })
 })

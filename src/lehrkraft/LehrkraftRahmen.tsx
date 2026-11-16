@@ -21,6 +21,7 @@ import { NeuesPaket, PaketListe } from './PaketListe'
 const MENUE: [string, string][] = [
   ['klassen', 'Klassen'],
   ['aufgaben', 'Übungen'],
+  ['erklaerungen', 'Erklärungen'], // Teilaufgabe 4 (Jazz 2026-11-15)
   ['pakete', 'Pakete'],
   ['kompetenzen', 'Kompetenzen'],
   ['einstellungen', 'Einstellungen'],
@@ -37,8 +38,9 @@ function Inhalt({ pfad }: { pfad: string[] }) {
   if (bereich === 'klassen') return <KlassenListe />
   if (bereich === 'kompetenzen') return <Kompetenzen />
   if (bereich === 'aufgaben' && id === 'neu') return <FormatWahl />
-  if (bereich === 'aufgaben' && id) return <AufgabeEditor key={id} aufgabeId={id.startsWith('neu-') ? null : id} neuerTyp={formatAusAdresse(id) ?? undefined} />
-  if (bereich === 'aufgaben') return <AufgabenListe />
+  if ((bereich === 'aufgaben' || bereich === 'erklaerungen') && id) return <AufgabeEditor key={id} aufgabeId={id.startsWith('neu-') ? null : id} neuerTyp={formatAusAdresse(id) ?? undefined} />
+  if (bereich === 'aufgaben') return <AufgabenListe key="u" />
+  if (bereich === 'erklaerungen') return <AufgabenListe key="e" erklaerungen />
   if (bereich === 'pakete' && id === 'neu') return <NeuesPaket />
   if (bereich === 'pakete' && id) return <PaketDetail key={id} paketId={id} vorschau={unterseite === 'vorschau'} />
   if (bereich === 'pakete') return <PaketListe />

@@ -62,3 +62,14 @@ describe('Sortieren nach Kompetenz und KC', () => {
     expect(sortiere(zeilen, { spalte: 'kc', absteigend: false }, String).map((z) => z.titel)).toEqual(['C', 'B', 'A'])
   })
 })
+
+describe('zuletzt geändert (Teilaufgabe 5)', () => {
+  it('neueste zuerst, bei Gleichstand nach Titel', () => {
+    const z = [
+      { titel: 'B', typ: 'lueckentext' as const, stufe: 1 as const, geaendert_am: '2026-11-14T10:00:00Z' },
+      { titel: 'C', typ: 'lueckentext' as const, stufe: 1 as const, geaendert_am: '2026-11-15T10:00:00Z' },
+      { titel: 'A', typ: 'lueckentext' as const, stufe: 1 as const, geaendert_am: '2026-11-14T10:00:00Z' },
+    ]
+    expect(sortiere(z, { spalte: 'geaendert', absteigend: false }, String).map((x) => x.titel)).toEqual(['C', 'A', 'B'])
+  })
+})
