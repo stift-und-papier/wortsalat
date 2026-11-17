@@ -232,7 +232,7 @@ for (const n of KLEINER) {
   vm.createContext(kontext)
   for (const datei of ['docs/farm/farben.js', 'docs/farm/wachsende-deko.js'])
     vm.runInContext(readFileSync(datei, 'utf8').replace(/^const (\w+)/gm, 'var $1'), kontext)
-  vm.runInContext('this.WACHS = WACHS', kontext)
+  vm.runInContext('this.WACHS = WACHS; this.DEKO_FARBEN = DEKO_FARBEN; this.wende = wende', kontext)
   for (const w of kontext.WACHS) {
     const stufen = w.stufen.map(([, q, regeln]) => {
       const [bogen, x, y, qw, qh] = q
@@ -254,6 +254,21 @@ for (const n of KLEINER) {
     writeFileSync(`src/grafik/${name}.png`, PNG.sync.write(ziel))
     liste.push({ name, breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
     console.log(`${name}.png  ${ziel.width}×${H} (${stufen.length} Stufen)`)
+  }
+  // Mehrfach gekaufte Deko in Farben (Jazz 2026-11-17, dekorationen.md 5.2a): ein Bild je Farbe nebeneinander, Regeln aus farben.js (DEKO_FARBEN);
+  // die Pilzhütte ohne Totenkopf. Welche Farbe ein Stück hat, sagt besitz.farbe (Rest bei Division durch die Zahl der Bilder).
+  for (const [name, farben] of Object.entries(kontext.DEKO_FARBEN)) {
+    const q = PNG.sync.read(readFileSync(`src/grafik/${name}.png`))
+    const ziel = new PNG({ width: q.width * farben.length, height: q.height })
+    farben.forEach(([, regeln], i) => {
+      const teil = new PNG({ width: q.width, height: q.height })
+      q.data.copy(teil.data)
+      kontext.wende(teil.data, q.width, regeln)
+      PNG.bitblt(teil, ziel, 0, 0, q.width, q.height, i * q.width, 0)
+    })
+    writeFileSync(`src/grafik/${name}.png`, PNG.sync.write(ziel))
+    Object.assign(liste.find((l) => l.name === name), { breite: ziel.width, bildBreite: q.width })
+    console.log(`${name}.png  ${farben.length} Farben`)
   }
   // Glitzern beim Wachsen (3 Bilder, Jazz' eigene Vorlage aus Gemini, von Claude auf die Palette gebracht: docs/farm/pixeln.cjs)
   const glitzer = [1, 2, 3].map((n) => PNG.sync.read(readFileSync(`assets/neu/glitzern_${n}.png`)))

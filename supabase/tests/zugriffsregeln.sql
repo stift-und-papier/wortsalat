@@ -781,6 +781,40 @@ begin
     exception when raise_exception then
       if sqlerrm !~ 'nur 2 Kühe' then raise; end if;
     end;
+    -- Jazz 2026-11-17 (Schritt 3a): Deko hat Platz und Farbe; jedes Stück eine neue Farbe; nur passende Plätze; Tauschen räumt in die Truhe
+    declare
+      b1 uuid; b2 uuid;
+    begin
+      b1 := (public.kaufen(t_eule, 'busch') ->> 'besitz')::uuid;
+      b2 := (public.kaufen(t_eule, 'busch') ->> 'besitz')::uuid;
+      reset role;
+      if (select farbe from public.besitz where id = b2) <> (select farbe from public.besitz where id = b1) + 1
+         or exists (select 1 from public.besitz where id in (b1, b2) and platz is not null) then
+        raise exception 'Block 9.6b: Farbe oder Platz nach dem Kauf falsch';
+      end if;
+      set local role anon;
+      begin
+        perform public.deko_aufstellen(t_eule, b1, 'B1');
+        raise exception 'Block 9.6b: Busch ins Beet gestellt';
+      exception when raise_exception then
+        if sqlerrm !~ 'passt dort nicht' then raise; end if;
+      end;
+      perform public.deko_aufstellen(t_eule, b1, 'D1');
+      perform public.deko_aufstellen(t_eule, b2, 'D1');
+      reset role;
+      if (select platz from public.besitz where id = b1) is not null or (select platz from public.besitz where id = b2) <> 'D1' then
+        raise exception 'Block 9.6b: Tauschen falsch';
+      end if;
+      set local role anon;
+      if not (public.schueler_farm(t_eule) -> 'deko') @> jsonb_build_array(jsonb_build_object('id', b2, 'platz', 'D1')) then
+        raise exception 'Block 9.6b: Farm-Daten ohne Platz und Farbe';
+      end if;
+      perform public.deko_aufstellen(t_eule, b2, null);
+      reset role;
+      if (select platz from public.besitz where id = b2) is not null then raise exception 'Block 9.6b: in die Truhe geht nicht'; end if;
+      set local role anon;
+    end;
+    n := n + 1;
     n := n + 1;
     reset role;
     n := n + 1;

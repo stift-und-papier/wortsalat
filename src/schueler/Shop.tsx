@@ -8,7 +8,7 @@ import { Buch, BuchBild } from '../gemeinsam/Buch'
 import { Sprite } from '../gemeinsam/Sprite'
 import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
-import { artikelBild, vorratDing, type Artikel, type ArtikelArt, type Shop as ShopDaten } from '../lib/shop'
+import { artikelBild, AUFSTELLEN, vorratDing, type Artikel, type ArtikelArt, type Shop as ShopDaten } from '../lib/shop'
 import type { Grafik } from '../lib/sprite'
 import { supabase } from '../lib/supabase'
 
@@ -39,7 +39,7 @@ function bild(p: Posten): { grafik: Grafik; nummer: number } {
   return { grafik: GRAFIK.emoji_frage, nummer: 0 }
 }
 
-export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void }) {
+export function Shop({ token, farm, nachKauf }: { token: string; farm: string; nachKauf: () => void }) {
   const [daten, setDaten] = useState<ShopDaten | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
   const [meldung, setMeldung] = useState<string | null>(null)
@@ -48,6 +48,7 @@ export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void 
   const [verkauf, setVerkauf] = useState<Verkauf | null>(null)
   const [[kapitel, seite], setOrt] = useState([0, 0])
   const [gewaehlt, setGewaehlt] = useState<string | null>(null) // key des angetippten Kästchens
+  const [neueDeko, setNeueDeko] = useState<string | null>(null) // Jazz 2026-11-17: gekaufte Deko, „gleich aufstellen?“
 
   const laden = useCallback(async () => {
     const [shop, liste] = await Promise.all([
@@ -67,15 +68,21 @@ export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void 
   async function kaufen(a: Artikel) {
     setBeschaeftigt(true)
     setFehler(null)
-    const { error } = await supabase.rpc('kaufen', { p_token: token, p_artikel: a.id })
+    const { data, error } = await supabase.rpc('kaufen', { p_token: token, p_artikel: a.id })
     setBeschaeftigt(false)
     setFrage(false)
     if (error) return setFehler(fehlerText(error))
+    const kauf = data as { besitz: string; platzart: string | null }
+    // Deko mit Platzwahl (Jazz 2026-11-17, Schritt 3a): fragen, ob sie gleich aufgestellt wird, sonst liegt sie in der Truhe
+    const aufstellbar = a.art === 'deko' && kauf.platzart !== 'fest'
+    setNeueDeko(aufstellbar ? kauf.besitz : null)
     // Usability-Test 2026-11-13: Samen erscheinen nicht von selbst, man pflanzt sie
     setMeldung(
       a.art === 'samen'
         ? `Gekauft: ${a.name}! Tippe auf der Farm ein leeres Feld an, dann kannst du sie pflanzen.`
-        : `Gekauft: ${a.name}! Schau auf deine Farm, dort ist es jetzt.`,
+        : aufstellbar
+          ? `Gekauft: ${a.name}!`
+          : `Gekauft: ${a.name}! Schau auf deine Farm, dort ist es jetzt.`,
     )
     await laden()
     nachKauf()
@@ -153,6 +160,39 @@ export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void 
     rechts = <span>Kommt, wenn du noch {wahl.fehlt} Münzen verdienst.</span>
   }
 
+  // Jazz 2026-11-17 (Schritt 3a): nach dem Kauf von Deko rechts die Frage „gleich aufstellen?“
+  if (neueDeko && !fehler) {
+    rechts = (
+      <>
+        <h2>Gleich aufstellen?</h2>
+        <span>Sonst liegt es in deiner Truhe auf der Farm.</span>
+        <a
+          className="knopf knopf--haupt"
+          href={farm}
+          onClick={() => {
+            try {
+              sessionStorage.setItem(AUFSTELLEN, neueDeko)
+            } catch {
+              // Speicher gesperrt: dann wählt man das Stück auf der Farm in der Truhe
+            }
+          }}
+        >
+          Ja, aufstellen
+        </a>
+        <button
+          type="button"
+          className="knopf"
+          onClick={() => {
+            setNeueDeko(null)
+            setMeldung('Gut, es liegt in deiner Truhe. Auf der Farm kannst du es später aufstellen.')
+          }}
+        >
+          Nein, später
+        </button>
+      </>
+    )
+  }
+
   return (
     <>
       <Buch
@@ -164,6 +204,7 @@ export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void 
         seiten={Math.max(1, Math.ceil(alle.length / JE_SEITE))}
         onWechsel={(k, s) => {
           setOrt([k, s])
+          setNeueDeko(null)
           setGewaehlt(null)
           setFrage(false)
         }}
@@ -185,6 +226,7 @@ export function Shop({ token, nachKauf }: { token: string; nachKauf: () => void 
                         aria-pressed={p.key === wahl?.key}
                         onClick={() => {
                           setGewaehlt(p.key)
+                          setNeueDeko(null)
                           setFrage(false)
                         }}
                       >

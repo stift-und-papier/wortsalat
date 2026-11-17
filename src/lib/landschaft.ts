@@ -65,6 +65,26 @@ export const DEKO_PLAETZE: Ort[] = [
   [1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
   [15, 10], [13, 12], [15, 12], [24, 12], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
 ].map(([x, y]) => kern(x, y))
+// Plätze für gekaufte Deko (Jazz 2026-11-17, dekorationen.md 5.1; Lage wie im Mockup docs/farm/farm-mockup.js). Namen wie in der Datenbank
+// (deko_platzart): D1–D20 klein, B1–B16 Beet (Blumen stehen dicht, darum ohne freie Kachel dazwischen), G1–G2 groß (2 × 2), S1–S4 im Wasser.
+export type PlatzArt = 'beet' | 'klein' | 'gross' | 'wasser'
+export const BEETE: { name: string; kacheln: Ort[] }[] = [
+  { name: 'am Acker', kacheln: [[7, 4], [7, 5], [7, 6]] },
+  { name: 'am Brunnen', kacheln: [[12, 8], [13, 9], [14, 9]] },
+  { name: 'an der Hütte', kacheln: [[3, 11], [3, 12]] },
+  { name: 'an der Scheune', kacheln: [[18, 7], [19, 7], [22, 7], [23, 7]] },
+  { name: 'am Ufer', kacheln: [[16, 13], [17, 13]] },
+  { name: 'am Obstgarten', kacheln: [[2, 5], [2, 6]] },
+].map((b) => ({ name: b.name, kacheln: b.kacheln.map(([x, y]) => kern(x, y)) }))
+export const DEKO_PLATZ: Record<string, Ort & { art: PlatzArt; groesse: number }> = Object.fromEntries([
+  ...DEKO_PLAETZE.map((o, i) => [`D${i + 1}`, { ...o, art: 'klein', groesse: 1 }]),
+  ...BEETE.flatMap((b) => b.kacheln).map((o, i) => [`B${i + 1}`, { ...o, art: 'beet', groesse: 1 }]),
+  ...[kern(8, 4), kern(16, 4)].map((o, i) => [`G${i + 1}`, { ...o, art: 'gross', groesse: 2 }]),
+  ...[kern(14, 3), kern(1, 2), kern(15, 1), kern(24, 1)].map((o, i) => [`S${i + 1}`, { ...o, art: 'wasser', groesse: 1 }]),
+])
+/** Kacheln eines Deko-Platzes (groß = 2 × 2) */
+export const platzKacheln = (id: string): Ort[] => (DEKO_PLATZ[id] ? flaeche(DEKO_PLATZ[id], DEKO_PLATZ[id].groesse, DEKO_PLATZ[id].groesse) : [])
+
 // Wachsende Deko (Jazz 2026-11-17, docs/farm/dekorationen.md): steht von Anfang an, wächst mit dem Lernfortschritt, nicht antippbar.
 // b × h Kacheln (das Bild ragt ggf. darüber hinaus), stufen = Zahl der Bilder (muss zu wachstum_verteilen in der Datenbank passen).
 export const WACHSENDE_DEKO = [
@@ -163,7 +183,7 @@ export function belegung(): Map<string, string> {
   BAEUME.forEach((b) => setze(b.grafik, b, b.grafik === 'baum' ? 2 : 1, 2))
   setze('Brunnen', BRUNNEN, 2, 2)
   Object.entries(BAUM_PLAETZE).forEach(([name, o]) => setze(name, o, 2, 2))
-  DEKO_PLAETZE.forEach((o, i) => setze(`Deko ${i}`, o))
+  for (const [id, p] of Object.entries(DEKO_PLATZ)) if (p.art !== 'wasser') platzKacheln(id).forEach((o) => setze(`Deko ${id}`, o))
   huettenKacheln().forEach((o) => setze('Hütte', o))
   setze('Monster', MONSTER_PLATZ)
   wachsKacheln().forEach((o) => setze('wachsende Deko', o))
@@ -171,7 +191,7 @@ export function belegung(): Map<string, string> {
   return belegt
 }
 
-export type Stand = { deko: number; brunnen: boolean; huehner: number; kuehe: number; obstbaeume?: string[]; monster?: boolean }
+export type Stand = { deko: string[]; brunnen: boolean; huehner: number; kuehe: number; obstbaeume?: string[]; monster?: boolean }
 function flaeche(o: Ort, breite: number, hoehe: number): Ort[] {
   return Array.from({ length: breite * hoehe }, (_, i) => ({ x: o.x + (i % breite), y: o.y + Math.floor(i / breite) }))
 }
@@ -181,7 +201,7 @@ export const tierFlaeche = (o: Ort, groesse: number) => flaeche(o, groesse, groe
 /** Kacheln, durch die die Figur nicht laufen kann (Wasser zählt extra) */
 export function hindernisse(s: Stand): Set<string> {
   // Felder sind Boden: darauf darf man gehen (sonst kommt man an die mittleren nicht heran)
-  const liste: Ort[] = [...DEKO_PLAETZE.slice(0, s.deko), ...wachsKacheln()]
+  const liste: Ort[] = [...s.deko.flatMap(platzKacheln), ...wachsKacheln()]
   for (const b of BAEUME) liste.push(...flaeche(b, b.grafik === 'baum' ? 2 : 1, 2))
   if (s.brunnen) liste.push(...flaeche(BRUNNEN, 2, 2))
   if (s.monster) liste.push(MONSTER_PLATZ, ...huettenKacheln())

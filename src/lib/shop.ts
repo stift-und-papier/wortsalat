@@ -36,9 +36,9 @@ export const OBSTBAUM: Record<string, { name: string; grafik: Grafik; fruechte: 
   birnenbaum: { name: 'Birnenbaum', grafik: GRAFIK.baum_birne, fruechte: 'Birnen' },
 }
 
-// Deko zum Ein- und Ausblenden auf der Farm; Namen wie in shop_artikel
+// Namen der Deko wie in shop_artikel
 export const DEKO_NAME: Record<string, string> = {
-  busch: 'Busch', blume_gelb: 'Gelbe Blume', pilz: 'Pilze', stein: 'Stein', blume_lila: 'Lila Blume', pilzhaus: 'Pilzhaus',
+  busch: 'Busch', blume_gelb: 'Blume', pilz: 'Pilze', stein: 'Stein', blume_lila: 'Traubenblume', pilzhaus: 'Pilzhaus',
   brunnen: 'Brunnen', boot: 'Boot', katze_rosa: 'Katzenblume rosa', katze_blau: 'Katzenblume blau',
 }
 
@@ -50,12 +50,19 @@ export function vorratDing(sorte: string): { name: string; grafik: Grafik; numme
   return { nummer: 0, ...e }
 }
 
+// Gekaufte Deko mit Platz (D1 … S4 aus DEKO_PLATZ in landschaft.ts, bei Brunnen und Boot ihr Name) und Farbe (laufende Nummer)
+export type DekoStueck = { id: string; artikel: string; platzart: 'beet' | 'klein' | 'gross' | 'wasser' | 'fest'; platz: string | null; farbe: number }
+// Nach dem Kauf „gleich aufstellen“: der Shop merkt sich das Stück, die Farm fragt nach dem Platz (nur für diesen Besuch)
+export const AUFSTELLEN = 'wortsalat-aufstellen'
+
 export type Farm = {
   felder: number
   pflanzen: { feld: number; sorte: string; bild: number; reif: boolean }[]
   samen: { sorte: string; anzahl: number }[]
   vorrat: { sorte: string; anzahl: number }[]
   dinge: { artikel: string; anzahl: number }[]
+  // Jazz 2026-11-17 (Schritt 3a): jede gekaufte Deko einzeln; platz null = liegt in der Truhe
+  deko: DekoStueck[]
   tiere: { id: string; art: string; satt: boolean }[]
   // tage = Tage, bis der Baum wieder Früchte trägt (0 = reif)
   baeume: { id: string; art: string; tage: number }[]
@@ -78,4 +85,10 @@ export function artikelBild(id: string): { grafik: Grafik; nummer: number } {
   const deko = (GRAFIK as Record<string, Grafik>)[`deko_${id}`]
   if (!deko) throw new Error(`Kein Bild für ${id}`)
   return { grafik: deko, nummer: 0 }
+}
+
+/** Bild einer gekauften Deko in ihrer Farbe (die Bilder je Farbe liegen nebeneinander; danach geht es von vorn los) */
+export function dekoBild(artikel: string, farbe: number): { grafik: Grafik; nummer: number } {
+  const b = artikelBild(artikel)
+  return { ...b, nummer: farbe % Math.max(1, Math.round(b.grafik.breite / b.grafik.bildBreite)) }
 }

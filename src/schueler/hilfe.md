@@ -67,6 +67,10 @@ Jede Aufgabe, für die du Münzen bekommst, gießt alle deine Felder. Ein kleine
 
 Ist eine Pflanze reif, sagt deine Figur Bescheid. Tippe das Feld an, dann liegt die Ernte daneben. Tippe die Ernte an, dann sammelt deine Figur sie ein. Danach ist sie in deinem **Vorrat** unter der Farm.
 
+## Wie stelle ich Deko auf?
+
+Nach dem Kauf fragt der Laden, ob du die Deko gleich aufstellen möchtest. Dann leuchten auf der Farm die Plätze hell, auf die sie passt. Blumen kommen in die Beete, Großes auf die großen Plätze. Später tippst du auf das Zahnrad und dann auf **Deko aufstellen**. Tippe einen hellen Platz an: Dort kannst du etwas aufstellen, tauschen oder in die Truhe legen. Was in der Truhe liegt, findest du im **Vorrat**. Nichts geht verloren.
+
 ## Wann bekomme ich Tiere?
 
 Hühner und Kühe gibt es im Shop, sobald du genug Münzen verdient hast. Tippe ein Tier an und gib ihm etwas aus deinem Vorrat. Jedes Tier frisst einmal am Tag. Dafür legt das Huhn ein Ei und die Kuh gibt Milch. Bessere Ernte gibt besondere Eier und Milch.

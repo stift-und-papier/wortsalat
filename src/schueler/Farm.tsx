@@ -10,11 +10,11 @@ import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
 import {
-  ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_KERN, grundKacheln, HEU, HUETTE, HUETTE_KLEIN, hindernisse,
+  ablagePlaetze, BAEUME, BAUM_PLAETZE, BEETE, BOOT, BRUNNEN, DEKO_PLATZ, FELD_PLAETZE, FIGUR_START, GRAS_KERN, grundKacheln, HEU, HUETTE, HUETTE_KLEIN, hindernisse,
   HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF_PLAETZE, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
   type Ort,
 } from '../lib/landschaft'
-import { artikelBild, DEKO_NAME, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
+import { AUFSTELLEN, DEKO_NAME, dekoBild, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type DekoStueck, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
 import { farmMal, monster as monsterAus } from '../lib/monster'
 import { supabase } from '../lib/supabase'
@@ -34,8 +34,7 @@ const mitte = (o: Ort) => ({ x: o.x * KACHEL + 8, y: o.y * KACHEL + 12 })
 const richtungZu = (dx: number, dy: number) => (Math.round(Math.atan2(dx, -dy) / (Math.PI / 4)) + 8) % 8
 
 type Menue = { art: 'feld'; feld: number } | { art: 'tier'; id: string }
-// shortcut: ausgeblendete Deko merkt sich nur dieses Gerät (wie Dunkler Modus). Soll es auf jedem iPad gelten, in die Datenbank (wie figur).
-const DEKO_AUS = 'wortsalat-farm-deko-aus'
+const PLATZ_WORT: Record<string, string> = { beet: 'ein Beet', klein: 'einen kleinen Platz', gross: 'einen großen Platz', wasser: 'einen Platz im Wasser' }
 
 export function Farm({ token, shop, album, figur: figurName, nachFigur }: { token: string; shop: string; album: string; figur: string; nachFigur: () => void }) {
   const [daten, setDaten] = useState<FarmDaten | null>(null)
@@ -56,13 +55,23 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   const [blase, setBlase] = useState(true) // Sprechblase „… kann geerntet werden!“, bis man zum ersten Mal tippt
   const [einrichten, setEinrichten] = useState(false) // Fenster hinter dem Zahnrad: Figur und Deko
   const [vorratOffen, setVorratOffen] = useState(false) // Jazz 2026-11-15: Vorrat als Fenster hinter dem Truhen-Knopf
-  const [dekoAus, setDekoAus] = useState<string[]>(() => {
+  // Deko aufstellen (Jazz 2026-11-17, Schritt 3a): die passenden Plätze leuchten hell; stueck = schon gewähltes Stück (aus Shop oder Truhe)
+  const [aufstellen, setAufstellen] = useState<{ stueck: string | null } | null>(() => {
     try {
-      return JSON.parse(localStorage.getItem(DEKO_AUS) ?? '[]') as string[]
+      const id = sessionStorage.getItem(AUFSTELLEN)
+      return id ? { stueck: id } : null
     } catch {
-      return []
+      return null
     }
   })
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem(AUFSTELLEN)
+    } catch {
+      // Speicher gesperrt: dann kam auch nichts aus dem Shop
+    }
+  }, [])
+  const [platzWahl, setPlatzWahl] = useState<string | null>(null) // angetippter Platz: Fenster mit passender Deko aus der Truhe
 
   const laden = useCallback(async () => {
     const { data, error } = await supabase.rpc('schueler_farm', { p_token: token })
@@ -194,7 +203,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     schritt(0, figur)
   }
 
-  async function ausfuehren(rpc: 'pflanzen' | 'ernten' | 'fuettern' | 'einsammeln' | 'farm_monster_waehlen', args: Record<string, unknown>, erfolg: string | ((neu: FarmDaten) => string)) {
+  async function ausfuehren(rpc: 'pflanzen' | 'ernten' | 'fuettern' | 'einsammeln' | 'farm_monster_waehlen' | 'deko_aufstellen', args: Record<string, unknown>, erfolg: string | ((neu: FarmDaten) => string)) {
     setFehler(null)
     const { data, error } = await supabase.rpc(rpc, { p_token: token, ...args })
     if (error) return setFehler(fehlerText(error))
@@ -229,27 +238,22 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     links: 34 + Math.floor((flaeche.breite - 27 * KACHEL * mal) / 2) - RAND * KACHEL * mal,
     oben: 32 + Math.floor((flaeche.hoehe - ZEILEN * KACHEL * mal) / 2), // unten liegt keine Meldung mehr: Insel senkrecht mittig
   }
-  // Deko lässt sich im Fenster „Farm einrichten“ ausblenden (gekauft bleibt sie)
-  const dekoArten = daten.dinge.map((d) => d.artikel).filter((id) => !['huhn', 'kuh'].includes(id))
-  const dinge = daten.dinge.filter((d) => !dekoAus.includes(d.artikel))
-  const deko = dinge
-    .filter((d) => !['huhn', 'kuh', 'brunnen', 'boot'].includes(d.artikel))
-    .flatMap((d) => Array(d.anzahl).fill(d.artikel) as string[])
-    .slice(0, DEKO_PLAETZE.length)
-  const hatBrunnen = dinge.some((d) => d.artikel === 'brunnen')
-  const hatBoot = dinge.some((d) => d.artikel === 'boot')
-  function dekoSchalten(id: string) {
-    const neu = dekoAus.includes(id) ? dekoAus.filter((x) => x !== id) : [...dekoAus, id]
-    setDekoAus(neu)
-    try {
-      localStorage.setItem(DEKO_AUS, JSON.stringify(neu))
-    } catch {
-      // Speicher gesperrt (privater Modus): gilt dann nur, bis die Seite neu lädt
-    }
-  }
+  // Jazz 2026-11-17 (Schritt 3a): Deko steht auf ihrem Platz (Server), ohne Platz liegt sie in der Truhe; Brunnen und Boot haben feste Plätze
+  const deko = daten.deko.filter((d) => d.platz && DEKO_PLATZ[d.platz])
+  const truhe = daten.deko.filter((d) => !d.platz)
+  const hatBrunnen = daten.deko.some((d) => d.platz === 'brunnen')
+  const hatBoot = daten.deko.some((d) => d.platz === 'boot')
+  const gewaehlt = aufstellen?.stueck ? daten.deko.find((d) => d.id === aufstellen.stueck) : undefined
+  // Plätze, die beim Aufstellen hell leuchten: zum gewählten Stück passend, sonst alle (Brunnen und Boot stellen sich selbst auf)
+  const helle = aufstellen ? Object.keys(DEKO_PLATZ).filter((id) => !gewaehlt || DEKO_PLATZ[id].art === gewaehlt.platzart) : []
+  const stellen = (stueck: string, platz: string | null, text: string) =>
+    ausfuehren('deko_aufstellen', { p_besitz: stueck, p_platz: platz }, text).then((ok) => {
+      if (ok) setPlatzWahl(null)
+      if (ok && platz) setAufstellen({ stueck: null })
+    })
   const baeume = daten.baeume.filter((b) => BAUM_PLAETZE[b.art])
   const besetzt = hindernisse({
-    deko: deko.length, brunnen: hatBrunnen, huehner: huehner.length, kuehe: kuehe.length, obstbaeume: baeume.map((b) => b.art),
+    deko: deko.map((d) => d.platz!), brunnen: hatBrunnen, huehner: huehner.length, kuehe: kuehe.length, obstbaeume: baeume.map((b) => b.art),
     monster: Boolean(daten.monster),
   })
   const farmMonster = daten.monster ? monsterAus(daten.monster) : null
@@ -430,9 +434,19 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
       {/* Usability-Test 2026-11-13: Meldungen an festem Platz; Jazz 2026-11-17: als Papier-Schild oben in der Kopfzeile (Mitte) */}
       {kopf.mitte &&
         createPortal(
-          <div className="farm-meldung">
+          <div className={aufstellen && !fehler ? 'farm-meldung farm-meldung--knopf' : 'farm-meldung'}>
             {fehler ? (
               <p role="alert">{fehler}</p>
+            ) : aufstellen ? (
+              <>
+                <p role="status">
+                  {meldung ? `${meldung} ` : ''}
+                  {gewaehlt ? `Wohin soll ${DEKO_NAME[gewaehlt.artikel] ?? 'die Deko'}? Tippe einen hellen Platz an.` : 'Tippe einen hellen Platz an.'}
+                </p>
+                <button type="button" className="knopf knopf--haupt" onClick={() => setAufstellen(null)}>
+                  Fertig
+                </button>
+              </>
             ) : (
               <p role="status" className={meldung || hungerText ? undefined : 'leise'}>
                 {meldung ?? grundText}
@@ -483,10 +497,31 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
           )}
           {baeume.map((b) => baumKnopf(b))}
           {hatBrunnen && <Ding grafik={GRAFIK.brunnen} x={px(BRUNNEN.x)} y={px(BRUNNEN.y)} mal={mal} z={(BRUNNEN.y + 2) * KACHEL} />}
-          {deko.map((id, i) => {
-            const b = artikelBild(id)
-            const o = DEKO_PLAETZE[i]
-            return <Ding key={i} grafik={b.grafik} nummer={b.nummer} x={px(o.x)} y={px(o.y)} mal={mal} z={(o.y + 1) * KACHEL} />
+          {deko.map((d) => {
+            // unten bündig und waagerecht mittig auf dem Platz (groß = 2 × 2)
+            const b = dekoBild(d.artikel, d.farbe)
+            const o = DEKO_PLATZ[d.platz!]
+            const x = px(o.x) + Math.round((o.groesse * KACHEL - b.grafik.bildBreite) / 2) * mal
+            return <Ding key={d.id} grafik={b.grafik} nummer={b.nummer} x={x} y={px(o.y + o.groesse) - b.grafik.bildHoehe * mal} mal={mal} z={(o.y + o.groesse) * KACHEL} />
+          })}
+          {/* Beim Aufstellen leuchten die passenden Plätze hell (ohne gestrichelte Linie: die heißt „hier schreiben“) */}
+          {helle.map((id) => {
+            const o = DEKO_PLATZ[id]
+            const steht = deko.find((d) => d.platz === id)
+            return (
+              <button
+                key={id}
+                type="button"
+                className="farm-platz"
+                style={{ left: px(o.x), top: px(o.y), width: px(o.groesse), height: px(o.groesse) }}
+                aria-label={`${PLATZ_WORT[o.art]}: ${steht ? DEKO_NAME[steht.artikel] ?? steht.artikel : 'frei'}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (gewaehlt) void stellen(gewaehlt.id, id, `${DEKO_NAME[gewaehlt.artikel] ?? 'Die Deko'} steht jetzt auf deiner Farm.`)
+                  else setPlatzWahl(id)
+                }}
+              />
+            )
           })}
           {/* Wachsende Deko: Bild unten bündig, waagerecht mittig auf ihrem Platz (Höheres ragt nach oben), nicht antippbar */}
           {WACHSENDE_DEKO.map((w) => {
@@ -697,23 +732,47 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             </div>
           )}
           <h4>Deko auf der Farm</h4>
-          {dekoArten.length === 0 ? (
+          {daten.deko.filter((d) => d.platzart !== 'fest').length === 0 ? (
             <p>
-              Du hast noch keine Deko. <a href={shop}>Im Shop</a> gibt es welche.
+              Du hast noch keine Deko. <a href={shop}>Im Laden</a> gibt es welche.
             </p>
           ) : (
-            <div className="farm-deko-wahl">
-              {dekoArten.map((id) => (
-                <button key={id} type="button" role="switch" aria-checked={!dekoAus.includes(id)} className="schalter" onClick={() => dekoSchalten(id)}>
-                  <span className="schalter__bahn" aria-hidden="true">
-                    <span className="schalter__knopf" />
-                  </span>
-                  {DEKO_NAME[id] ?? id}
-                </button>
-              ))}
-            </div>
+            <>
+              <p>Stelle Deko auf, tausche sie oder räume sie in die Truhe. Nichts geht verloren.</p>
+              <button
+                type="button"
+                className="knopf knopf--haupt"
+                onClick={() => {
+                  setEinrichten(false)
+                  setMeldung(null)
+                  setAufstellen({ stueck: null })
+                }}
+              >
+                Deko aufstellen
+              </button>
+            </>
           )}
         </FarmMenue>
+      )}
+
+      {platzWahl && (
+        <PlatzFenster
+          platz={platzWahl}
+          deko={daten.deko}
+          shop={shop}
+          schliessen={() => setPlatzWahl(null)}
+          stellen={(stueck, platz, text) => void stellen(stueck, platz, text)}
+          ganzesBeet={async (stuecke) => {
+            for (const [stueck, platz] of stuecke) {
+              const { error } = await supabase.rpc('deko_aufstellen', { p_token: token, p_besitz: stueck, p_platz: platz })
+              if (error) return setFehler(fehlerText(error))
+            }
+            setPlatzWahl(null)
+            setAufstellen({ stueck: null })
+            setMeldung('Das Beet ist jetzt voller Blumen.')
+            void laden()
+          }}
+        />
       )}
 
       {daten.monster_neu && farmMonster && daten.monster && (
@@ -739,6 +798,32 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
 
       {vorratOffen && (
         <FarmMenue titel="Dein Vorrat" schliessen={() => setVorratOffen(false)}>
+        {/* Jazz 2026-11-17 (Schritt 3a): Deko, die nicht aufgestellt ist, liegt hier; antippen = aufstellen */}
+        {truhe.length > 0 && (
+          <>
+            <h4>Deko zum Aufstellen</h4>
+            <MenueListe>
+              {gruppen(truhe).map((g) => {
+                const b = dekoBild(g[0].artikel, g[0].farbe)
+                return (
+                  <MenuePlatz
+                    key={g[0].id}
+                    grafik={b.grafik}
+                    nummer={b.nummer}
+                    name={DEKO_NAME[g[0].artikel] ?? g[0].artikel}
+                    anzahl={g.length}
+                    waehlen={() => {
+                      setVorratOffen(false)
+                      setMeldung(null)
+                      setAufstellen({ stueck: g[0].id })
+                    }}
+                  />
+                )
+              })}
+            </MenueListe>
+            <h4>Ernte und mehr</h4>
+          </>
+        )}
         {daten.vorrat.length === 0 ? (
           <p>Noch leer. Was du erntest und einsammelst, liegt hier.</p>
         ) : (
@@ -808,5 +893,85 @@ function Ding(props: { grafik: Grafik; nummer?: number; x: number; y: number; ma
     <span className="farm-ding" style={{ left: props.x, top: props.y, zIndex: props.z }}>
       <Sprite grafik={props.grafik} nummer={props.nummer} mal={props.mal} />
     </span>
+  )
+}
+
+/** Gleiche Deko in gleicher Farbe zusammenfassen (für die Auswahl mit Anzahl) */
+function gruppen(liste: DekoStueck[]): DekoStueck[][] {
+  const map = new Map<string, DekoStueck[]>()
+  for (const d of liste) {
+    const key = `${d.artikel}:${dekoBild(d.artikel, d.farbe).nummer}`
+    map.set(key, [...(map.get(key) ?? []), d])
+  }
+  return [...map.values()]
+}
+
+// Angetippter Platz beim Aufstellen (Jazz 2026-11-17, dekorationen.md 5.4): frei → passende Deko aus der Truhe wählen;
+// belegt → tauschen oder in die Truhe. Im Beet: alle freien Plätze des Beets auf einmal mit einer Blume.
+function PlatzFenster(props: {
+  platz: string
+  deko: DekoStueck[]
+  shop: string
+  schliessen: () => void
+  stellen: (stueck: string, platz: string | null, text: string) => void
+  ganzesBeet: (stuecke: [string, string][]) => void
+}) {
+  const o = DEKO_PLATZ[props.platz]
+  const steht = props.deko.find((d) => d.platz === props.platz)
+  const passend = gruppen(props.deko.filter((d) => !d.platz && d.platzart === o.art))
+  const name = (d: DekoStueck) => DEKO_NAME[d.artikel] ?? d.artikel
+  // freie Plätze im selben Beet (dieser zuerst)
+  const beet = BEETE.find((b) => b.kacheln.some((k) => k.x === o.x && k.y === o.y))
+  const beetFrei = beet
+    ? Object.keys(DEKO_PLATZ)
+        .filter((id) => beet.kacheln.some((k) => k.x === DEKO_PLATZ[id].x && k.y === DEKO_PLATZ[id].y) && DEKO_PLATZ[id].art === 'beet')
+        .filter((id) => !props.deko.some((d) => d.platz === id))
+    : []
+  return (
+    <FarmMenue titel={steht ? name(steht) : 'Freier Platz'} schliessen={props.schliessen}>
+      {steht && (
+        <button type="button" className="knopf" onClick={() => props.stellen(steht.id, null, `${name(steht)} liegt jetzt in deiner Truhe.`)}>
+          In die Truhe
+        </button>
+      )}
+      {passend.length === 0 ? (
+        <p>
+          In deiner Truhe ist nichts für {PLATZ_WORT[o.art]}. <a href={props.shop}>Im Laden</a> gibt es mehr.
+        </p>
+      ) : (
+        <>
+          <h4>{steht ? 'Tauschen gegen' : 'Aufstellen'}</h4>
+          <MenueListe>
+            {passend.map((g) => {
+              const b = dekoBild(g[0].artikel, g[0].farbe)
+              return (
+                <MenuePlatz
+                  key={g[0].id}
+                  grafik={b.grafik}
+                  nummer={b.nummer}
+                  name={name(g[0])}
+                  anzahl={g.length}
+                  waehlen={() => props.stellen(g[0].id, props.platz, `${name(g[0])} steht jetzt auf deiner Farm.`)}
+                />
+              )
+            })}
+          </MenueListe>
+          {beetFrei.length > 1 && passend.some((g) => g.length > 1) && (
+            <>
+              <h4>Ganzes Beet {beet!.name}</h4>
+              <div className="farm-deko-wahl">
+                {passend
+                  .filter((g) => g.length > 1)
+                  .map((g) => (
+                    <button key={g[0].id} type="button" className="knopf" onClick={() => props.ganzesBeet(beetFrei.slice(0, g.length).map((id, i) => [g[i].id, id]))}>
+                      Alle freien Plätze: {name(g[0])}
+                    </button>
+                  ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
+    </FarmMenue>
   )
 }

@@ -587,4 +587,15 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Meldung einmal beim Öffnen, Gewachsenes glitzert etwa 5 s immer wieder (Jazz) (aus bei „Bewegung reduzieren“). Hilfe: neuer Abschnitt. Geprüft im Browser mit Dachs-19
   (8 Ereignisse → alle Stufe 2, Meldung, Glitzern, „gesehen“ gespeichert). Zahnrad wieder der alte Holzknopf (Jazz).
   Nicht getestet: echtes iPad; Aussehen des Glitzerns (nur im Code geprüft, dass es erscheint und verschwindet).
-- **Nächster Schritt:** Jazz prüft Schritt 2; danach Schritt 3 (kaufbare Deko mit Plätzen und Farben), Teilaufgabe 5 (Münzsystem) später.
+- **Schritt 3a (2026-11-17, Jazz: erst Plätze, dann Bilder; Datenbank freigegeben; vorläufige Preise A 30 / B 75 / C 160 / D 250 für 3b):**
+  Migrationen `deko_plaetze` und `deko_fest_platz`: `shop_artikel.platzart` (beet, klein, gross, wasser, fest), `besitz.platz` (leer = Truhe) und
+  `besitz.farbe` (laufende Nummer je Artikel), `deko_aufstellen` (aufstellen, tauschen, in die Truhe), `kaufen` gibt die Besitz-Nummer zurück und
+  begrenzt Deko auf die Zahl der Plätze (Brunnen und Boot je eins). Schon Gekauftes wurde wie bisher verteilt (Blumen und Katzenblumen in die Beete),
+  Farben in Kaufreihenfolge. „Gelbe Blume“ heißt jetzt „Blume“ (rosa, blau, lila, weiß, orange), „Lila Blume“ heißt „Traubenblume“; Pilz und
+  Pilzhütte in 4 Farben, Pilzhütte ohne Totenkopf (Bilder aus farben.js per grafik-holen.mjs). Plätze `DEKO_PLATZ`/`BEETE` in landschaft.ts (Tests:
+  nichts überdeckt sich, alles erreichbar, Wasser-Plätze am Ufer). Farm: Zahnrad → „Deko aufstellen“, helle Plätze, Platz antippen → aufstellen,
+  tauschen, in die Truhe, ganzes Beet auf einmal; Vorrat zeigt „Deko zum Aufstellen“; Laden fragt nach dem Kauf „Gleich aufstellen?“.
+  Das Ausblenden von Deko nur auf dem Gerät (localStorage) entfällt. Belohnungs-Deko (Katzenblumen) kommt in die Truhe.
+  Geprüft im Browser mit Pfau-99: Verteilung, in die Truhe, wieder aufstellen, Busch kaufen und gleich aufstellen. DB-Test 167, Tests 156.
+  Nicht getestet: iPad; „ganzes Beet“ (kein Testkind hat genug gleiche Blumen in der Truhe); große Plätze und Wasser-Plätze (es gibt noch keine Deko dafür, kommt in 3b).
+- **Nächster Schritt:** Jazz prüft Schritt 3a; danach 3b (etwa 40 neue Deko-Dinge im Laden, vorläufige Preise), Teilaufgabe 5 (Münzsystem) später.

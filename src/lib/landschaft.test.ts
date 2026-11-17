@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ablagePlaetze, BAUM_PLAETZE, belegung, BOOT, blobTeil, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_DEKO, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KUH_PLAETZE,
-  MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
+  DEKO_PLATZ, MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
 } from './landschaft'
 
 describe('Landschaft', () => {
@@ -40,7 +40,7 @@ describe('Landschaft', () => {
     expect(grundKacheln().filter((k) => k.grafik === 'wasser')).toHaveLength(SPALTEN * ZEILEN)
   })
   it('mit allem gekauft erreicht die Figur jedes Feld und jedes Tier (auch in der Scheune)', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2 })
+    const besetzt = hindernisse({ deko: Object.keys(DEKO_PLATZ), brunnen: true, huehner: 4, kuehe: 2 })
     expect(besetzt.has(`${FIGUR_START.x},${FIGUR_START.y}`)).toBe(false)
     const ziele = [
       ...FELD_PLAETZE.map((o) => [o]),
@@ -50,7 +50,7 @@ describe('Landschaft', () => {
     for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
   })
   it('mit Monster und Hütte (Jazz 2026-11-15) bleibt alles erreichbar, auch das Monster', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2, monster: true })
+    const besetzt = hindernisse({ deko: Object.keys(DEKO_PLATZ), brunnen: true, huehner: 4, kuehe: 2, monster: true })
     const ziele = [...FELD_PLAETZE.map((o) => [o]), ...HUHN_PLAETZE.map((o) => [o]), [MONSTER_PLATZ]]
     for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
   })
@@ -66,7 +66,7 @@ describe('Landschaft', () => {
 
 describe('ablagePlaetze', () => {
   it('legt Dinge auf freie, verschiedene Kacheln neben den Ursprung', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2 })
+    const besetzt = hindernisse({ deko: Object.keys(DEKO_PLATZ), brunnen: true, huehner: 4, kuehe: 2 })
     const huhn = tierFlaeche(HUHN_PLAETZE[0], 1)
     const plaetze = ablagePlaetze([huhn, huhn, huhn], besetzt, new Set())
     expect(new Set(plaetze.map((o) => `${o.x},${o.y}`)).size).toBe(3)
@@ -86,14 +86,22 @@ describe('ablagePlaetze', () => {
     for (let dx = 0; dx < w4.b; dx++) expect(istGras(w4.x + dx, w4.y)).toBe(false)
     expect([0, 1].some((dx) => istGras(w4.x + dx, w4.y - 1))).toBe(true)
   })
+  it('Wasser-Plätze für Deko liegen im Wasser direkt am Ufer, nicht unter dem Boot', () => {
+    for (const id of ['S1', 'S2', 'S3', 'S4']) {
+      const o = DEKO_PLATZ[id]
+      expect(istGras(o.x, o.y), id).toBe(false)
+      expect([[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => istGras(o.x + dx, o.y + dy)), id).toBe(true)
+      expect(o.x >= BOOT.x && o.x < BOOT.x + 3 && o.y >= BOOT.y && o.y < BOOT.y + 2, id).toBe(false)
+    }
+  })
   it('Boot liegt ganz im Wasser, Obstbäume sind mit allem anderen zusammen erreichbar', () => {
     for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 3; dx++) expect(istGras(BOOT.x + dx, BOOT.y + dy)).toBe(false)
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2, obstbaeume: Object.keys(BAUM_PLAETZE) })
+    const besetzt = hindernisse({ deko: Object.keys(DEKO_PLATZ), brunnen: true, huehner: 4, kuehe: 2, obstbaeume: Object.keys(BAUM_PLAETZE) })
     for (const o of Object.values(BAUM_PLAETZE)) expect(weg(FIGUR_START, nebenan(tierFlaeche(o, 2)), besetzt)).not.toBeNull()
     for (const o of FELD_PLAETZE) expect(weg(FIGUR_START, nebenan([o]), besetzt)).not.toBeNull()
   })
   it('eine Kuh allein läuft durch die ganze Scheune: beide Plätze drinnen gesperrt, die Kuh bleibt erreichbar', () => {
-    const besetzt = hindernisse({ deko: 0, brunnen: false, huehner: 0, kuehe: 1 })
+    const besetzt = hindernisse({ deko: [], brunnen: false, huehner: 0, kuehe: 1 })
     for (const k of [...tierFlaeche(KUH_PLAETZE[0], 2), ...tierFlaeche(KUH_PLAETZE[1], 2)]) expect(besetzt.has(`${k.x},${k.y}`)).toBe(true)
     expect(weg(FIGUR_START, nebenan(tierFlaeche(KUH_PLAETZE[0], 2)), besetzt)).not.toBeNull()
   })

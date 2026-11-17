@@ -270,7 +270,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
   if (bereich === 'shop') {
     return (
       <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster}>
-        <Shop token={token} nachKauf={() => void laden()} />
+        <Shop token={token} farm={`#${basis}/farm`} nachKauf={() => void laden()} />
       </Rahmen>
     )
   }
@@ -541,7 +541,7 @@ function BelohnungFenster({ belohnungen, schliessen }: { belohnungen: Belohnung[
             )
           })}
         </ul>
-        <p className="leise">Samen findest du beim Pflanzen, Deko steht gleich auf deiner Farm.</p>
+        <p className="leise">Samen findest du beim Pflanzen. Deko liegt in deiner Truhe auf der Farm, von dort stellst du sie auf.</p>
         <div className="knopf-reihe">
           {/* eslint-disable-next-line jsx-a11y/no-autofocus -- Fenster: Fokus muss hinein */}
           <button type="button" className="knopf knopf--haupt" autoFocus onClick={schliessen}>
