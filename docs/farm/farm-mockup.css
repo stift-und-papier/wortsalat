@@ -1,0 +1,62 @@
+/* Gemeinsame Stile der Farm-Mockups (layout-leer.html, layout-voll.html). Nur Vorschlag, ändert nichts am Spiel. */
+  :root { --kopf: 64px; --menue: 83px; --rand: 8px; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { position: relative; }
+  body { background: var(--color-papier, #f6ecd2); }
+  /* Kopfzeile (Vorschlag: 72 statt 116 px hoch, Farm-Knöpfe wandern hierher) */
+  .kopf { height: var(--kopf); box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+  .kopf .mitte { flex: 1; display: flex; justify-content: center; }
+  .kopf .pixel-schild { margin: 0; }
+  .kopf .pixel-schild h1 { font-size: 1.35rem; }
+  /* Dunkel-Schalter, Bildknöpfe (.farm-bildknopf) und Zahnrad (.holzknopf) kommen unverändert aus bausteine.css wie im Spiel */
+  .farm-bildknopf--shop { color: var(--color-aktion); }
+  .farm-bildknopf--shop .symbol { width: 28px; height: 28px; }
+  .rundknopf { width: 56px; height: 56px; box-sizing: border-box; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-direction: column; font-size: 11px; line-height: 1; }
+  .rundknopf img { image-rendering: pixelated; }
+  .muenzen { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-weight: 800; }
+  /* Spielfenster: volle Breite, Holzrahmen wie heute (rahmen_spiel, 2-fach) */
+  .spielrahmen { position: absolute; left: var(--rand); right: var(--rand); top: var(--kopf);
+    border: 32px solid transparent; border-width: 32px 34px 34px;
+    border-image: url('../../src/grafik/rahmen_spiel.png') 16 17 17 / 32px 34px 34px; image-rendering: pixelated; }
+  .buehne { position: relative; overflow: hidden; background-image: url('../../src/grafik/wasser.png'); image-rendering: pixelated; }
+  .buehne canvas { position: absolute; image-rendering: pixelated; }
+  .ding { position: absolute; line-height: 0; }
+  .ding img, .sprite { image-rendering: pixelated; display: block; }
+  .platzhalter { position: absolute; box-sizing: border-box; border: 2px dashed #6b4a2b; background: rgba(255, 248, 225, 0.75);
+    color: #3b2a1a; font: 700 11px/1.15 Nunito, sans-serif; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; }
+  .zone { position: absolute; box-sizing: border-box; border: 3px dashed rgba(40, 30, 90, 0.85); background: rgba(255, 255, 255, 0.18); }
+  .zone b { position: absolute; left: -3px; bottom: 100%; background: rgba(255, 255, 255, 0.92); color: #1d1640; font: 800 12px/1.2 Nunito, sans-serif; padding: 2px 5px; border-radius: 4px; white-space: nowrap; }
+  .platz { position: absolute; box-sizing: border-box; border: 2px dotted #1d1640; border-radius: 50%; }
+  .platz--gross { border-radius: 6px; }
+  .platz span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 800 10px/1 Nunito, sans-serif; color: #1d1640; background: rgba(255,255,255,0.85); padding: 1px 2px; border-radius: 3px; }
+  .meldung { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 32px); width: 640px; box-sizing: border-box;
+    border-style: solid; border-width: 12px 12px 18px; border-image: var(--rahmen-karte) 4 4 6 fill / 12px 12px 18px; image-rendering: pixelated;
+    padding: 2px 10px; font-size: 17px; color: #3b2a1a; text-align: center; }
+  .menue { position: absolute; left: 0; right: 0; bottom: 0; height: var(--menue); box-sizing: border-box; margin: 0; }
+  .menue ul { display: flex; justify-content: space-around; list-style: none; margin: 0 auto; padding: 10px 0; }
+  .menue a { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 15px; }
+  .menue a .symbol { display: inline-block; width: 28px; height: 22px; }
+  .menue a[aria-current='page'] { font-weight: 800; }
+  .hinweis-mockup { position: fixed; right: 6px; bottom: calc(var(--menue) + 4px); font: 11px Nunito, sans-serif; color: #444; background: rgba(255,255,255,0.8); padding: 1px 4px; }
+  /* Hochformat: nur Hinweis (Vorschlag, Jazz 2026-11-17: ja) */
+  .drehen { display: none; }
+  @media (orientation: portrait) {
+    .drehen { display: flex; position: fixed; inset: var(--kopf) 0 var(--menue) 0; flex-direction: column; align-items: center; justify-content: center; gap: 20px; background: var(--color-papier, #f6ecd2); z-index: 10; font-size: 22px; font-weight: 800; color: #3b2a1a; }
+    .drehen .ipad { width: 90px; height: 124px; border: 6px solid #6b4a2b; border-radius: 12px; animation: drehen 2.4s steps(1) infinite; }
+    @keyframes drehen { 50% { transform: rotate(-90deg); } }
+  }
+  @media (prefers-reduced-motion: reduce) { .drehen .ipad { animation: none; transform: rotate(-90deg); } }
+
+  /* Bewegung in der vollen Farm (im Spiel: FarmTier.tsx); aus bei „Bewegung reduzieren“ */
+  .laufen { animation: laufen 1.6s steps(2) infinite; }
+  @keyframes laufen { 50% { transform: translateX(6px); } }
+  .schaukeln { animation: schaukeln 1.4s steps(2) infinite; }
+  @keyframes schaukeln { 50% { transform: translateY(2px); } }
+  .huepfen { animation: huepfen 1.2s steps(2) infinite; }
+  @keyframes huepfen { 50% { transform: translateY(-4px); } }
+  .platzhalter.bewegt { outline: 2px solid #b5651d; outline-offset: -5px; }
+  @media (prefers-reduced-motion: reduce) { .laufen, .schaukeln, .huepfen { animation: none; } }
+
+  /* Rahmen des Spiels (body.garten-seite) ohne seinen Innenabstand: das Mockup legt Kopfzeile, Fenster und Menü selbst fest */
+  body.garten-seite { padding: 0; min-height: 0; }
+  .kopf.muenzen-stand { flex-wrap: nowrap; margin: 0; }

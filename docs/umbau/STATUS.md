@@ -544,4 +544,13 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   gekauften Paketen (Abschnitt 8). Selbstprüfung in allen drei Größen ok.
 - **Nachtrag Jazz (2026-11-17):** Monster läuft nie ins Wasser (Laufweg vor der Hütte, Prüfung im Mockup), Überschrift „Meine Farm“ entfällt
   (Kopfzeile 64 px), Wasser-Deko nur oben (S2 lag im Meldungsfeld) → 26 Deko-Plätze (20 klein, 2 groß, 4 Wasser). Selbstprüfung in allen Größen ok.
-- **Nächster Schritt:** Teilaufgabe 3 (Layout voll).
+- **Nachtrag Jazz:** Kopfzeile der Mockups mit Dunkel-Schalter und Zahnrad wie im Spiel (Klassen `garten-seite`, `muenzen-stand`, `holzknopf`).
+  Mockup-Code liegt jetzt gemeinsam in `docs/farm/farm-mockup.js` und `farm-mockup.css`.
+- **Teilaufgabe 3 – Layout voll** (2026-11-17): `docs/farm/layout-voll.md`, Mockup `docs/farm/layout-voll.html`, Fotos `docs/farm/bilder/layout-voll-*.png`.
+  Alles gekauft, jeder Platz belegt (gut 80 Dinge, neue Deko als Platzhalter). Im Mockup bewegen sich 13 Dinge gleichzeitig (+ Figur beim Laufen).
+  Vorschlag Budget: höchstens 12 eigene Bewegungen, höchstens 2 bewegte Deko, Liegendes hüpft im gemeinsamen Takt; schlimmster Fall heute bis
+  19 einzeln hüpfende Dinge. Überladung: Hof frei, Zonen erkennbar; eng rechts vom Stall und oben Mitte; Tippflächen überlappen bei Ei/Milch
+  neben dem Tier → V1: Eier im Stall-Eingang, Milch an der Scheunentür. **Getestet:** Mockup in drei Größen + Hochformat, Selbstprüfung ok.
+  **Nicht getestet:** echtes iPad (Leistung), dunkler Modus, neue Deko-Bilder (nur Platzhalter).
+- **Offen:** Vorschläge V1–V4 in `layout-voll.md` Abschnitt 4.
+- **Nächster Schritt:** Rückmeldung von Jazz, dann Teilaufgabe 4 (Dekorationskonzept).
