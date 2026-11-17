@@ -263,8 +263,11 @@ function volleFarm(p, setze, platzhalter) {
   // Blumenbeete: heutige Blumen-Bilder gemischt, dazu neue Blumen aus den Paketen (Platzhalter „Blume“)
   const blumen = ['deko_blume_gelb', 'deko_katze_rosa', 'deko_blume_lila', null, 'deko_katze_blau']
   let z = 0
-  BEETE.forEach((b) => b.k.forEach(([x, y]) => { const g = blumen[z++ % blumen.length]; g ? ding(sprite(g, 16, 16, 16, 16, 0, m), x, y, 1, 1) : platzhalter('neu: Blume', x, y, 1, 1) }))
-  DEKO.forEach((o, i) => (i < 14 ? ding(sprite(vorhanden[i % 8], 16, 16, 16, 16, 0, m), o.x, o.y, 1, 1) : platzhalter('neu: ' + neu[i - 14], o.x, o.y, 1, 1)))
+  // Jazz: Deko, die es mehrfach gibt, hat je Stück eine andere Farbe (farben.js); gelbe Blume nur noch als Sonnenblume
+  const zaehler = {}
+  const deko = (g) => { const v = DEKO_FARBEN[g]; if (!v) return sprite(g, 16, 16, 16, 16, 0, m); const n = zaehler[g] = (zaehler[g] ?? -1) + 1; return farbBild([{ u: G + g + '.png' }, 0, 0, 16, 16], v[n % v.length][1], m) }
+  BEETE.forEach((b) => b.k.forEach(([x, y]) => { const g = blumen[z++ % blumen.length]; g ? ding(deko(g), x, y, 1, 1) : platzhalter('neu: Blume', x, y, 1, 1) }))
+  DEKO.forEach((o, i) => (i < 14 ? ding(deko(vorhanden[i % 8]), o.x, o.y, 1, 1) : platzhalter('neu: ' + neu[i - 14], o.x, o.y, 1, 1)))
   platzhalter('neu: Picknick', DEKO_GROSS[0].x, DEKO_GROSS[0].y, 2, 2)
   platzhalter('neu: Bienen-stock (bewegt)', DEKO_GROSS[1].x, DEKO_GROSS[1].y, 2, 2, true)
   const wasser = ['Schilf', 'Frosch (bewegt)', 'Steine', 'Schilf']

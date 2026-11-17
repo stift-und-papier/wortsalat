@@ -22,6 +22,10 @@
 <h1>Wachsende Deko: alle Stufen</h1>
 <p>4-fach vergrößert, so groß wie der Platz auf der Farm (1 Kachel = 64 px). Beschriftete Kästen sind neue Grafiken.</p>
 <div id="liste"></div>
+<h1>Kaufbare Deko in Farben</h1>
+<p>Jedes gekaufte Stück bekommt die nächste Farbe. Gelb gibt es nur bei der wachsenden Sonnenblume. Die Pilzhütte hat keinen Totenkopf mehr.</p>
+<div id="farben"></div>
+<script src="farben.js"></script>
 <script src="wachsende-deko.js"></script>
 <script>
   const M = 4
@@ -30,6 +34,13 @@
     r.innerHTML = `<h2>${w.n} ${w.name}<br><small>${w.b} × ${w.h} Kacheln, ${w.stufen.length} Stufen</small></h2>` +
       w.stufen.map((s, i) => `<div class="stufe"><div class="bild${w.wasser ? ' wasser' : ''}" style="width:${w.b * 16 * M}px;height:${w.h * 16 * M}px">${wachsBild(w, i, M)}</div>${i + 1}. ${s[0]}</div>`).join('')
     document.getElementById('liste').appendChild(r)
+  }
+  const namen = { deko_blume_gelb: 'Blume', deko_blume_lila: 'Traubenblume', deko_pilz: 'Pilz', deko_pilzhaus: 'Pilzhütte', deko_busch: 'Busch', deko_stein: 'Stein' }
+  for (const [g, varianten] of Object.entries(DEKO_FARBEN)) {
+    const r = document.createElement('div'); r.className = 'reihe'
+    r.innerHTML = `<h2>${namen[g]}<br><small>${varianten.length} Farben</small></h2>` +
+      varianten.map(([f, regeln]) => `<div class="stufe"><div class="bild" style="width:64px;height:64px">${farbBild([{ u: '../../src/grafik/' + g + '.png' }, 0, 0, 16, 16], regeln, M)}</div>${f}</div>`).join('')
+    document.getElementById('farben').appendChild(r)
   }
 </script>
 </body>

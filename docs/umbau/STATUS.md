@@ -572,4 +572,5 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - **Entscheidungen Jazz zu Teilaufgabe 4 (2026-11-17):** D1–D9 alle angenommen (8 wachsende Deko wie vorgeschlagen; „neu dazugelernt“ zählt;
   Belohnungen bleiben; Meldungstexte; im 2. Schuljahr vorerst nichts Neues; wachsende Motive nicht im Shop; Kategorien, Platzarten, Preisstufen A–D;
   „Möchtest du es gleich aufstellen?“; Vogelhaus und Windrad ohne Dauerbewegung).
+- **Nachtrag Jazz zu Teilaufgabe 4 (2026-11-17):** Farben angepasst (Kirschbaum Stufe 2 rosa, Eiche gelbgrün, Beerenbusch dunkelgrün; Wildblumen enden im Lavendel aus `assets/objects.png`, jetzt 1 × 2). Mehrfach gekaufte Deko bekommt je Stück eine andere Farbe, Gelb nur bei der Sonnenblume, Pilzhaus ohne Totenkopf (`dekorationen.md` 5.2a, Mockup-Färbung `docs/farm/farben.js`). Prompts für die neuen Bilder: `docs/farm/gemini-prompts.md`. Offen: Herkunft/Lizenz von `assets/objects.png`.
 - **Nächster Schritt:** Teilaufgabe 5 (Münzsystem).

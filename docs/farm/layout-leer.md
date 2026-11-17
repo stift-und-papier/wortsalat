@@ -140,7 +140,7 @@ Ein neues Kind sieht:
 
 ## 8. Mehr Deko für den Shop: passende Bilder aus den gekauften Paketen
 
-Heute verkauft der Shop 8 Deko-Gegenstände: Busch, Blume gelb, Blume lila, Pilz, Stein, Pilzhaus, Boot und Brunnen. Dazu kommen 2 Katzenblumen als Belohnung.
+Heute verkauft der Shop 8 Deko-Gegenstände: Busch, Blume gelb, Blume lila, Pilz, Stein, Pilzhaus, Boot und Brunnen. Dazu kommen 2 Katzenblumen als Belohnung. (Teilaufgabe 4: mehrfach gekaufte Deko bekommt je Stück eine andere Farbe, Gelb nur noch bei der Sonnenblume, Pilzhaus ohne Totenkopf; siehe `dekorationen.md` Abschnitt 5.2a.)
 
 Alle Bilder unten sind schon gekauft. Sie liegen in `assets/entpackt/` und sind noch nicht im Spiel. Die Lizenz erlaubt, einzelne Bilder nach `src/grafik/` zu übernehmen.
 
