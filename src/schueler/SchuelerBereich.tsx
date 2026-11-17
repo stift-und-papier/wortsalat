@@ -568,7 +568,9 @@ function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, fa
           </button>
           {/* Jazz 2026-11-15: Überschrift jeder Seite als Holzschild in der Mitte zwischen Dunkel-Schalter und Münzen (immer an derselben Stelle) */}
           {farmKopf && <div id="kopf-links" className="kopf-knoepfe" />}
-          {farmKopf && <div id="kopf-rechts" className="kopf-knoepfe kopf-knoepfe--rechts" />}
+          {/* Jazz 2026-11-17: Meldung der Farm oben in der Mitte, wo sonst die Überschrift steht */}
+          {farmKopf && <div id="kopf-mitte" className="kopf-mitte" />}
+          {farmKopf && <div id="kopf-rechts" className="kopf-knoepfe" />}
           {titel && (
             <header className="pixel-schild">
               <h1>{titel}</h1>

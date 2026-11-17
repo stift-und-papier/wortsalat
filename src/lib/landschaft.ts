@@ -39,7 +39,7 @@ const kern = (x: number, y: number): Ort => ({ x: x + RAND, y })
 // Felder dicht wie heute (Jazz, E3), 4 × 3 links
 export const FELD_PLAETZE: Ort[] = Array.from({ length: 12 }, (_, i) => kern(3 + (i % 4), 4 + Math.floor(i / 4)))
 export const STALL: Ort = kern(19, 9) // 3 × 3 Kacheln
-export const HUHN_PLAETZE: Ort[] = [kern(17, 10), kern(23, 10), kern(18, 12), kern(22, 12)]
+export const HUHN_PLAETZE: Ort[] = [kern(17, 10), kern(23, 10), kern(18, 12), kern(21, 12)] // Jazz 2026-11-17: Huhn 4 nicht am Ufer
 // Napf (Jazz, E4): links vom Stall für Huhn 1 und 3, rechts für Huhn 2 und 4; leer, solange eines davon hungrig ist
 export const NAPF_PLAETZE: Ort[] = [kern(17, 9), kern(23, 9)]
 // Scheune von oben mit offenem Dach; unten in der Mitte ein Durchgang ohne Tür (2 Kacheln).
@@ -63,7 +63,7 @@ export const BOOT: Ort = kern(12, 1)
 // 20 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel
 export const DEKO_PLAETZE: Ort[] = [
   [1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
-  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
+  [15, 10], [13, 12], [15, 12], [24, 12], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
 ].map(([x, y]) => kern(x, y))
 // Monster, das auf der Farm wohnt (Jazz 2026-11-15/17): Hütte links unter dem Acker, Eingang nicht am Wasser; Laufweg vor der Tür.
 // Große Hütte 4 × 4 (Hindernis die unteren 2 Reihen), kleine Hütte 2 × 3 unten mittig für kleine Monster (Jazz, E10).

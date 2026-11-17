@@ -8,6 +8,9 @@ const SEEROSE = { u: PAKET + 'Sprout Sorry pack/Early Access/Plant update 2/Cher
 const BAEUME2 = { u: PAKET + 'Sprout Sorry pack/Early Access/Plant update 2/Trees, stumps and bushes v2.png', w: 192, h: 128 }
 // Jazz: Eiche hellgrün, Beerenbusch dunkelgrün, damit sie sich von den Obstbäumen (Türkisgrün) abheben (Regeln aus farben.js)
 const EICHE_GRUEN = rampe('tuerkisgruen', 'gruen')
+// Jazz 2026-11-17: Eiche hebt sich noch zu wenig ab, darum Herbst-Eiche: kleiner Herbstbaum aus dem Halloween-Bogen, Stufe 4 herbstlich gefärbt
+const HERBST = { u: PAKET + 'Sprout Sorry pack/Early Access/halloween/fall_trees.png', w: 240, h: 96 }
+const EICHE_HERBST = rampe('tuerkisgruen', 'orange')
 const BUSCH_GRUEN = rampe('tuerkisgruen', 'gruen', -2)
 const GRAS_WIE_LAVENDEL = rampe('tuerkisgruen', 'gruen')
 // Neue Bilder: Vogelhaus, Lavendel, Napf von Claude nach den Gemini-Vorlagen von Jazz gezeichnet (handgezeichnet.cjs); liegen in assets/neu/ (nicht im Repo)
@@ -38,7 +41,7 @@ const WACHS = [
     ['Vogelhaus mit Futter', NEU('vogelhaus_4', 14, 32)], ['Vogel sitzt auf dem Dach', NEU('vogelhaus_5', 14, 32)]] },
   { n: 'W7', name: 'Eiche', x: 0, y: 5, b: 1, h: 2, stufen: [
     ['Eichel', [BAEUME2, 3, 4, 9, 9], [EICHE_GRUEN]], ['Eichel keimt', [BAEUME2, 2, 20, 10, 11], [EICHE_GRUEN]], ['Sprössling', [BAEUME2, 2, 37, 10, 10], [EICHE_GRUEN]],
-    ['kleiner Baum', [BAEUME2, 18, 16, 12, 15], [EICHE_GRUEN]], ['junge Eiche', [BAEUME2, 49, 17, 14, 29], [EICHE_GRUEN]]] },
+    ['kleiner Baum im Herbstlaub', [BAEUME2, 18, 16, 12, 15], [EICHE_HERBST]], ['Eiche im Herbstlaub', [HERBST, 4, 61, 24, 33]]] },
   // Jazz: statt Windrad eine zweite Sonnenblume
   { n: 'W8', name: 'Sonnenblume', x: 8, y: 8, b: 1, h: 2, stufen: SONNENBLUME },
 ]
@@ -48,7 +51,7 @@ function wachsBild(w, s, mal) {
   const [t, q, regeln] = w.stufen[s]
   if (!q) return `<div class="platzhalter" style="position:absolute;inset:0">neu: ${w.name}<br>${t}</div>`
   const [datei, x, y, qw, qh, bw = qw, bh = qh] = q
-  const links = Math.round((w.b * 16 - bw) / 2) * mal, oben = Math.max(0, w.h * 16 - bh) * mal
+  const links = Math.round((w.b * 16 - bw) / 2) * mal, oben = (w.h * 16 - bh) * mal // unten bündig, Höheres ragt nach oben
   if (regeln) return farbBild(q, regeln, mal, `position:absolute;left:${links}px;top:${oben}px;`)
   return `<div class="sprite" style="position:absolute;left:${links}px;top:${oben}px;width:${bw * mal}px;height:${bh * mal}px;` +
     `background:url('${datei.u}') -${x * mal}px -${y * mal}px/${datei.w * mal}px ${datei.h * mal}px"></div>`

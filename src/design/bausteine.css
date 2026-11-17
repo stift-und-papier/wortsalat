@@ -661,14 +661,14 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .farm-landschaft canvas { display: block; image-rendering: pixelated; clip-path: inset(10px 12px 12px 12px); }
 .farm-landschaft .sprite { image-rendering: pixelated; }
 .farm-ding { position: absolute; pointer-events: none; line-height: 0; }
-.farm-feld, .farm-tier, .farm-liegt, .farm-baum, .farm-monster {
+.farm-feld, .farm-tier, .farm-liegt, .farm-baum, .farm-monster, .farm-futter {
   position: absolute; display: grid; place-items: center; line-height: 0;
   padding: 0; border: none; background: none; cursor: pointer; pointer-events: auto;
 }
 /* Tippfläche mindestens 48 px, auch wenn Feld oder Huhn kleiner gezeichnet sind */
-.farm-feld::before, .farm-tier::before, .farm-liegt::before, .farm-baum::before, .farm-monster::before { content: ''; position: absolute; inset: min(0px, calc((100% - 48px) / 2)); }
+.farm-feld::before, .farm-tier::before, .farm-liegt::before, .farm-baum::before, .farm-monster::before, .farm-futter::before { content: ''; position: absolute; inset: min(0px, calc((100% - 48px) / 2)); }
 .farm-feld[aria-pressed='true'] { outline: 3px solid var(--color-aktion); outline-offset: 1px; }
-.farm-feld:focus-visible, .farm-tier:focus-visible, .farm-liegt:focus-visible, .farm-baum:focus-visible, .farm-monster:focus-visible { outline: 3px solid var(--color-aktion); }
+.farm-feld:focus-visible, .farm-tier:focus-visible, .farm-liegt:focus-visible, .farm-baum:focus-visible, .farm-monster:focus-visible, .farm-futter:focus-visible { outline: 3px solid var(--color-aktion); }
 /* Pflanzen stehen mitten im Feld (Lehrkraft 2026-11-12) */
 /* Obstbäume: Bild 48 × 48 ragt über die 2 × 2 Kacheln hinaus; stehen still, nur beim Ernten fallen die Früchte einmal */
 .farm-baum__bild { position: absolute; line-height: 0; pointer-events: none; }
@@ -952,7 +952,16 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 /* Die Farm endet schon über dem Menü unten (Farm.tsx rechnet die Höhe aus): kein Abstand darunter, sonst scrollt die Seite */
 .garten-seite--farm { padding-bottom: 0; }
 .kopf-knoepfe { display: flex; align-items: center; gap: var(--space-xs); }
-.kopf-knoepfe--rechts { margin-left: auto; }
+/* Meldung oben in der Mitte der Kopfzeile: Papier-Schild, nimmt den freien Platz, darf zweizeilig werden */
+.garten-seite--farm .muenzen-stand { flex-wrap: nowrap; }
+.kopf-mitte { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; }
+.kopf-mitte .farm-meldung {
+  max-width: 100%; box-sizing: border-box; padding: 2px var(--space-xs); border: solid transparent; border-width: 10px;
+  border-image: url('../grafik/tafel.png') 5 fill / 10px; image-rendering: pixelated;
+  color: var(--color-album-tinte); text-align: center; font-size: 17px; line-height: 1.25;
+}
+.kopf-mitte .farm-meldung p { margin: 0; }
+.kopf-mitte .farm-meldung .leise { color: var(--color-album-tinte); }
 .farm-bildknopf--laden {
   width: auto; display: inline-flex; gap: var(--space-xs); padding: 0 var(--space-xs); align-items: center;
   color: var(--color-album-tinte); font-weight: 800; font-size: 17px; line-height: 1; text-decoration: none;
@@ -963,6 +972,7 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .garten-seite--farm .garten-seite__inhalt { max-width: none; }
 .farm-rahmen { overflow: hidden; }
 .farm-rahmen > .spiel-fenster { width: 100%; box-sizing: border-box; overflow: hidden; background-repeat: repeat; image-rendering: pixelated; }
+.farm-meer { position: absolute; overflow: hidden; image-rendering: pixelated; }
 .farm-rahmen .farm-landschaft { position: absolute; margin: 0; }
 .farm-rahmen .farm-landschaft canvas { clip-path: none; }
 .farm-rahmen .farm-meldung { max-width: calc(100% - 100px); }

@@ -22,7 +22,9 @@ import { FarmTier } from './FarmTier'
 
 const TEMPO = 50 // Grafik-Pixel pro Sekunde
 const RAND_UNTEN = 8 // Luft zwischen Farm und Menü unten (CSS-Pixel)
+const MEER_RAND = { oben: 10, seite: 12 } // durchsichtiger Außenrand des Rahmenbilds (2-fach)
 const RAHMEN_B = 68, RAHMEN_H = 66 // Holzrahmen des Spielfensters links + rechts bzw. oben + unten (CSS-Pixel)
+const flaecheVon = (o: Ort, breite: number): Ort[] => Array.from({ length: breite }, (_, i) => ({ x: o.x + i, y: o.y }))
 const ruhig = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const TIER_NAME: Record<string, string> = { huhn: 'Huhn', kuh: 'Kuh' }
 // Mitte einer Kachel, Füße der Figur etwas unterhalb der Mitte
@@ -44,8 +46,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   const [mal, setMal] = useState(2)
   const [flaeche, setFlaeche] = useState({ breite: 0, hoehe: 0 }) // Innenfläche des Spielfensters (ohne Holzrahmen)
   // Jazz 2026-11-17 (E5): Sammelalbum, Vorrat, Laden und Zahnrad stehen in der Kopfzeile der Seite (Plätze legt SchuelerBereich an)
-  const [kopf, setKopf] = useState<{ links: HTMLElement | null; rechts: HTMLElement | null }>({ links: null, rechts: null })
-  useEffect(() => setKopf({ links: document.getElementById('kopf-links'), rechts: document.getElementById('kopf-rechts') }), [])
+  const [kopf, setKopf] = useState<{ links: HTMLElement | null; mitte: HTMLElement | null; rechts: HTMLElement | null }>({ links: null, mitte: null, rechts: null })
+  useEffect(() => setKopf({ links: document.getElementById('kopf-links'), mitte: document.getElementById('kopf-mitte'), rechts: document.getElementById('kopf-rechts') }), [])
   const [figur, setFigur] = useState({ ...mitte(FIGUR_START), richtung: 4, dauer: 0 })
   const rahmen = useRef<HTMLDivElement>(null)
   const leinwand = useRef<HTMLCanvasElement>(null)
@@ -87,6 +89,9 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     }
     const beob = new ResizeObserver(passen)
     beob.observe(el)
+    // die Meldung oben kann die Kopfzeile höher machen: dann neu rechnen, damit die Seite nicht scrollt
+    const kopfzeile = document.querySelector('.muenzen-stand')
+    if (kopfzeile) beob.observe(kopfzeile)
     window.addEventListener('resize', passen)
     return () => {
       beob.disconnect()
@@ -104,7 +109,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   useEffect(() => {
     const ctx = leinwand.current?.getContext('2d')
     if (!ctx || !daten) return
-    const namen = ['wasser', 'gras', 'gras_deko', 'feld', 'wand', 'heu', 'trog', 'baum', 'baum_klein', 'stall'] as const
+    const namen = ['wasser', 'gras', 'gras_deko', 'feld', 'wand', 'heu', 'baum', 'baum_klein', 'stall'] as const
     const bilder = Object.fromEntries(namen.map((n) => [n, Object.assign(new Image(), { src: GRAFIK[n].url })])) as Record<(typeof namen)[number], HTMLImageElement>
     const kachel = (name: (typeof namen)[number], nummer: number, x: number, y: number) => {
       const q = einzelbild(GRAFIK[name], nummer)
@@ -121,13 +126,12 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
       ctx.drawImage(bilder.stall, STALL.x * KACHEL, STALL.y * KACHEL)
       for (const k of scheunenKacheln()) kachel('wand', k.nummer, k.x, k.y)
       ctx.drawImage(bilder.heu, HEU.x * KACHEL, HEU.y * KACHEL)
-      ctx.drawImage(bilder.trog, trogVoll ? 0 : 64, 0, 32, 16, TROG.x * KACHEL, TROG.y * KACHEL, 32, 16)
       for (const b of BAEUME) ctx.drawImage(bilder[b.grafik], b.x * KACHEL, b.y * KACHEL)
     })
     return () => {
       aktiv = false
     }
-  }, [daten === null, felder, trogVoll])
+  }, [daten === null, felder])
 
   useEffect(() => () => window.clearTimeout(ankunft.current), [])
 
@@ -192,10 +196,10 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   }
 
   const px = (kacheln: number) => kacheln * KACHEL * mal
-  // Lage der Insel im Spielfenster: Kern (27 Kacheln) waagerecht mittig, oben eine halbe Wasserreihe angeschnitten (Rahmen 34 bzw. 32 px)
+  // Lage der Insel im Spielfenster: Kern (27 Kacheln) waagerecht und senkrecht mittig (Rahmen 34 bzw. 32 px)
   const insel = {
     links: 34 + Math.floor((flaeche.breite - 27 * KACHEL * mal) / 2) - RAND * KACHEL * mal,
-    oben: 32 + Math.min(-Math.floor((KACHEL * mal) / 2), Math.floor((flaeche.hoehe - ZEILEN * KACHEL * mal) / 2)),
+    oben: 32 + Math.floor((flaeche.hoehe - ZEILEN * KACHEL * mal) / 2), // unten liegt keine Meldung mehr: Insel senkrecht mittig
   }
   // Deko lässt sich im Fenster „Farm einrichten“ ausblenden (gekauft bleibt sie)
   const dekoArten = daten.dinge.map((d) => d.artikel).filter((id) => !['huhn', 'kuh'].includes(id))
@@ -319,6 +323,29 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
     )
   }
 
+  // Jazz 2026-11-17: Napf und Trog antippen öffnet das Füttern für das erste hungrige Tier daran (sonst das erste)
+  function futterKnopf(key: string, name: string, tiere: { id: string; satt: boolean }[], grafik: Grafik, nummer: number, o: Ort, breite: number, bild: { x: number; y: number }) {
+    const ziel = tiere.find((t) => !t.satt) ?? tiere[0]
+    return (
+      <button
+        key={key}
+        type="button"
+        className="farm-ding farm-futter"
+        style={{ left: px(o.x), top: px(o.y), width: px(breite), height: px(1), zIndex: (o.y + 1) * KACHEL }}
+        aria-label={!tiere.length ? `${name}, leer` : ziel.satt ? `${name}, voll` : `${name}, leer: antippen zum Füttern`}
+        onClick={() =>
+          gehe(nebenan(flaecheVon(o, breite)), () =>
+            ziel ? setMenue({ art: 'tier', id: ziel.id }) : setMeldung(name === 'Trog' ? 'Hier fressen deine Kühe. Kühe gibt es im Laden.' : 'Hier fressen deine Hühner. Hühner gibt es im Laden.'),
+          )
+        }
+      >
+        <span className="farm-ding" style={{ left: bild.x - px(o.x), top: bild.y - px(o.y) }}>
+          <Sprite grafik={grafik} nummer={nummer} mal={mal} />
+        </span>
+      </button>
+    )
+  }
+
   const tier = menue?.art === 'tier' ? daten.tiere.find((t) => t.id === menue.id) : undefined
 
   // Lehrkraft 2026-11-12: statt Haken sagt die Figur, was reif ist
@@ -328,7 +355,14 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   ]
   // Jazz 2026-11-17 (E4): Meldung, solange ein Tier hungrig ist
   const hungrigH = huehner.some((t) => !t.satt), hungrigK = kuehe.some((t) => !t.satt)
-  const hungerText = hungrigH && hungrigK ? 'Deine Tiere sind hungrig.' : hungrigH ? 'Deine Hühner sind hungrig.' : hungrigK ? 'Deine Kühe sind hungrig.' : null
+  // Jazz 2026-11-17: die Meldung sagt auch, was man antippt
+  const hungerText = hungrigH && hungrigK
+    ? 'Deine Tiere sind hungrig. Tippe ein Tier, den Napf oder den Trog an.'
+    : hungrigH
+      ? 'Deine Hühner sind hungrig. Tippe ein Huhn oder den Napf an.'
+      : hungrigK
+        ? 'Deine Kühe sind hungrig. Tippe eine Kuh oder den Trog an.'
+        : null
   const grundText = hungerText ?? (daten.pflanzen.length === 0 && felder > 0 ? 'Tippe ein Feld an und pflanze deinen ersten Samen.' : 'Tippe irgendwohin, dann läuft deine Figur hin. Tippe Felder, Tiere und Bäume an.')
   const blasenText = reifes.length > 1 ? 'Ich kann mehrere Dinge ernten!' : reifes.length ? `${reifes[0]} kann geerntet werden!` : null
 
@@ -363,6 +397,20 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
           </>,
           kopf.rechts,
         )}
+      {/* Usability-Test 2026-11-13: Meldungen an festem Platz; Jazz 2026-11-17: als Papier-Schild oben in der Kopfzeile (Mitte) */}
+      {kopf.mitte &&
+        createPortal(
+          <div className="farm-meldung">
+            {fehler ? (
+              <p role="alert">{fehler}</p>
+            ) : (
+              <p role="status" className={meldung || hungerText ? undefined : 'leise'}>
+                {meldung ?? grundText}
+              </p>
+            )}
+          </div>,
+          kopf.mitte,
+        )}
       {/* Jazz 2026-11-17: im Hochformat nur dieser Hinweis (bausteine.css) */}
       <p className="farm-drehen" role="status">
         Dreh dein iPad, dann siehst du deine Farm.
@@ -371,19 +419,11 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         {/* Jazz 2026-11-14: Holzrahmen wie ein Spielfenster; liegt über dem Rand (bausteine.css), innen Meer in Kachelgröße */}
         <div
           className="spiel-fenster"
-          style={{ height: flaeche.hoehe + RAHMEN_H, backgroundImage: `url(${GRAFIK.wasser.url})`, backgroundSize: px(1), backgroundPosition: `${insel.links}px ${insel.oben}px` }}
+          style={{ height: flaeche.hoehe + RAHMEN_H }}
         >
-        {/* Usability-Test 2026-11-13: Meldungen an festem Platz; Jazz 2026-11-15: als Papier-Banner unten im Meer */}
-        <div className="farm-meldung">
-          {fehler ? (
-            <p role="alert">{fehler}</p>
-          ) : (
-            <p role="status" className={meldung || hungerText ? undefined : 'leise'}>
-              {meldung ?? grundText}
-            </p>
-          )}
-        </div>
-        <div className="farm-landschaft" style={{ width: px(SPALTEN), height: px(ZEILEN), left: insel.links, top: insel.oben }} onClick={inDieLandschaft}>
+        {/* Meer und Insel nur innerhalb des Rahmens: das Rahmenbild ist außen 10 bis 12 px durchsichtig (MEER_RAND), dort nichts zeigen */}
+        <div className="farm-meer" style={{ inset: `${MEER_RAND.oben}px ${MEER_RAND.seite}px ${MEER_RAND.seite}px`, backgroundImage: `url(${GRAFIK.wasser.url})`, backgroundSize: px(1), backgroundPosition: `${insel.links - MEER_RAND.seite}px ${insel.oben - MEER_RAND.oben}px` }}>
+        <div className="farm-landschaft" style={{ width: px(SPALTEN), height: px(ZEILEN), left: insel.links - MEER_RAND.seite, top: insel.oben - MEER_RAND.oben }} onClick={inDieLandschaft}>
           <canvas ref={leinwand} width={SPALTEN * KACHEL} height={ZEILEN * KACHEL} style={{ width: px(SPALTEN), height: px(ZEILEN) }} aria-hidden="true" />
 
           {Array.from({ length: felder }, (_, feld) => {
@@ -449,8 +489,9 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
           {NAPF_PLAETZE.map((o, n) => {
             const seine = huehner.filter((_, i) => i % 2 === n)
             if (!seine.length) return null
-            return <Ding key={`napf${n}`} grafik={GRAFIK.napf} nummer={seine.every((t) => t.satt) ? 1 : 0} x={px(o.x) + mal} y={px(o.y) + 8 * mal} mal={mal} z={(o.y + 1) * KACHEL} />
+            return futterKnopf(`napf${n}`, 'Napf', seine, GRAFIK.napf, seine.every((t) => t.satt) ? 1 : 0, o, 1, { x: px(o.x) + mal, y: px(o.y) + 8 * mal })
           })}
+          {futterKnopf('trog', 'Trog', kuehe, GRAFIK.trog, trogVoll ? 0 : 2, TROG, 2, { x: px(TROG.x), y: px(TROG.y) })}
           {huehner.map((t, i) => tierKnopf(t, HUHN_PLAETZE[i], 1, i))}
           {kuehe.map((t, i) => tierKnopf(t, KUH_PLAETZE[i], 2, i))}
           {daten.liegen.map((d, i) => {
@@ -514,6 +555,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
               {blasenText}
             </span>
           )}
+        </div>
         </div>
         </div>
       </div>

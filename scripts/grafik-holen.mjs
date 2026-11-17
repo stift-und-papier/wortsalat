@@ -60,7 +60,8 @@ const BILDER = [
   { name: 'wand', datei: SPRITES + 'Tilesets/Building parts/Wooden_House_Walls_Tilset.png', x: 0, y: 0, breite: 48, hoehe: 48, bildBreite: 16, bildHoehe: 16 },
   { name: 'heu', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Barn structures.png', x: 0, y: 32, breite: 32, hoehe: 16 },
   // Jazz 2026-11-17 (E4): alle 3 Bilder (voll, halb, leer); leerer Trog = Kühe hungrig
-  { name: 'trog', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Water tray.png', x: 0, y: 0, breite: 96, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
+  { name: 'trog', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Water tray.png', x: 0, y: 0, breite: 96, hoehe: 16, bildBreite: 32, bildHoehe: 16,
+    tausch: { '#9bd4c3': '#eae178', '#8cbfc2': '#d4c169' } }, // Jazz 2026-11-17: Futtertrog mit Heu statt Wasser (Farben wie heu.png)
   // Herz-Sprechblase: eigenes Werk der Lehrkraft (bubble emotes)
   // Sprechblase der Figur auf der Farm (Dialouge UI, „dialog box“): 30 × 28, Spitze links unten
   { name: 'dialog_blase', datei: UI + 'Dialouge UI/dialog box.png', x: 7, y: 11, breite: 30, hoehe: 28 },
@@ -154,6 +155,12 @@ for (const b of BILDER) {
   PNG.bitblt(quelle, ziel, x, y, breite, hoehe, 0, 0)
   // spiegeln: jedes Einzelbild waagerecht umdrehen (Monster schauen im Original nach rechts, sollen zur Figur links schauen; Jazz, Schritt 8)
   if (b.palette) aufPalette(ziel)
+  // tausch: einzelne Farben ersetzen ('#rrggbb' → '#rrggbb')
+  if (b.tausch)
+    for (let i = 0; i < ziel.data.length; i += 4) {
+      const neu = b.tausch['#' + ziel.data.subarray(i, i + 3).toString('hex')]
+      if (ziel.data[i + 3] > 0 && neu) ziel.data.set(Buffer.from(neu.slice(1), 'hex'), i)
+    }
   if (b.spiegeln) {
     const bw = b.bildBreite ?? breite
     const kopie = Buffer.from(ziel.data)

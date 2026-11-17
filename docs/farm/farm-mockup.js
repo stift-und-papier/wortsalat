@@ -37,7 +37,7 @@ const OBSTBAEUME = [{ x: 3, y: 1, n: 'Orange' }, { x: 6, y: 1, n: 'Pfirsich' }, 
 const SCHEUNE = { x: 18, y: 1, b: 6, h: 6 }
 const KUEHE = [{ x: 19, y: 3 }, { x: 21, y: 3 }] // je 2 × 2, höchstens 2 (Jazz 2026-11-17)
 const STALL = { x: 19, y: 9 } // 3 × 3
-const HUEHNER = [{ x: 17, y: 10 }, { x: 23, y: 10 }, { x: 18, y: 12 }, { x: 22, y: 12 }]
+const HUEHNER = [{ x: 17, y: 10 }, { x: 23, y: 10 }, { x: 18, y: 12 }, { x: 21, y: 12 }] // Jazz 2026-11-17: Huhn 4 nicht am Ufer
 // Jazz 2026-11-17: Hütte weiter oben, der Eingang zeigt nicht mehr aufs Wasser. Platz 4 × 4 für die große Hütte (heutiges Bild);
 // kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte 2 × 3 unten mittig auf diesem Platz:
 // Jazz 2026-11-17: der kleine Hühnerstall mit einem Fenster aus dem Premium-Paket (Chikcen_Houses.png, 6 Dachfarben)
@@ -52,7 +52,7 @@ const FIGUR = { x: 16, y: 8 } // Füße auf Zeile 9
 const WACHSEND = WACHS
 // Deko-Plätze in drei Größen: klein 1 × 1 (D), groß 2 × 2 (G), im Wasser 1 × 1 (S)
 const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
-  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10],
+  [15, 10], [13, 12], [15, 12], [24, 12], [25, 8], [25, 10],
   // Jazz 2026-11-17: nicht in einer Reihe, sondern wie zufällig: Baumstumpf beim Baum, Laterne am Brunnen, Briefkasten am Hofweg, Fels am Ufer
   [3, 9], [15, 7], [9, 7], [9, 10]].map(([x, y]) => ({ x, y }))
 // Jazz 2026-11-17: mehr Blumen. Blumenbeete aus 2 bis 4 Kacheln; die Blumen eines Beets stehen dicht (wie die Felder),
@@ -176,7 +176,7 @@ async function zeichnen() {
     const tuer = y === SCHEUNE.y + SCHEUNE.h - 1 && (x === 20 || x === 21)
     teil(B.wand, tuer ? 4 : ze * 3 + sp, 3, x, y)
   }
-  ctx.drawImage(B.heu, 19 * K, 2 * K); ctx.drawImage(B.trog, 21 * K, 2 * K)
+  ctx.drawImage(B.heu, 19 * K, 2 * K); ctx.drawImage(B.trog, 64, 0, 32, 16, 21 * K, 2 * K, 32, 16) // leerer Trog (Bild 3 von 3), Jazz E4
   ctx.drawImage(B.stall, STALL.x * K, STALL.y * K)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 
@@ -247,7 +247,7 @@ function volleFarm(p, setze, platzhalter) {
   const napf = `<div class="sprite" style="width:${14 * m}px;height:${8 * m}px;margin:${8 * m}px 0 0 ${m}px;background:url('../../assets/neu/napf_1.png') 0 0/${14 * m}px ${8 * m}px"></div>`
   ding(napf, 17, 9, 1, 1) // Napf steht über dem Huhn, so bleibt rechts vom Stall Luft
   ding(napf, 23, 9, 1, 1)
-  platzhalter('Trog leer', 21, 2, 2, 1)
+  // leerer Trog steht schon im Hintergrund (Bild 3 von 3)
   // Monster (Maus) vor seiner Hütte (Dach Nr. 3), läuft hin und her; sein Geschenk liegt daneben und hüpft
   // Die Maus ist ein kleines Monster: kleiner Hühnerstall (32 × 48, lila Dach) als Hütte.
   // shortcut: liest das Bild direkt aus dem Paketordner assets/ (nicht im Repo, nur auf dem Rechner der Lehrkraft); im Spiel käme es nach src/grafik/
