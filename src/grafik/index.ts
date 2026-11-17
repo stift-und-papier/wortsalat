@@ -65,6 +65,7 @@ import blase_ausruf from './blase_ausruf.png'
 import fallen_wiese from './fallen_wiese.png'
 import huette_klein from './huette_klein.png'
 import napf from './napf.png'
+import knopf_zahnrad from './knopf_zahnrad.png'
 import truhe from './truhe.png'
 import feld from './feld.png'
 import figur_blau from './figur_blau.png'
@@ -145,6 +146,7 @@ export const GRAFIK = {
   fallen_wiese: { url: fallen_wiese, breite: 576, hoehe: 324, bildBreite: 576, bildHoehe: 324 },
   huette_klein: { url: huette_klein, breite: 96, hoehe: 96, bildBreite: 32, bildHoehe: 48 },
   napf: { url: napf, breite: 28, hoehe: 8, bildBreite: 14, bildHoehe: 8 },
+  knopf_zahnrad: { url: knopf_zahnrad, breite: 22, hoehe: 24, bildBreite: 22, bildHoehe: 24 },
   truhe: { url: truhe, breite: 16, hoehe: 14, bildBreite: 16, bildHoehe: 14 },
   feld: { url: feld, breite: 14, hoehe: 14, bildBreite: 14, bildHoehe: 14 },
   figur_blau: { url: figur_blau, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },

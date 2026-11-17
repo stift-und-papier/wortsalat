@@ -387,12 +387,14 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         createPortal(
           <>
             {/* Jazz 2026-11-17 (E5): Der Laden-Knopf ersetzt den Menüpunkt „Shop“ unten, breiter und mit dem Wort */}
-            <a className="farm-bildknopf farm-bildknopf--laden" href={shop}>
+            {/* Jazz 2026-11-17: Holz gefüllt wie der Hauptknopf, damit man den Laden schnell findet */}
+            <a className="knopf knopf--haupt farm-laden" href={shop}>
               <Symbol name="shop" />
               Laden
             </a>
-            <button type="button" className="holzknopf" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
-              <Symbol name="einstellungen" />
+            {/* Jazz 2026-11-17: Zahnrad-Knopf aus dem UI Pack */}
+            <button type="button" className="farm-zahnrad" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
+              <Sprite grafik={GRAFIK.knopf_zahnrad} mal={2.5} />
             </button>
           </>,
           kopf.rechts,
