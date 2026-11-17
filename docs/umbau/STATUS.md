@@ -560,4 +560,13 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - **Nachtrag Jazz:** Monster-Hütte weiter oben (Platz 4 × 4 bei x 4, y 8; Eingang nicht mehr am Wasser, Laufweg vor der Tür auf Gras);
   kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte: den kleinen Hühnerstall mit einem Fenster
   (Premium `Chikcen_Houses.png`, 32 × 48, 2 × 3 Kacheln, 6 Dachfarben; Jazz), keine neue Grafik.
-- **Nächster Schritt:** Teilaufgabe 4 (Dekorationskonzept).
+- **Teilaufgabe 4 – Dekorationskonzept** (2026-11-17): `docs/farm/dekorationen.md`, Stufen-Seite `docs/farm/wachsende-deko.html` (+ `wachsende-deko.js`,
+  Foto `bilder/wachsende-deko-stufen.png`); Mockups leer/voll zeigen die echten Stufen-Bilder (aus `assets/`, nur lokal).
+  8 wachsende Deko (Kirschbaum, Wildblumen, Sonnenblume, Seerosen, Beerenbusch, Vogelhaus neu, Eiche, Windrad neu), 26 Schritte bis ausgewachsen.
+  Schritt je Kompetenz einmal für „neu dazugelernt“ (erster Lernstand), „besser“, „deutlich besser“; Schritt geht an die am wenigsten gewachsene Deko
+  (keine Zuordnung zu Bereichen); nur vorwärts (Stufe = Maximum, Zurücksetzen behält sie). Meldungsfeld-Texte je Deko. Technik: Tabellen
+  `wachstum_ereignisse`, `wachstum_stufen` (Schema-Änderung, später). Kaufbare Deko: 4 Platzarten, 8 Kategorien, Preisstufen A–D, Aufstellen nach Kauf,
+  `besitz.platz`. Asset-Liste: 15 neue Bilder (Vogelhaus 5, Windrad 4, Glitzern 3, Napf 2, Buch 1). V3 gelöst (W7 und W8 umgelegt, Frosch auf S2).
+  Offen D1–D9. **Getestet:** Paketbilder vermessen, Stufen-Seite und Mockups in drei Größen, Selbstprüfung ok. **Nicht getestet:** Tempo (Schätzung
+  15–30 Schritte/Jahr, Simulation in Teilaufgabe 5), echtes iPad, dunkler Modus.
+- **Nächster Schritt:** Rückmeldung von Jazz zu D1–D9, dann Teilaufgabe 5 (Münzsystem).

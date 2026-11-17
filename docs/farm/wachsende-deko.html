@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wachsende Deko: alle Stufen (Mockup)</title>
+<!-- Teilaufgabe 4: zeigt jede wachsende Deko in allen Stufen, 4-fach, auf Gras. Nur Vorschlag, nichts am Spiel. -->
+<link rel="stylesheet" href="farm-mockup.css">
+<style>
+  body { margin: 0; padding: 16px; background: #f4ecd8; font: 17px/1.4 Nunito, sans-serif; color: #3a2a1a; }
+  h1 { font: 700 24px/1.2 Fraunces, serif; margin: 0 0 4px; }
+  p { margin: 0 0 16px; }
+  .reihe { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .reihe h2 { width: 150px; margin: 0; font-size: 17px; align-self: center; }
+  .stufe { text-align: center; font-size: 14px; }
+  .bild { position: relative; background: #8ac56b; border-radius: 4px; margin-bottom: 4px; }
+  .bild.wasser { background: #9fd4d0; }
+  .platzhalter { font-size: 11px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; }
+</style>
+</head>
+<body>
+<h1>Wachsende Deko: alle Stufen</h1>
+<p>4-fach vergrößert, so groß wie der Platz auf der Farm (1 Kachel = 64 px). Beschriftete Kästen sind neue Grafiken.</p>
+<div id="liste"></div>
+<script src="wachsende-deko.js"></script>
+<script>
+  const M = 4
+  for (const w of WACHS) {
+    const r = document.createElement('div'); r.className = 'reihe'
+    r.innerHTML = `<h2>${w.n} ${w.name}<br><small>${w.b} × ${w.h} Kacheln, ${w.stufen.length} Stufen</small></h2>` +
+      w.stufen.map((s, i) => `<div class="stufe"><div class="bild${w.wasser ? ' wasser' : ''}" style="width:${w.b * 16 * M}px;height:${w.h * 16 * M}px">${wachsBild(w, i, M)}</div>${i + 1}. ${s[0]}</div>`).join('')
+    document.getElementById('liste').appendChild(r)
+  }
+</script>
+</body>
+</html>

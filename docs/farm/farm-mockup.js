@@ -48,11 +48,8 @@ const MONSTER = { x: 5, y: 12 }
 const BRUNNEN = { x: 13, y: 7 } // 2 × 2
 const BOOT = { x: 12, y: 1 } // 3 × 2 im Wasser
 const FIGUR = { x: 16, y: 8 } // Füße auf Zeile 9
-const WACHSEND = [ // Teilaufgabe 4 legt fest, was hier wächst; hier nur Platz und Größe
-  { x: 13, y: 4, b: 2, h: 2, n: 'W1' }, { x: 11, y: 5, b: 1, h: 1, n: 'W2' }, { x: 17, y: 7, b: 1, h: 1, n: 'W3' },
-  { x: 10, y: 12, b: 2, h: 1, n: 'W4', wasser: true }, { x: 11, y: 7, b: 1, h: 1, n: 'W5' }, { x: 22, y: 8, b: 1, h: 1, n: 'W6' },
-  { x: 16, y: 1, b: 1, h: 1, n: 'W7' }, { x: 24, y: 11, b: 1, h: 1, n: 'W8' },
-]
+// Wachsende Deko: Plätze, Größen und Stufen stehen in wachsende-deko.js (Teilaufgabe 4)
+const WACHSEND = WACHS
 // Deko-Plätze in drei Größen: klein 1 × 1 (D), groß 2 × 2 (G), im Wasser 1 × 1 (S)
 const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
   [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10],
@@ -191,7 +188,8 @@ async function zeichnen() {
   setze(f, FIGUR.x, FIGUR.y, 1, 2)
   // Wachsende Deko: leer = Stufe 1, voll = letzte Stufe; neue Grafiken (Teilaufgabe 4), hier beschriftete Platzhalter
   const platzhalter = (t, x, y, b, h, bewegt) => { const d = document.createElement('div'); d.className = 'platzhalter' + (bewegt ? ' bewegt' : ''); d.textContent = t; return setze(d, x, y, b, h) }
-  WACHSEND.forEach((w) => platzhalter(w.n + (VOLL ? ' Stufe 5' : ' wächst'), w.x, w.y, w.b, w.h))
+  WACHSEND.forEach((w) => { const d = document.createElement('div'); d.className = 'ding'; d.innerHTML = wachsBild(w, VOLL ? w.stufen.length - 1 : 0, p / K); setze(d, w.x, w.y, w.b, w.h)
+    if (plaetze) { const g = document.createElement('div'); g.className = 'platz platz--wachsend'; g.innerHTML = `<span>${w.n}</span>`; setze(g, w.x, w.y, w.b, w.h) } })
   if (VOLL) volleFarm(p, setze, platzhalter)
 
   if (plaetze) {
@@ -261,7 +259,7 @@ function volleFarm(p, setze, platzhalter) {
   ding(sprite('saatgut', 16, 16, 32, 208, 4, m, 'huepfen'), 8, 11, 1, 1, true)
   // Deko: 14 kleine Plätze mit vorhandenen Bildern, 6 mit neuen aus den Paketen (Platzhalter, Liste in layout-leer.md Abschnitt 8)
   const vorhanden = ['deko_busch', 'deko_blume_gelb', 'deko_pilz', 'deko_stein', 'deko_blume_lila', 'deko_pilzhaus', 'deko_katze_rosa', 'deko_katze_blau']
-  const neu = ['Sonnen-blume', 'Schild', 'Baum-stumpf', 'Laterne', 'Brief-kasten', 'Fels']
+  const neu = ['Klee', 'Schild', 'Baum-stumpf', 'Laterne', 'Brief-kasten', 'Fels']
   // Blumenbeete: heutige Blumen-Bilder gemischt, dazu neue Blumen aus den Paketen (Platzhalter „Blume“)
   const blumen = ['deko_blume_gelb', 'deko_katze_rosa', 'deko_blume_lila', null, 'deko_katze_blau']
   let z = 0
@@ -269,6 +267,6 @@ function volleFarm(p, setze, platzhalter) {
   DEKO.forEach((o, i) => (i < 14 ? ding(sprite(vorhanden[i % 8], 16, 16, 16, 16, 0, m), o.x, o.y, 1, 1) : platzhalter('neu: ' + neu[i - 14], o.x, o.y, 1, 1)))
   platzhalter('neu: Picknick', DEKO_GROSS[0].x, DEKO_GROSS[0].y, 2, 2)
   platzhalter('neu: Bienen-stock (bewegt)', DEKO_GROSS[1].x, DEKO_GROSS[1].y, 2, 2, true)
-  const wasser = ['See-rosen', 'Schilf', 'Frosch (bewegt)', 'Steine']
-  wasser.forEach((t, i) => platzhalter('neu: ' + t, DEKO_WASSER[i].x, DEKO_WASSER[i].y, 1, 1, i === 2))
+  const wasser = ['Schilf', 'Frosch (bewegt)', 'Steine', 'Schilf']
+  wasser.forEach((t, i) => platzhalter('neu: ' + t, DEKO_WASSER[i].x, DEKO_WASSER[i].y, 1, 1, i === 1))
 }

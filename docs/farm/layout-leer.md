@@ -73,7 +73,7 @@ So ist gerechnet:
 | **Deko groß** (2 × 2) | neben dem Acker, vor der Scheune | **2 Plätze** G1, G2 | – | Picknick, Bank mit Tisch, Bienenstock, Kirschblütenbusch |
 | **Deko im Wasser** (1 × 1) | nur oben: Bucht und Ufer | **4 Plätze** S1 bis S4 | – | Seerosen, Schilf, Steine im Wasser, Frosch |
 | **Blumenbeete** (Jazz: mehr Blumen) | am Acker, am Brunnen, an der Hütte, an der Scheunentür, am Ufer, am Obstgarten | **6 Beete mit 16 Blumenplätzen** (je 2 bis 4 Kacheln) | – | Die Blumen eines Beets stehen dicht wie die Felder. Antippen öffnet unter „Farm einrichten“ die Auswahl für das Beet. Nur Blumen passen hinein. |
-| **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 | – | Was dort wächst, legt Teilaufgabe 4 fest. Sie sind nicht antippbar. |
+| **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 (1 × 1 bis 2 × 2) | – | Kirschbaum, Wildblumen, Sonnenblume, Seerosen, Beerenbusch, Vogelhaus, Eiche, Windrad; Stufen und Plätze in `dekorationen.md`. Sie sind nicht antippbar. |
 | **Figur** | Start im Hof (x 16, y 8) | – | Mitte | |
 | **Liegendes** (Ernte, Ei, Milch, Monster-Geschenk) | Ernte auf dem Feld selbst; Ei/Milch und Geschenk an einem festen Platz neben Tier bzw. Hütte | – | „daneben“ | Geschenke **hüpfen weiter** (Jazz, E4). |
 | **Meldung** | Banner unten im Meer | – | Banner im Spielfenster | Hinweise zur Farm, siehe Abschnitt 6 |
@@ -146,12 +146,12 @@ Alle Bilder unten sind schon gekauft. Sie liegen in `assets/entpackt/` und sind 
 
 | Gruppe | Platz | Vorschläge | Quelle (Bilderbogen) |
 |---|---|---|---|
-| **Blumen für die Beete** (Jazz: mehr Blumen) | Beet | Blumenbüschel in Gelb, Rosa, Blau, Lila und Weiß; Sonnenblume; Tulpe und Rose (gibt es schon als Pflanzen); Kirschblüten-Büschel; Kleeblüten; die heutigen Blumen gelb und lila sowie die Katzenblumen | Premium `Objects/Mushrooms, Flowers, Stones.png` (mehrere Blumenbüschel in verschiedenen Farben), Basic `Basic_Grass_Biom_things.png`, Sorry Pack `Cherry Blossom Biom.png`, heutige `pflanzen.png` (Tulpe, Rose in Blüte) |
-| **Blumen und Pflanzen** | klein | Sonnenblume, Blumenbüschel in mehreren Farben, rosa Pilze, Kleeblatt-Büschel, Beerenbusch, rosa Busch | Sprout Lands Premium `Objects/Mushrooms, Flowers, Stones.png`, `Trees, stumps and bushes.png`; Basic `Basic_Grass_Biom_things.png`; Sorry Pack `Cherry Blossom Biom.png` |
+| **Blumen für die Beete** (Jazz: mehr Blumen) | Beet | Blumenbüschel in Gelb, Rosa, Blau, Lila und Weiß; Tulpe und Rose (gibt es schon als Pflanzen); Kirschblüten-Büschel; Kleeblüten; die heutigen Blumen gelb und lila sowie die Katzenblumen | Premium `Objects/Mushrooms, Flowers, Stones.png` (mehrere Blumenbüschel in verschiedenen Farben), Basic `Basic_Grass_Biom_things.png`, Sorry Pack `Cherry Blossom Biom.png`, heutige `pflanzen.png` (Tulpe, Rose in Blüte) |
+| **Blumen und Pflanzen** | klein | Blumenbüschel in mehreren Farben, rosa Pilze, Kleeblatt-Büschel, rosa Busch (Sonnenblume und Beerenbusch wachsen jetzt, Teilaufgabe 4) | Sprout Lands Premium `Objects/Mushrooms, Flowers, Stones.png`, `Trees, stumps and bushes.png`; Basic `Basic_Grass_Biom_things.png`; Sorry Pack `Cherry Blossom Biom.png` |
 | **Steine und Holz** | klein | großer Stein, bemooster Fels, Baumstumpf, Holzstamm, Pilz auf Stumpf | `Mushrooms, Flowers, Stones.png`, `Trees, stumps and bushes.png`, Sorry Pack `Birch wood Biom.png` |
 | **Schilder und Kleines** | klein | Holzschild mit Bild (24 Motive, z. B. Herz, Blume, Stern), Briefkasten, Laterne, Truhe (Holz, Silber, Gold) | Premium `Objects/signs.png`, `Tilesets/Building parts/Mailbox Animation Frames.png`; Sorry Pack `Furniture/*_Chest.png` |
 | **Hof und Garten** | groß | Picknickdecke mit Korb, Bank mit Tisch, Bienenstock (mit Bienen), Lagerfeuer, Kirschblütenbusch, Zaunstück | Premium `Piknik blanket.png`, `Piknik basket.png`; Sorry Pack `Furniture/new Wooden Furniture.png`, `Bee/beehive.png`, `Sprout winter/campfire.png`; Premium `Fences.png` |
-| **Am und im Wasser** | Wasser | Seerosen, Schilf, Steine im Wasser, Frosch | Premium `Objects/Water Objects.png`; Sorry Pack `Plant update 2/frog/` |
+| **Am und im Wasser** | Wasser | Schilf, Steine im Wasser, Frosch (Seerosen wachsen jetzt, Teilaufgabe 4) | Premium `Objects/Water Objects.png`; Sorry Pack `Plant update 2/frog/` |
 | **Jahreszeit** (Vorschlag, nur zeitweise im Shop) | klein/groß | Weihnachtsbaum, Geschenke, geschnitzter Kürbis | Sorry Pack `Sprout winter/`, `halloween/carved_halloween_pumpkins.png` |
 
 Das ergibt **etwa 40 neue Deko-Gegenstände**, davon gut 10 Blumen, ohne ein einziges Bild neu zu zeichnen.

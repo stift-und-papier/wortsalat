@@ -66,3 +66,7 @@
   /* Blumenbeet: Kacheln eines Beets, eckig und dicht */
   .platz--beet { border-radius: 2px; border-style: dashed; border-color: #8a2c64; }
   .platz--beet span { color: #8a2c64; }
+
+  /* Wachsende Deko: Platz-Rahmen grün */
+  .platz--wachsend { border-radius: 2px; border-color: #3f7a2a; }
+  .platz--wachsend span { color: #2f5e1f; }

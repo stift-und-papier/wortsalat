@@ -33,8 +33,8 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 | Blumenbeete (6 Beete, 16 Plätze) | alle bepflanzt, gemischt aus heutigen Blumen-Bildern und neuen Blumen (Platzhalter) |
 | Deko klein (20) | 14 mit heutigen Bildern, 6 mit neuen Bildern aus den Paketen (im Mockup als Platzhalter) |
 | Deko groß (2) | Picknick, Bienenstock (neu) |
-| Deko im Wasser (4) | Seerosen, Schilf, Frosch, Steine (neu) |
-| Wachsende Deko (8) | alle in der letzten Stufe |
+| Deko im Wasser (4) | Schilf, Frosch (auf S2, V3), Steine, Schilf (neu) |
+| Wachsende Deko (8) | alle in der letzten Stufe (echte Bilder aus den Paketen; Vogelhaus und Windrad als Platzhalter, siehe `dekorationen.md`) |
 | Figur | im Hof |
 | Meldung | „Deine Hühner sind hungrig.“ |
 | Münzen | 4-stellig (1.240): Die Anzeige reicht dafür. |
@@ -94,7 +94,7 @@ Dazu kommt die Figur, solange sie läuft. Das sind **14**.
 |---|---|---|
 | V1 | Wo liegen Ei und Milch? Heute liegen sie direkt neben dem Tier, dann überlappen sich die Tippflächen von Tier und Ei. | Eier liegen **im Eingang des Hühnerstalls**, Milch **an der Scheunentür**. Ein Tipp dort sammelt alle Eier bzw. alle Milch ein. Das ist ein fester Platz, und nichts überlappt. |
 | V2 | Bewegungs-Budget wie in Abschnitt 2: höchstens 12 eigene Bewegungen, höchstens 2 bewegte Deko, Liegendes hüpft im gemeinsamen Takt | annehmen |
-| V3 | Enge Stellen (rechts vom Stall, oben Mitte) | beim Festlegen der wachsenden Deko (Teilaufgabe 4) einen Platz umlegen; der Frosch nicht neben W7 |
+| V3 | Enge Stellen (rechts vom Stall, oben Mitte) | beim Festlegen der wachsenden Deko (Teilaufgabe 4) einen Platz umlegen; der Frosch nicht neben W7. **Gelöst** in Teilaufgabe 4 (`dekorationen.md` Abschnitt 7). |
 | V4 | Schlimmster Fall „viel Liegendes“ | keine Obergrenze nötig, weil alles im selben Takt hüpft (V2); die Meldung erinnert einmal: „Auf deiner Farm liegt etwas zum Einsammeln.“ |
 
 ## 5. Geprüft und nicht geprüft
