@@ -51,7 +51,19 @@ const WACHSEND = [ // Teilaufgabe 4 legt fest, was hier wächst; hier nur Platz 
 ]
 // Deko-Plätze in drei Größen: klein 1 × 1 (D), groß 2 × 2 (G), im Wasser 1 × 1 (S)
 const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
-  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [3, 8], [5, 8], [7, 8], [9, 8]].map(([x, y]) => ({ x, y }))
+  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10],
+  // Jazz 2026-11-17: nicht in einer Reihe, sondern wie zufällig: Baumstumpf beim Baum, Laterne am Brunnen, Briefkasten am Hofweg, Fels am Ufer
+  [3, 9], [15, 7], [9, 7], [9, 10]].map(([x, y]) => ({ x, y }))
+// Jazz 2026-11-17: mehr Blumen. Blumenbeete aus 2 bis 4 Kacheln; die Blumen eines Beets stehen dicht (wie die Felder),
+// darum gilt für sie die Abstandsregel nicht. Antippen öffnet unter „Farm einrichten“ die Auswahl für dieses Beet.
+const BEETE = [
+  { n: 'A am Acker', k: [[7, 4], [7, 5], [7, 6]] },
+  { n: 'B am Brunnen', k: [[12, 8], [13, 9], [14, 9]] },
+  { n: 'C an der Hütte', k: [[3, 11], [3, 12]] },
+  { n: 'D an der Scheune', k: [[18, 7], [19, 7], [22, 7], [23, 7]] },
+  { n: 'E am Ufer', k: [[16, 13], [17, 13]] },
+  { n: 'F am Obstgarten', k: [[2, 5], [2, 6]] },
+]
 const DEKO_GROSS = [{ x: 8, y: 4 }, { x: 16, y: 4 }]
 // Wasser-Plätze nur oben (Jazz: unten lag S2 im Meldungsfeld)
 const DEKO_WASSER = [[14, 3], [1, 2], [15, 1], [24, 1]].map(([x, y]) => ({ x, y }))
@@ -59,7 +71,7 @@ const BAEUME_FEST = [{ g: 'baum', x: 13, y: 10, b: 2, h: 2 }, { g: 'baum_klein',
   { g: 'baum_klein', x: 12, y: 4, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 9, b: 1, h: 2 },
   // auf den Landstreifen (nur Landschaft)
   { g: 'baum', x: -3, y: 6, b: 2, h: 2 }, { g: 'baum_klein', x: -2, y: 9, b: 1, h: 2 }, { g: 'baum', x: 28, y: 5, b: 2, h: 2 }, { g: 'baum_klein', x: 27, y: 9, b: 1, h: 2 }]
-const GRAS_DEKO = [[10, 6], [8, 7], [4, 9], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [19, 7], [16, 6], [-2, 4], [29, 8]]
+const GRAS_DEKO = [[10, 6], [8, 7], [4, 9], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [20, 8], [16, 6], [-2, 4], [29, 8]]
 
 // ---------- Selbstprüfung: alles auf Gras, nichts überdeckt sich, Tippflächen 48 px überlappen nicht ----------
 const belegt = new Map()
@@ -84,6 +96,7 @@ lege('Figur', FIGUR.x, FIGUR.y, 1, 2)
 WACHSEND.forEach((w) => lege(w.n, w.x, w.y, w.b, w.h, w.wasser))
 DEKO.forEach((d, i) => lege('Deko ' + (i + 1), d.x, d.y))
 DEKO_GROSS.forEach((d, i) => lege('Deko groß ' + (i + 1), d.x, d.y, 2, 2))
+BEETE.forEach((b) => b.k.forEach(([x, y]) => lege('Beet ' + b.n, x, y)))
 DEKO_WASSER.forEach((d, i) => { lege('Deko Wasser ' + (i + 1), d.x, d.y, 1, 1, true); if (gras(d.x, d.y)) fehler.push(`Wasser-Deko ${i + 1} liegt auf Gras`) })
 BAEUME_FEST.forEach((t) => lege(t.g, t.x, t.y, t.b, t.h))
 // Monster: Laufweg auf Gras, daneben (links/rechts) Gras oder Hütte, darunter Gras
@@ -197,6 +210,7 @@ async function zeichnen() {
     DEKO.forEach((o, i) => kreis('D' + (i + 1), o))
     DEKO_WASSER.forEach((o, i) => kreis('S' + (i + 1), o))
     DEKO_GROSS.forEach((o, i) => { const g = document.createElement('div'); g.className = 'platz platz--gross'; g.innerHTML = `<span>G${i + 1}</span>`; setze(g, o.x, o.y, 2, 2) })
+    BEETE.forEach((b) => b.k.forEach(([x, y], i) => { const g = document.createElement('div'); g.className = 'platz platz--beet'; g.innerHTML = i ? '' : `<span>B${b.n[0]}</span>`; setze(g, x, y, 1, 1) }))
   }
   const info = document.getElementById('info')
   const bewegt = buehne.querySelectorAll('.bewegt').length
@@ -241,6 +255,10 @@ function volleFarm(p, setze, platzhalter) {
   // Deko: 14 kleine Plätze mit vorhandenen Bildern, 6 mit neuen aus den Paketen (Platzhalter, Liste in layout-leer.md Abschnitt 8)
   const vorhanden = ['deko_busch', 'deko_blume_gelb', 'deko_pilz', 'deko_stein', 'deko_blume_lila', 'deko_pilzhaus', 'deko_katze_rosa', 'deko_katze_blau']
   const neu = ['Sonnen-blume', 'Schild', 'Baum-stumpf', 'Laterne', 'Brief-kasten', 'Fels']
+  // Blumenbeete: heutige Blumen-Bilder gemischt, dazu neue Blumen aus den Paketen (Platzhalter „Blume“)
+  const blumen = ['deko_blume_gelb', 'deko_katze_rosa', 'deko_blume_lila', null, 'deko_katze_blau']
+  let z = 0
+  BEETE.forEach((b) => b.k.forEach(([x, y]) => { const g = blumen[z++ % blumen.length]; g ? ding(sprite(g, 16, 16, 16, 16, 0, m), x, y, 1, 1) : platzhalter('neu: Blume', x, y, 1, 1) }))
   DEKO.forEach((o, i) => (i < 14 ? ding(sprite(vorhanden[i % 8], 16, 16, 16, 16, 0, m), o.x, o.y, 1, 1) : platzhalter('neu: ' + neu[i - 14], o.x, o.y, 1, 1)))
   platzhalter('neu: Picknick', DEKO_GROSS[0].x, DEKO_GROSS[0].y, 2, 2)
   platzhalter('neu: Bienen-stock (bewegt)', DEKO_GROSS[1].x, DEKO_GROSS[1].y, 2, 2, true)

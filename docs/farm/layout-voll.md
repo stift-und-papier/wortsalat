@@ -30,6 +30,7 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 | Hühnerstall | 4 Hühner, 2 davon hungrig (Napf leer), 1 Ei zum Einsammeln |
 | Monster | Hütte, Monster vor der Hütte, sein Geschenk (Samentüte) liegt daneben |
 | Brunnen, Boot | beide gekauft |
+| Blumenbeete (6 Beete, 16 Plätze) | alle bepflanzt, gemischt aus heutigen Blumen-Bildern und neuen Blumen (Platzhalter) |
 | Deko klein (20) | 14 mit heutigen Bildern, 6 mit neuen Bildern aus den Paketen (im Mockup als Platzhalter) |
 | Deko groß (2) | Picknick, Bienenstock (neu) |
 | Deko im Wasser (4) | Seerosen, Schilf, Frosch, Steine (neu) |
@@ -38,7 +39,7 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 | Meldung | „Deine Hühner sind hungrig.“ |
 | Münzen | 4-stellig (1.240): Die Anzeige reicht dafür. |
 
-Das sind gut **80 Dinge** auf der Insel. Mehr geht nicht, weil jeder Platz belegt ist.
+Das sind knapp **100 Dinge** auf der Insel. Mehr geht nicht, weil jeder Platz belegt ist.
 
 ## 2. Bewegungs-Budget
 

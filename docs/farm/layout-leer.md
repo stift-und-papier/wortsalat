@@ -34,7 +34,7 @@ Grundlage sind `analyse-farm.md` und die Antworten von Jazz vom 2026-11-17 (sieh
 5. **Die Meldung** ist ein Papier-Banner unten im Meer. Dort stehen aktuelle Hinweise zur Farm. Einstein kommt nicht auf die Farm.
 6. **Felder liegen dicht wie heute (4 × 3).**
    - Das hat sich in Tests bewährt.
-   - Der gewonnene Platz geht an die Deko: **26 Deko-Plätze statt 18**, in drei Größen.
+   - Der gewonnene Platz geht an die Deko: **26 Deko-Plätze statt 18** in drei Größen, dazu **16 Blumenplätze in 6 Beeten**.
 7. **Tippflächen:**
    - Hühner und Deko bekommen mindestens 48 × 48 px.
    - Felder bleiben bei 2-fach 32 px. Das ist eine bewusste Ausnahme (Jazz, E3).
@@ -69,9 +69,10 @@ So ist gerechnet:
 | **Monster-Hütte** | links unten (x 4 bis 7, y 10 bis 13) | Hütte und Laufweg des Monsters (x 8 bis 9, y 11) | links unten | **Das Monster läuft nie ins Wasser** (Jazz). Links und rechts vom Laufweg liegen Gras oder die Hütte, darunter Gras. Das Mockup prüft das. |
 | **Brunnen** | Mitte (x 13 bis 14, y 7 bis 8) | 1 | Mitte | |
 | **Boot** | Bucht oben Mitte (x 12 bis 14, y 1 bis 2) | 1 (im Wasser) | Bucht oben | |
-| **Deko klein** (1 × 1) | am Rand, unter dem Acker, im Hof | **20 Plätze** D1 bis D20 | 18 | Blumen, Steine, Pilze, Schilder und Ähnliches |
+| **Deko klein** (1 × 1) | verstreut: am Rand, beim Baum, am Brunnen, am Hofweg, am Ufer | **20 Plätze** D1 bis D20 | 18 | Steine, Pilze, Schilder, Baumstumpf, Laterne, Briefkasten und Ähnliches. Bewusst nicht in Reihen (Jazz). |
 | **Deko groß** (2 × 2) | neben dem Acker, vor der Scheune | **2 Plätze** G1, G2 | – | Picknick, Bank mit Tisch, Bienenstock, Kirschblütenbusch |
 | **Deko im Wasser** (1 × 1) | nur oben: Bucht und Ufer | **4 Plätze** S1 bis S4 | – | Seerosen, Schilf, Steine im Wasser, Frosch |
+| **Blumenbeete** (Jazz: mehr Blumen) | am Acker, am Brunnen, an der Hütte, an der Scheunentür, am Ufer, am Obstgarten | **6 Beete mit 16 Blumenplätzen** (je 2 bis 4 Kacheln) | – | Die Blumen eines Beets stehen dicht wie die Felder. Antippen öffnet unter „Farm einrichten“ die Auswahl für das Beet. Nur Blumen passen hinein. |
 | **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 | – | Was dort wächst, legt Teilaufgabe 4 fest. Sie sind nicht antippbar. |
 | **Figur** | Start im Hof (x 16, y 8) | – | Mitte | |
 | **Liegendes** (Ernte, Ei, Milch, Monster-Geschenk) | Ernte auf dem Feld selbst; Ei/Milch und Geschenk an einem festen Platz neben Tier bzw. Hütte | – | „daneben“ | Geschenke **hüpfen weiter** (Jazz, E4). |
@@ -145,6 +146,7 @@ Alle Bilder unten sind schon gekauft. Sie liegen in `assets/entpackt/` und sind 
 
 | Gruppe | Platz | Vorschläge | Quelle (Bilderbogen) |
 |---|---|---|---|
+| **Blumen für die Beete** (Jazz: mehr Blumen) | Beet | Blumenbüschel in Gelb, Rosa, Blau, Lila und Weiß; Sonnenblume; Tulpe und Rose (gibt es schon als Pflanzen); Kirschblüten-Büschel; Kleeblüten; die heutigen Blumen gelb und lila sowie die Katzenblumen | Premium `Objects/Mushrooms, Flowers, Stones.png` (mehrere Blumenbüschel in verschiedenen Farben), Basic `Basic_Grass_Biom_things.png`, Sorry Pack `Cherry Blossom Biom.png`, heutige `pflanzen.png` (Tulpe, Rose in Blüte) |
 | **Blumen und Pflanzen** | klein | Sonnenblume, Blumenbüschel in mehreren Farben, rosa Pilze, Kleeblatt-Büschel, Beerenbusch, rosa Busch | Sprout Lands Premium `Objects/Mushrooms, Flowers, Stones.png`, `Trees, stumps and bushes.png`; Basic `Basic_Grass_Biom_things.png`; Sorry Pack `Cherry Blossom Biom.png` |
 | **Steine und Holz** | klein | großer Stein, bemooster Fels, Baumstumpf, Holzstamm, Pilz auf Stumpf | `Mushrooms, Flowers, Stones.png`, `Trees, stumps and bushes.png`, Sorry Pack `Birch wood Biom.png` |
 | **Schilder und Kleines** | klein | Holzschild mit Bild (24 Motive, z. B. Herz, Blume, Stern), Briefkasten, Laterne, Truhe (Holz, Silber, Gold) | Premium `Objects/signs.png`, `Tilesets/Building parts/Mailbox Animation Frames.png`; Sorry Pack `Furniture/*_Chest.png` |
@@ -152,7 +154,7 @@ Alle Bilder unten sind schon gekauft. Sie liegen in `assets/entpackt/` und sind 
 | **Am und im Wasser** | Wasser | Seerosen, Schilf, Steine im Wasser, Frosch | Premium `Objects/Water Objects.png`; Sorry Pack `Plant update 2/frog/` |
 | **Jahreszeit** (Vorschlag, nur zeitweise im Shop) | klein/groß | Weihnachtsbaum, Geschenke, geschnitzter Kürbis | Sorry Pack `Sprout winter/`, `halloween/carved_halloween_pumpkins.png` |
 
-Das ergibt **etwa 30 neue Deko-Gegenstände**, ohne ein einziges Bild neu zu zeichnen.
+Das ergibt **etwa 40 neue Deko-Gegenstände**, davon gut 10 Blumen, ohne ein einziges Bild neu zu zeichnen.
 
 **Grenzen:**
 - Bewegte Deko (Bienen, Frosch, Lagerfeuer) zählt zum Bewegungs-Budget aus Teilaufgabe 3 und steht bei „Bewegung reduzieren“ still.
@@ -175,6 +177,7 @@ Preise und Freischaltung folgen in Teilaufgabe 5, die genaue Auswahl in Teilaufg
 | E5 | Shop-Knopf auf der Farm | Der Knopf **ersetzt** den Menüpunkt Shop unten. Das Buch im Sammelalbum-Knopf wird kleiner. |
 | E6 | Monster | läuft nie ins Wasser (Laufweg vor der Hütte, ringsum Gras) |
 | E7 | Überschrift „Meine Farm“ | entfällt auf der Farm |
+| E9 | Deko-Verteilung und Blumen | Baumstumpf, Laterne, Briefkasten, Fels verstreut statt in einer Reihe; 6 Blumenbeete mit 16 Plätzen; mehr Blumen im Shop |
 | E8 | Wasser-Platz S2 lag unten im Meldungsfeld | Wasser-Plätze nur noch oben; unter der Insel liegt nichts Antippbares im Wasser (Prüfung im Mockup) |
 
 ## 10. Was später im Code zu ändern wäre (nicht jetzt)

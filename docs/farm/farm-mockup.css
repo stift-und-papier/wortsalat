@@ -62,3 +62,7 @@
   /* Rahmen des Spiels (body.garten-seite) ohne seinen Innenabstand: das Mockup legt Kopfzeile, Fenster und Menü selbst fest */
   body.garten-seite { padding: 0; min-height: 0; }
   .kopf.muenzen-stand { flex-wrap: nowrap; margin: 0; }
+
+  /* Blumenbeet: Kacheln eines Beets, eckig und dicht */
+  .platz--beet { border-radius: 2px; border-style: dashed; border-color: #8a2c64; }
+  .platz--beet span { color: #8a2c64; }

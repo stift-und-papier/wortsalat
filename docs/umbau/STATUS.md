@@ -554,4 +554,7 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   **Nicht getestet:** echtes iPad (Leistung), dunkler Modus, neue Deko-Bilder (nur Platzhalter).
 - **Entscheidungen Jazz zu Teilaufgabe 3 (2026-11-17):** V1–V4 angenommen (Eier im Stall-Eingang, Milch an der Scheunentür; Bewegungs-Budget;
   enge Stellen in Teilaufgabe 4 lösen; Erinnerung an Liegendes per Meldung). Shop-Knopf breiter mit dem Wort „Laden“ (Mockups und Fotos erneuert).
+- **Nachtrag Jazz:** Baumstumpf, Laterne, Briefkasten, Fels verstreut (Baum, Brunnen, Hofweg, Ufer) statt in einer Reihe; mehr Blumen:
+  6 Blumenbeete mit 16 Plätzen (Blumen eines Beets dicht, Auswahl je Beet), Blumen-Vorschläge aus den Paketen in `layout-leer.md` Abschnitt 8.
+  Selbstprüfung in allen Größen ok.
 - **Nächster Schritt:** Teilaufgabe 4 (Dekorationskonzept).
