@@ -4,10 +4,11 @@ import { KERNCURRICULA, STUFEN } from '../lib/csv'
 import { supabase } from '../lib/supabase'
 import type { Kompetenz } from '../lib/typen'
 
-type Props = { ausgewaehlt: Set<string>; onChange: (neu: Set<string>) => void }
+/** erklaerung: Erklärseite (zählt nie für den Lernstand), dann ein freundlicherer Hinweis ohne Zuordnung */
+type Props = { ausgewaehlt: Set<string>; onChange: (neu: Set<string>) => void; erklaerung?: boolean }
 
 // Kompetenzen für eine Aufgabe auswählen – auch aus mehreren Kerncurricula.
-export function KompetenzAuswahl({ ausgewaehlt, onChange }: Props) {
+export function KompetenzAuswahl({ ausgewaehlt, onChange, erklaerung = false }: Props) {
   const [alle, setAlle] = useState<Kompetenz[]>([])
   const [kc, setKc] = useState<Kompetenz['kerncurriculum']>('Realschule')
   const [stufe, setStufe] = useState('alle')
@@ -47,7 +48,9 @@ export function KompetenzAuswahl({ ausgewaehlt, onChange }: Props) {
       <legend>Kompetenzen</legend>
       {gewaehlt.length === 0 ? (
         <p className="lk-hinweis" role="alert">
-          Noch keine Kompetenz zugeordnet. Ohne Zuordnung fließt die Aufgabe nicht in den Lernstand ein.
+          {erklaerung
+            ? 'Noch keine Kompetenz zugeordnet. Mit Zuordnung finden Sie die Erklärseite leichter über Suche und Filter.'
+            : 'Noch keine Kompetenz zugeordnet. Ohne Zuordnung fließt die Aufgabe nicht in den Lernstand ein.'}
         </p>
       ) : (
         <ul className="lk-chips">

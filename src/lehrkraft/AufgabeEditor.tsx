@@ -479,10 +479,14 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext', neuGemischt
             <input className="lk-feld" value={titel} onChange={(e) => setTitel(e.target.value)} maxLength={120} placeholder="z. B. das oder dass?" />
           </label>
           {istErklaerung ? (
-            <p className="lk-leise">
-              Erklärseiten zählen im Paket als erledigt, sobald Schüler:innen „Verstanden“ antippen, aber nie für den
-              Lernstand. Darum gibt es hier keine Stufe und keine Kompetenzen.
-            </p>
+            // Jazz 2026-11-17: auch Erklärseiten bekommen Kompetenzen (Suche, Filter, Ordnung in der Liste); für den Lernstand zählen sie nie
+            <>
+              <p className="lk-leise">
+                Erklärseiten zählen im Paket als erledigt, sobald Schüler:innen „Verstanden“ antippen, aber nie für den
+                Lernstand. Darum gibt es hier keine Stufe. Die Kompetenzen helfen beim Suchen und Filtern.
+              </p>
+              <KompetenzAuswahl ausgewaehlt={kompetenzIds} onChange={setKompetenzIds} erklaerung />
+            </>
           ) : (
             <>
           <fieldset>

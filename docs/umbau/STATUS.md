@@ -496,3 +496,7 @@
   **Getestet:** Skript (36 Übungen ohne Prüffehler), Datenbank (Reihenfolge im Paket, Kompetenzen je Übung, Runden), als Dachs-19 bei 820 × 1180
   (Paket kurz der Klasse „Test“ zugewiesen, danach wieder entfernt): Teilsätze zuordnen richtig, Satzgefüge bauen richtig (Satzanfang groß),
   Abschluss mit Monster (Maus) und 3 Runden. **Nicht getestet:** alle übrigen Übungen im Browser (nur geprüft durch die Parser), echtes iPad.
+- **Kompetenzen bei Erklärseiten** (Jazz 2026-11-17): der Editor zeigt für Erklärseiten jetzt die Kompetenz-Auswahl (vorher nur der Satz „keine Kompetenzen“);
+  Hinweis ohne Zuordnung passt zu Erklärseiten (Suche und Filter statt Lernstand). Speichern war schon für alle Arten vorhanden.
+  **Getestet** (Browser): „Erklärung: Das Satzgefüge und sein Komma“: Kompetenz entfernt, gespeichert, neu geladen (3); über die Auswahl (Gymnasium, Suche
+  „Einsch“) wieder angekreuzt, gespeichert, neu geladen (4). `npm test` 152, lint ohne Fehler.
