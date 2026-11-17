@@ -38,6 +38,7 @@
   .zone { position: absolute; box-sizing: border-box; border: 3px dashed rgba(40, 30, 90, 0.85); background: rgba(255, 255, 255, 0.18); }
   .zone b { position: absolute; left: -3px; bottom: 100%; background: rgba(255, 255, 255, 0.92); color: #1d1640; font: 800 12px/1.2 Nunito, sans-serif; padding: 2px 5px; border-radius: 4px; white-space: nowrap; }
   .platz { position: absolute; box-sizing: border-box; border: 2px dotted #1d1640; border-radius: 50%; }
+  .platz--gross { border-radius: 6px; }
   .platz span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 800 10px/1 Nunito, sans-serif; color: #1d1640; background: rgba(255,255,255,0.85); padding: 1px 2px; border-radius: 3px; }
   .meldung { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 32px); width: 640px; box-sizing: border-box;
     border-style: solid; border-width: 12px 12px 18px; border-image: var(--rahmen-karte) 4 4 6 fill / 12px 12px 18px; image-rendering: pixelated;
@@ -61,7 +62,7 @@
 <body>
 <header class="kopf">
   <span class="schalter"><i></i> Dunkel</span>
-  <button class="knopf rundknopf" aria-label="Sammelalbum"><img src="../../src/grafik/buch_symbol.png" width="44" height="52" alt=""></button>
+  <button class="knopf rundknopf" aria-label="Sammelalbum"><img src="../../src/grafik/buch_symbol.png" width="27" height="32" alt=""></button>
   <button class="knopf rundknopf" aria-label="Vorrat"><img src="../../src/grafik/truhe.png" width="32" height="28" alt=""></button>
   <div class="mitte"><div class="pixel-schild"><h1>Meine Farm</h1></div></div>
   <button class="knopf rundknopf" aria-label="Shop"><img src="../../src/grafik/muenze.png" width="24" height="24" alt="">Shop</button>
@@ -79,7 +80,6 @@
   <li><a href="#"><span class="symbol"></span>Übungen</a></li>
   <li><a href="#"><span class="symbol"></span>Erklärungen</a></li>
   <li><a href="#" aria-current="page"><span class="symbol"></span>Farm</a></li>
-  <li><a href="#"><span class="symbol"></span>Shop</a></li>
   <li><a href="#"><span class="symbol"></span>Hilfe</a></li>
 </ul></nav>
 <div class="hinweis-mockup" id="info"></div>
@@ -117,7 +117,8 @@ const grasGanz = (x, y) => KARTE[y]?.[x] === '#'
 const gras = (x, y) => grasGanz(x + OX, y) // Kern-Koordinaten
 
 // Plätze (x, y in Kacheln; b × h)
-const FELDER = [3, 5, 7, 9].flatMap((x) => [4, 6, 8].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
+// Jazz 2026-11-17 (E3): Felder dicht wie heute (4 × 3), das hat sich in Tests bewährt; dafür mehr Platz für Deko
+const FELDER = Array.from({ length: 12 }, (_, i) => ({ x: 3 + (i % 4), y: 4 + Math.floor(i / 4) }))
 const START_FELDER = 4
 const OBSTBAEUME = [{ x: 3, y: 1, n: 'Orange' }, { x: 6, y: 1, n: 'Pfirsich' }, { x: 9, y: 1, n: 'Birne' }] // Bild 3 × 3
 const SCHEUNE = { x: 18, y: 1, b: 6, h: 6 }
@@ -134,13 +135,16 @@ const WACHSEND = [ // Teilaufgabe 4 legt fest, was hier wächst; hier nur Platz 
   { x: 10, y: 12, b: 2, h: 1, n: 'W4', wasser: true }, { x: 11, y: 7, b: 1, h: 1, n: 'W5' }, { x: 22, y: 8, b: 1, h: 1, n: 'W6' },
   { x: 16, y: 1, b: 1, h: 1, n: 'W7' }, { x: 24, y: 11, b: 1, h: 1, n: 'W8' },
 ]
-const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 10], [11, 9], [11, 11], [16, 3], [17, 5], [24, 3], [25, 5],
-  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [25, 12]].map(([x, y]) => ({ x, y }))
+// Deko-Plätze in drei Größen: klein 1 × 1 (D), groß 2 × 2 (G), im Wasser 1 × 1 (S)
+const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 10], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
+  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [3, 8], [5, 8], [7, 8], [9, 8]].map(([x, y]) => ({ x, y }))
+const DEKO_GROSS = [{ x: 8, y: 4 }, { x: 16, y: 4 }]
+const DEKO_WASSER = [[14, 3], [11, 13], [2, 13], [24, 13], [25, 1]].map(([x, y]) => ({ x, y }))
 const BAEUME_FEST = [{ g: 'baum', x: 13, y: 10, b: 2, h: 2 }, { g: 'baum_klein', x: 24, y: 6, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 2, b: 1, h: 2 },
   { g: 'baum_klein', x: 12, y: 4, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 9, b: 1, h: 2 },
   // auf den Landstreifen (nur Landschaft)
   { g: 'baum', x: -3, y: 6, b: 2, h: 2 }, { g: 'baum_klein', x: -2, y: 9, b: 1, h: 2 }, { g: 'baum', x: 28, y: 5, b: 2, h: 2 }, { g: 'baum_klein', x: 27, y: 9, b: 1, h: 2 }]
-const GRAS_DEKO = [[6, 5], [8, 7], [4, 9], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [19, 7], [16, 6], [-2, 4], [29, 8]]
+const GRAS_DEKO = [[10, 6], [8, 7], [4, 9], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [19, 7], [16, 6], [-2, 4], [29, 8]]
 
 // ---------- Selbstprüfung: alles auf Gras, nichts überdeckt sich, Tippflächen 48 px überlappen nicht ----------
 const belegt = new Map()
@@ -164,12 +168,16 @@ lege('Boot', BOOT.x, BOOT.y, 3, 2, true)
 lege('Figur', FIGUR.x, FIGUR.y, 1, 2)
 WACHSEND.forEach((w) => lege(w.n, w.x, w.y, w.b, w.h, w.wasser))
 DEKO.forEach((d, i) => lege('Deko ' + (i + 1), d.x, d.y))
+DEKO_GROSS.forEach((d, i) => lege('Deko groß ' + (i + 1), d.x, d.y, 2, 2))
+DEKO_WASSER.forEach((d, i) => { lege('Deko Wasser ' + (i + 1), d.x, d.y, 1, 1, true); if (gras(d.x, d.y)) fehler.push(`Wasser-Deko ${i + 1} liegt auf Gras`) })
 BAEUME_FEST.forEach((t) => lege(t.g, t.x, t.y, t.b, t.h))
 GRAS_DEKO.forEach(([x, y]) => { if (belegt.has(`${x},${y}`) || !gras(x, y)) fehler.push(`Grasdeko (${x}, ${y}) liegt schlecht`) })
 // Antippbare 1 × 1-Dinge brauchen ringsum eine freie Kachel (dann passt bei 2-fach eine Tippfläche von 48 × 48 px ohne Überlappung)
-const klein = [...FELDER.map((o) => ['Feld', o]), ...HUEHNER.map((o) => ['Huhn', o]), ...DEKO.map((o) => ['Deko', o])]
+// Ausnahme (Jazz, E3): Felder untereinander liegen dicht, ihre Tippfläche bleibt bei 2-fach 32 px
+const klein = [...FELDER.map((o) => ['Feld', o]), ...HUEHNER.map((o) => ['Huhn', o]), ...DEKO.map((o) => ['Deko', o]), ...DEKO_WASSER.map((o) => ['Wasser-Deko', o])]
 for (let i = 0; i < klein.length; i++) for (let j = i + 1; j < klein.length; j++) {
   const [na, a] = klein[i], [nb, b] = klein[j]
+  if (na === 'Feld' && nb === 'Feld') continue
   if (Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) < 2) fehler.push(`${na} (${a.x}, ${a.y}) zu nah an ${nb} (${b.x}, ${b.y})`)
 }
 
@@ -246,7 +254,7 @@ async function zeichnen() {
   if (plaetze) {
     const zone = (t, x, y, b, h) => { const z = document.createElement('div'); z.className = 'zone'; z.innerHTML = `<b>${t}</b>`; setze(z, x, y, b, h) }
     zone('Obstgarten (3 Bäume, Shop)', 3, 1, 9, 3)
-    zone('Acker: 12 Felder, 4 zu Beginn', 3, 4, 7, 5)
+    zone('Acker: 12 Felder, 4 zu Beginn', 3, 4, 4, 3)
     zone('Scheune: 2 Kühe', SCHEUNE.x, SCHEUNE.y, SCHEUNE.b, SCHEUNE.h)
     zone('Hühnerstall + 4 Hühner', 17, 9, 7, 4)
     zone('Monster-Hütte', HUETTE.x, HUETTE.y, 4, 4)
@@ -254,13 +262,15 @@ async function zeichnen() {
     zone('Boot', BOOT.x, BOOT.y, 3, 2)
     zone('Brunnen', BRUNNEN.x, BRUNNEN.y, 2, 2)
     // Tippflächen der kleinen Dinge (48 × 48 px bei 2-fach, sonst eine Kachel)
-    const ziel = Math.max(48, p)
-    const kreis = (t, o) => { const a = auf(o.x, o.y), k = document.createElement('div'); k.className = 'platz'
+
+    const kreis = (t, o, ziel = Math.max(48, p)) => { const a = auf(o.x, o.y), k = document.createElement('div'); k.className = 'platz'
       Object.assign(k.style, { left: a.left + p / 2 - ziel / 2 + 'px', top: a.top + p / 2 - ziel / 2 + 'px', width: ziel + 'px', height: ziel + 'px' })
       k.innerHTML = `<span>${t}</span>`; buehne.appendChild(k) }
-    FELDER.forEach((o, i) => kreis('F' + (i + 1), o))
+    FELDER.forEach((o, i) => kreis('F' + (i + 1), o, p))
     HUEHNER.forEach((o, i) => kreis('H' + (i + 1), o))
     DEKO.forEach((o, i) => kreis('D' + (i + 1), o))
+    DEKO_WASSER.forEach((o, i) => kreis('S' + (i + 1), o))
+    DEKO_GROSS.forEach((o, i) => { const g = document.createElement('div'); g.className = 'platz platz--gross'; g.innerHTML = `<span>G${i + 1}</span>`; setze(g, o.x, o.y, 2, 2) })
   }
   const info = document.getElementById('info')
   info.textContent = `Mockup · ${W} × ${H} · Faktor ${mal} · Insel ${SP * p} × ${ZE * p} px · ${fehler.length ? fehler.length + ' Fehler (Konsole)' : 'Prüfung ok'}`

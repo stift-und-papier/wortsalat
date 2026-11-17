@@ -537,5 +537,9 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   8 Plätze für wachsende Deko, 18 Deko-Plätze, Hochformat nur Hinweis. Hungrige Tiere: Variante A (leerer Napf/Trog) + Meldung, keine Blasen.
   Nur Testfarm Pfau-99 hat mehr als 2 Kühe (4). **Getestet:** Mockup bei 1024 × 768, 1180 × 820, 1366 × 1024, 768 × 1024 (Edge Kopfmodus),
   Selbstprüfung ok. **Nicht getestet:** echtes iPad (Safari-Leisten), dunkler Modus und Bewegung im Mockup.
-- **Offen:** Entscheidungen E1–E5 in `layout-leer.md` Abschnitt 9.
-- **Nächster Schritt:** Rückmeldung von Jazz zu Teilaufgabe 2, dann Teilaufgabe 3 (Layout voll).
+- **Entscheidungen Jazz zu Teilaufgabe 2 (2026-11-17):** E1, E2 angenommen. E3: Felder **dicht wie heute** (4 × 3, Tippfläche 32 px bei 2-fach
+  bewusst erlaubt), dafür mehr Deko-Plätze und mehr Deko im Shop. E4: Napf/Trog statt Blasen, Meldung „Deine Hühner/Kühe/Tiere sind hungrig.“,
+  Monster ohne Ausrufezeichen, Geschenke hüpfen weiter. E5: Shop-Knopf über der Farm **ersetzt** den Menüpunkt Shop; Buch im Sammelalbum-Knopf kleiner.
+  Umgesetzt im Mockup und in `layout-leer.md`: 27 Deko-Plätze (20 klein, 2 groß 2 × 2, 5 im Wasser), Liste von etwa 30 passenden Deko-Bildern aus den
+  gekauften Paketen (Abschnitt 8). Selbstprüfung in allen drei Größen ok.
+- **Nächster Schritt:** Teilaufgabe 3 (Layout voll).
