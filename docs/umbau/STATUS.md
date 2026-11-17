@@ -463,3 +463,20 @@
     Farm Dachs-19 bei 820 × 1180 und 1180 × 820 (Boot ganz sichtbar, Rahmen oben); Lernstand Klasse „Test“ mit Stufen und Verlauf je Kompetenz;
     Farm Pfau-99 bei 1180 × 820. `npm test` 151, lint, build ohne Fehler.
   - **Nicht getestet:** Holzrahmen am echten iPad (Fehler hier nicht nachstellbar; Lösung ist die übliche für Safari), Lernstand der Klasse „AES“ im Browser.
+- **Gemischt, Anweisung/Tipp je Runde, Multiple Choice** (Jazz 2026-11-16: alle Vorschläge angenommen; Migration `gemischt_multiple_choice`, eingespielt):
+  - **Kachel „Gemischt“** (`#/lehrkraft/aufgaben/neu-gemischt`): jede Runde wählt ihr Format (sechs Standardformate) und hat eigene **Arbeitsanweisung**
+    (Pflicht) und **Tipp** (freiwillig, je höchstens 500 Zeichen). Gespeichert als `loesung.gemischt = true` und `loesung.runden[i].anweisung/hinweis`;
+    die Datenbank gibt beides in `inhalt.runden[i]` weiter (leere fallen weg, dann gilt das der Übung). Bei allen anderen Formaten gilt das Format für alle
+    Runden, die Formatwahl je Runde ist weg. Ältere Übungen mit eigenem Format je Runde öffnen als „Gemischt“. Liste und Paketauswahl zeigen „Gemischt“.
+  - **Multiple Choice** ersetzt „Sätze verbessern“ (gleiche Kennung `ueberarbeiten` und Teil `versionen`, damit archivierte Übungen und ihre Ergebnisse
+    lesbar bleiben): Frage, 2 bis 6 Antworten, eine oder mehrere richtig (mindestens eine falsch), Hinweis je Antwort freiwillig (nur im Textmodus,
+    `Frage:` statt `Kontext:`, das alte Wort gilt weiter). Schüler:innen erfahren nur `mehrfach` („Mehrere Antworten sind richtig.“) und dürfen dann
+    mehrere antippen; richtig = genau die richtigen. Formular im Antipp-Modus: Haken „richtig“, Antwort, ✕ in einer Zeile.
+  - Behoben: Kurzzeile eingeklappter Runden entfernte jedes „s“ (Suchmuster ohne `\`).
+  - **Getestet** (Browser, Lehrkraft 1180 × 820 und 820 × 1180; Dachs-19 1180 × 820): gemischte Übung mit Lückentext- und Multiple-Choice-Runde angelegt,
+    Formatwechsel nimmt die passende Anweisung mit, Vorschau zeigt Anweisung/Format der Runde, nur „Hund“ = nochmal, „Hund“ + „Haus“ = richtig
+    (Prüfung der Datenbank), gespeichert, neu geladen (Formate, Anweisungen, Tipp, Haken wieder da), Inhalt ohne Lösung (`mehrfach`, keine `richtig`);
+    neue Lückentext-Übung ohne Formatwahl je Runde; Liste „Gemischt“; als Dachs-19 durchgespielt: Runde mit eigener Anweisung, Tipp der Runde.
+    Testübung und Testpaket danach archiviert. `npm test` 152, lint, build, `npm run test:datenbank` ALLE TESTS BESTANDEN (161, Block 22 neu).
+  - **Nicht getestet:** echtes iPad; Multiple Choice mit Hinweisen je Antwort; „Test: Zwei Formate ohne Monster“ steht in der Liste noch als „Lückentext“
+    (hat kein Kennzeichen `gemischt`, öffnet aber als „Gemischt“ und bekommt es beim nächsten Speichern).

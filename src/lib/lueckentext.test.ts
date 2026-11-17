@@ -263,7 +263,7 @@ describe('Reihenfolge', () => {
   })
 })
 
-describe('Sätze verbessern', () => {
+describe('Multiple Choice (früher Sätze verbessern)', () => {
   const text =
     'Kontext: Im Zoo.\nDann sah ich Löwen und dann Affen.\nHinweis: Zweimal „dann“.\n*Zuerst sah ich Löwen, danach Affen.\nHinweis: Keine Wiederholung.\n\nA\nHinweis: a\nB\nHinweis: b\n*C\nHinweis: c'
 
@@ -289,15 +289,22 @@ describe('Sätze verbessern', () => {
 
   it('meldet Fehler in der Eingabe', () => {
     const f = (t: string) => versionenZuTeilen(t).fehler.join(' ')
-    expect(f('*A\nHinweis: a')).toMatch(/2 bis 4/)
-    expect(f('A\nHinweis: a\nB\nHinweis: b')).toMatch(/genau eine/)
-    expect(f('A\nHinweis: a\n*B')).toMatch(/unter jede Version/)
+    expect(f('*A\nHinweis: a')).toMatch(/2 bis 6/)
+    expect(f('A\nHinweis: a\nB\nHinweis: b')).toMatch(/mindestens eine Antwort mit \*/)
+    expect(f('*A\n*B')).toMatch(/muss falsch sein/)
     expect(f('Hinweis: x\nA\nHinweis: a\n*B\nHinweis: b')).toMatch(/Vor jedem/)
-    expect(f('')).toMatch(/mindestens einen Satz/)
+    expect(f('')).toMatch(/mindestens eine Frage/)
   })
 
-  it('wandelt zurück in die Schreibweise', () => {
-    expect(teileZuText(versionenZuTeilen(text).teile)).toBe(text)
+  it('wandelt zurück in die Schreibweise (mit „Frage:“)', () => {
+    expect(teileZuText(versionenZuTeilen(text).teile)).toBe(text.replace('Kontext:', 'Frage:'))
+  })
+
+  it('Multiple Choice: mehrere richtige, Hinweise freiwillig, Schüler:innen erfahren nur „mehrfach“', () => {
+    const { teile, fehler } = versionenZuTeilen('Frage: Welche sind Nomen?\n*Hund\nlaufen\n*Haus')
+    expect(fehler).toEqual([])
+    expect(teile[0]).toMatchObject({ kontext: 'Welche sind Nomen?', richtig: [0, 2] })
+    expect(ohneLoesung(teile).teile[0]).toEqual({ t: 'versionen', id: 0, kontext: 'Welche sind Nomen?', optionen: ['Hund', 'laufen', 'Haus'], mehrfach: true })
   })
 })
 

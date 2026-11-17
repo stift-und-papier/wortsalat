@@ -174,7 +174,7 @@ export function nochOffenText(teile: Teile): string {
     (hat('reihe')
       ? 'Lege alle Bausteine in die Reihe'
       : hat('versionen')
-        ? 'Wähle bei jedem Satz eine Version'
+        ? 'Wähle bei jeder Frage eine Antwort'
         : hat('wort')
           ? 'Tippe die Fehlerwörter an'
           : hat('einheit')
@@ -289,7 +289,7 @@ function AufgabeUeben({ aufgabe, pruefen, loesungHolen, weiter, startAntworten, 
     ? (ergebnis?.rueckmeldung ??
       (plaetzeRichtig > 0 ? `Schon ${plaetzeRichtig} von ${plaetze.length} Bausteinen stehen an der richtigen Stelle.` : 'Lies den Satz laut: Was passt an den Anfang?'))
     : arten.has('versionen')
-      ? (ergebnis?.rueckmeldung ?? 'Lies die Hinweise unter den Versionen und entscheide noch einmal.')
+      ? (ergebnis?.rueckmeldung ?? 'Lies die Frage noch einmal genau und entscheide neu.')
       : arten.has('wort')
         ? [fehlend > 0 ? `Es fehlen noch ${fehlend} Fehler.` : '', falschMarkiert > 0 ? 'Bei den Wörtern mit ↻ stimmt etwas noch nicht.' : '', ergebnis?.rueckmeldung ?? '']
             .filter(Boolean)

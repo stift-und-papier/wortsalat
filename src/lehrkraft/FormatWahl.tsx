@@ -20,6 +20,14 @@ export function FormatWahl() {
             </a>
           </li>
         ))}
+        {/* Jazz 2026-11-16: jede Runde mit eigenem Format, eigener Anweisung und eigenem Tipp (ohne Diktat und Fallende Wörter) */}
+        <li>
+          <a className="lk-eintrag lk-kachel" href="#/lehrkraft/aufgaben/neu-gemischt">
+            <strong>Gemischt</strong>
+            <span>Jede Runde hat ihr eigenes Format, ihre eigene Arbeitsanweisung und ihren eigenen Tipp.</span>
+            <span className="lk-leise">Runde 1 Lückentext · Runde 2 Multiple Choice …</span>
+          </a>
+        </li>
       </ul>
     </>
   )

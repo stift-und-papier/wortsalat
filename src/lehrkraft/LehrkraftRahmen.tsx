@@ -38,7 +38,7 @@ function Inhalt({ pfad }: { pfad: string[] }) {
   if (bereich === 'klassen') return <KlassenListe />
   if (bereich === 'kompetenzen') return <Kompetenzen />
   if (bereich === 'aufgaben' && id === 'neu') return <FormatWahl />
-  if ((bereich === 'aufgaben' || bereich === 'erklaerungen') && id) return <AufgabeEditor key={id} aufgabeId={id.startsWith('neu-') ? null : id} neuerTyp={formatAusAdresse(id) ?? undefined} />
+  if ((bereich === 'aufgaben' || bereich === 'erklaerungen') && id) return <AufgabeEditor key={id} aufgabeId={id.startsWith('neu-') ? null : id} neuerTyp={formatAusAdresse(id) ?? undefined} neuGemischt={id === 'neu-gemischt'} />
   if (bereich === 'aufgaben') return <AufgabenListe key="u" />
   if (bereich === 'erklaerungen') return <AufgabenListe key="e" erklaerungen />
   if (bereich === 'pakete' && id === 'neu') return <NeuesPaket />

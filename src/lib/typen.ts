@@ -82,13 +82,17 @@ export type LueckentextInhalt = {
   wort?: string
   /** eigenes Format dieser Runde (sonst das der Übung) */
   typ?: AufgabenTyp
+  /** Gemischte Übung (Jazz 2026-11-16): Kennzeichen (oberste Ebene) und Anweisung/Tipp je Runde */
+  gemischt?: boolean
+  anweisung?: string
+  hinweis?: string
   /** Übungsumbau: eine Übung besteht aus Runden, jede Runde im bisherigen Format (Diktat: genau eine, ohne Runden-Reiter) */
   runden?: LueckentextInhalt[]
 }
 
 /** Spalte aufgaben.inhalt: Schüler-Fassung ohne Lösungen (erzeugt die Datenbank; Vorschau: ohneLoesung) */
 export type ReiheOhneLoesung = { t: 'reihe'; id: number; satzart?: string; zeichen?: string; varianten?: number; bausteine: Baustein[] }
-export type VersionenOhneLoesung = { t: 'versionen'; id: number; kontext?: string; optionen: string[] }
+export type VersionenOhneLoesung = { t: 'versionen'; id: number; kontext?: string; optionen: string[]; mehrfach?: boolean }
 export type AuswahlTeilOhneLoesung = { t: 'auswahl'; id: number; optionen: string[]; mehrfach: boolean }
 export type LueckentextInhaltSchueler = {
   darstellung?: Darstellung
@@ -101,6 +105,9 @@ export type LueckentextInhaltSchueler = {
   saetze?: string[]
   wort?: string
   typ?: AufgabenTyp
+  /** Gemischte Übung (Jazz 2026-11-16): eigene Arbeitsanweisung und eigener Tipp je Runde */
+  anweisung?: string
+  hinweis?: string
   teile: (
     | TextTeil
     | { t: 'luecke'; id: number; hinweis?: string }

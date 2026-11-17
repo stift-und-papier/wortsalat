@@ -258,7 +258,8 @@ export function versionenBloecke(text: string): VersionenBlock[] {
     .map((zeilen) => {
       const block: VersionenBlock = { kontext: '', versionen: [] }
       for (const z of zeilen) {
-        const kontext = /^kontext\s*:\s*(.*)$/i.exec(z)
+        // „Frage:“ (Multiple Choice, Jazz 2026-11-16); „Kontext:“ aus „Sätze verbessern“ gilt weiter
+        const kontext = /^(?:frage|kontext)\s*:\s*(.*)$/i.exec(z)
         const hinweis = /^hinweis\s*:\s*(.*)$/i.exec(z)
         const letzte = block.versionen[block.versionen.length - 1]
         if (kontext) block.kontext = kontext[1].trim()
@@ -276,7 +277,7 @@ export function bloeckeZuText(bloecke: VersionenBlock[]): string {
   return bloecke
     .map((b) =>
       [
-        ...(b.kontext.trim() ? [`Kontext: ${b.kontext.trim()}`] : []),
+        ...(b.kontext.trim() ? [`Frage: ${b.kontext.trim()}`] : []),
         ...b.versionen
           .filter((v) => v.text.trim())
           .flatMap((v) => [`${v.besser ? '*' : ''}${v.text.trim()}`, ...(v.hinweis.trim() ? [`Hinweis: ${v.hinweis.trim()}`] : [])]),
@@ -292,13 +293,13 @@ export function versionenZuTeilen(text: string): ParseErgebnis {
   const fehler: string[] = []
   const bloecke = versionenBloecke(text)
   bloecke.forEach((b, nr) => {
-    const satz = `Satz ${nr + 1}`
-    if (b.versionen.some((v) => !v.text)) fehler.push(`${satz}: Vor jedem „Hinweis:“ muss eine Version stehen.`)
-    if (b.versionen.length < 2 || b.versionen.length > 4) fehler.push(`${satz}: Bitte 2 bis 4 Versionen schreiben, jede in eine eigene Zeile.`)
+    // Multiple Choice (Jazz 2026-11-16): 2 bis 6 Antworten, mindestens eine richtig (mehrere erlaubt), Hinweis je Antwort freiwillig
+    const satz = `Frage ${nr + 1}`
+    if (b.versionen.some((v) => !v.text)) fehler.push(`${satz}: Vor jedem „Hinweis:“ muss eine Antwort stehen.`)
+    if (b.versionen.length < 2 || b.versionen.length > 6) fehler.push(`${satz}: Bitte 2 bis 6 Antworten schreiben, jede in eine eigene Zeile.`)
     const besser = b.versionen.flatMap((v, i) => (v.besser ? [i] : []))
-    if (besser.length !== 1) fehler.push(`${satz}: Bitte genau eine Version mit * als die bessere markieren.`)
-    if (b.versionen.some((v) => v.text && !v.hinweis))
-      fehler.push(`${satz}: Bitte unter jede Version eine Zeile „Hinweis: …“ mit der Begründung schreiben.`)
+    if (besser.length === 0) fehler.push(`${satz}: Bitte mindestens eine Antwort mit * als richtig markieren.`)
+    else if (besser.length === b.versionen.length) fehler.push(`${satz}: Mindestens eine Antwort muss falsch sein.`)
     teile.push({
       t: 'versionen',
       id: nr,
@@ -308,7 +309,7 @@ export function versionenZuTeilen(text: string): ParseErgebnis {
       hinweise: b.versionen.map((v) => v.hinweis),
     })
   })
-  if (bloecke.length === 0) fehler.push('Schreiben Sie mindestens einen Satz mit zwei Versionen.')
+  if (bloecke.length === 0) fehler.push('Schreiben Sie mindestens eine Frage mit zwei Antworten.')
   return { teile, fehler }
 }
 
@@ -422,7 +423,7 @@ export function ohneLoesung(
                     bausteine: [...t.bausteine].sort((a, b) => (a.k < b.k ? -1 : 1)),
                   }
                 : t.t === 'versionen'
-                  ? { t: 'versionen', id: t.id, kontext: t.kontext, optionen: t.optionen }
+                  ? { t: 'versionen', id: t.id, kontext: t.kontext, optionen: t.optionen, mehrfach: t.richtig.length > 1 }
                   : t,
     ),
   }

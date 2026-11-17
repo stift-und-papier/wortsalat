@@ -306,3 +306,6 @@
 - 2026-11-16 (Jazz, Teilaufgabe 4 und 5): **Erklärungen** sind ein eigener Menüpunkt; im Paket über Reiter Übungen/Erklärungen hinzufügen. Auswahl im Paket
   mit Suche (Titel, Anweisung, Kompetenz), Filtern (auch Stufe), Sortierung, Tags, Kästchen, „Ansehen“; Reihenfolge ziehen. Suche und Filter bleiben
   bis zum Schließen des Fensters gemerkt. Keine Stichwort-Spalte (Suche ohne Datenbankänderung).
+- 2026-11-16 (Jazz): Kachel **„Gemischt“** (Format, Arbeitsanweisung und Tipp je Runde; sonst gilt das Format für alle Runden). **Multiple Choice** ersetzt
+  „Sätze verbessern“ (gleiche Kennung `ueberarbeiten`, Frage + 2 bis 6 Antworten, eine oder mehrere richtig). Editor: Einordnen oben, neue Runde klappt die
+  übrigen ein. Farm: Boot in der Bucht oben. Testfarm Pfau-99 und Lernstand-Testdaten (markiert) für die Testklassen.

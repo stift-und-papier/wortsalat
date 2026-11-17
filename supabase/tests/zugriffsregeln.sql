@@ -1746,6 +1746,36 @@ begin
     n := n + 1;
   end;
 
+  -- ---------- Block 22: Gemischt (Anweisung/Tipp je Runde) und Multiple Choice (Jazz 2026-11-16) ----------
+  declare
+    v_mc uuid;
+    v jsonb;
+  begin
+    insert into public.aufgaben (owner, typ, titel, loesung) values (c_lk_a, 'lueckentext', 'M22-gemischt',
+      '{"gemischt":true,"runden":[
+         {"typ":"lueckentext","anweisung":"Ergänze.","hinweis":"Denk an dass.","teile":[{"t":"luecke","id":0,"loesungen":["dass"]}]},
+         {"typ":"ueberarbeiten","anweisung":" ","teile":[{"t":"versionen","id":0,"kontext":"Welche sind Nomen?","optionen":["Hund","laufen","Haus"],"richtig":[0,2],"hinweise":["","",""]}]}]}')
+      returning id into v_mc;
+    v := (select inhalt from public.aufgaben where id = v_mc);
+    -- 22.1 Anweisung und Tipp der Runde gehen mit, leere fallen weg
+    if v -> 'runden' -> 0 ->> 'anweisung' <> 'Ergänze.' or v -> 'runden' -> 0 ->> 'hinweis' <> 'Denk an dass.' or v -> 'runden' -> 1 ? 'anweisung' then
+      raise exception 'Block 22.1: Anweisung/Tipp je Runde falsch: %', v;
+    end if;
+    n := n + 1;
+    -- 22.2 Multiple Choice: „mehrfach“, aber weder richtig noch Lösungen
+    if not (v -> 'runden' -> 1 -> 'teile' -> 0 ->> 'mehrfach')::boolean or v::text ~ 'richtig|loesungen|dass"' then
+      raise exception 'Block 22.2: Multiple Choice verrät zu viel: %', v;
+    end if;
+    n := n + 1;
+    -- 22.3 zu lange Anweisung wird abgelehnt
+    begin
+      update public.aufgaben set loesung = jsonb_set(loesung, '{runden,0,anweisung}', to_jsonb(repeat('x', 501))) where id = v_mc;
+      raise exception 'Block 22.3: 501 Zeichen angenommen';
+    exception when sqlstate '22023' then null;
+    end;
+    n := n + 1;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;

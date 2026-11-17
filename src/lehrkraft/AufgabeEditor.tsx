@@ -72,13 +72,13 @@ export const FORMATE: Record<AufgabenTyp, { name: string; kurz: string; mini: st
     beispiel:
       'Varianten: 2\ngestern | bin ich | ins Kino | gegangen.\nins Kino | bin ich | gestern | gegangen.\n\nder Hund | bellt | laut.',
   },
+  // Jazz 2026-11-16: Multiple Choice ersetzt „Sätze verbessern“ (gleiche Kennung, gleiches Speicherformat 'versionen')
   ueberarbeiten: {
-    name: 'Sätze verbessern',
-    kurz: 'Schüler:innen wählen die bessere Version eines Satzes und lesen danach die Begründung.',
-    mini: 'Version A oder Version B?',
-    anweisung: 'Welche Version ist besser? Tippe sie an.',
-    beispiel:
-      'Kontext: Gestern war ich im Zoo.\nDann sah ich die Löwen und dann sah ich die Affen.\nHinweis: Hier steht zweimal „dann sah ich“. Das klingt eintönig.\n*Zuerst sah ich die Löwen, danach die Affen.\nHinweis: Die Wiederholung ist vermieden, der Satz ist kürzer.',
+    name: 'Multiple Choice',
+    kurz: 'Eine Frage mit mehreren Antworten. Eine oder mehrere sind richtig.',
+    mini: 'Welche Wörter sind Nomen? ☐ Hund ☐ laufen ☐ Haus',
+    anweisung: 'Tippe die richtigen Antworten an.',
+    beispiel: 'Frage: Welche Wörter sind Nomen?\n*Hund\nlaufen\n*Haus\nHinweis: Nomen schreibt man groß.',
   },
   erklaerung: {
     name: 'Erklärung',
@@ -134,8 +134,10 @@ const Erklaerung = ({ offen, children }: { offen: boolean; children: React.React
 )
 
 // Aufgabe anlegen oder bearbeiten (alle Formate) – wahlweise als Text mit [Klammern] oder per Formular.
-export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabeId: string | null; neuerTyp?: AufgabenTyp }) {
+export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext', neuGemischt = false }: { aufgabeId: string | null; neuerTyp?: AufgabenTyp; neuGemischt?: boolean }) {
   const [typ, setTyp] = useState<AufgabenTyp>(neuerTyp)
+  // Jazz 2026-11-16: „Gemischt“ = jede Runde mit eigenem Format, eigener Anweisung und eigenem Tipp; sonst gilt das Format für alle Runden
+  const [gemischt, setGemischt] = useState(neuGemischt)
   // Id einer hier neu angelegten Aufgabe, solange die Seite noch "neu" ist (erneutes Speichern aktualisiert sie)
   const angelegt = useRef<string | null>(null)
   const [darstellung, setDarstellung] = useState<Darstellung>('antippen')
@@ -154,9 +156,12 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   // Übungsumbau: eine Übung hat mehrere Runden (Reiter), jede Runde ist ein eigener Aufgabentext im bisherigen Format
   // k = fester Schlüssel der Runde im Editor (bleibt beim Umsortieren, damit Formularfelder zu ihrer Runde gehören)
   const naechsterK = useRef(1)
-  // typ: eigenes Format dieser Runde (Jazz 2026-11-15); leer = Format der Übung
-  const neueRunde = (text = '', typ?: AufgabenTyp) => ({ k: naechsterK.current++, text, typ })
-  const [runden, setRunden] = useState<{ k: number; text: string; typ?: AufgabenTyp }[]>(() => [{ k: 0, text: '' }])
+  // typ: eigenes Format dieser Runde (Jazz 2026-11-15); leer = Format der Übung. anweisung/hinweis nur bei „Gemischt“
+  type Runde = { k: number; text: string; typ?: AufgabenTyp; anweisung?: string; hinweis?: string }
+  const neueRunde = (text = '', typ?: AufgabenTyp, anw?: string): Runde =>
+    gemischt ? { k: naechsterK.current++, text, typ: typ ?? 'lueckentext', anweisung: anw ?? FORMATE[typ ?? 'lueckentext'].anweisung, hinweis: '' } : { k: naechsterK.current++, text, typ }
+  const [runden, setRunden] = useState<Runde[]>(() => [neuGemischt ? { k: 0, text: '', typ: 'lueckentext', anweisung: FORMATE.lueckentext.anweisung, hinweis: '' } : { k: 0, text: '' }])
+  const setRundeFeld = (i: number, teil: Partial<Runde>) => setRunden((alt) => alt.map((r, j) => (j === i ? { ...r, ...teil } : r)))
   const [aktiv, setAktiv] = useState(0)
   const text = runden[aktiv]?.text ?? ''
   const setRundeText = (i: number, neu: string) => setRunden((alt) => alt.map((r, j) => (j === i ? { ...r, text: neu } : r)))
@@ -173,8 +178,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
 
   // Jazz 2026-11-16: eine neue Runde klappt die bisherigen ein (Schlüssel r.k); von Hand wieder aufklappbar
   const [zu, setZu] = useState<number[]>([])
-  function rundeEinfuegen(nach: number, text = '', rtyp?: AufgabenTyp) {
-    const neu = neueRunde(text, rtyp)
+  function rundeEinfuegen(nach: number, text = '', rtyp?: AufgabenTyp, anw?: string) {
+    // Gemischt: neue Runde übernimmt das Format der Runde davor
+    const neu = neueRunde(text, rtyp ?? (gemischt ? runden[nach]?.typ : undefined), anw)
     setZu(runden.map((r) => r.k))
     setRunden([...runden.slice(0, nach + 1), neu, ...runden.slice(nach + 1)])
     setAktiv(nach + 1)
@@ -249,7 +255,19 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         // Merkdiktat (ein Teil je Runde) und Fallende Wörter (ein Wort je Runde) bearbeitet man in einem Textfeld
         if (a.typ === 'diktat') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.text).join(' | ') }])
         else if (a.typ === 'fallende_woerter') setRunden([{ k: naechsterK.current++, text: gespeichert.map((r) => r.wort ?? r.text).join('\n') }])
-        else setRunden(gespeichert.map((r) => ({ k: naechsterK.current++, text: r.text ?? teileZuText(r.teile), typ: r.typ })))
+        else {
+          // Gemischt: gespeichert als loesung.gemischt; ältere Übungen mit eigenem Format je Runde gelten auch als gemischt
+          const gem = Boolean(a.loesung.gemischt) || gespeichert.some((r) => r.typ)
+          setGemischt(gem)
+          setRunden(
+            gespeichert.map((r) => ({
+              k: naechsterK.current++,
+              text: r.text ?? teileZuText(r.teile),
+              typ: gem ? (r.typ ?? a.typ) : undefined,
+              ...(gem ? { anweisung: r.anweisung ?? a.anweisung, hinweis: r.hinweis ?? a.hinweis ?? '' } : {}),
+            })),
+          )
+        }
         setDarstellung(l.darstellung ?? 'antippen')
         setKategorienText((l.kategorien ?? []).join(', '))
         setKorrigieren(l.korrigieren ?? false)
@@ -329,14 +347,24 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
   const woerter = istFallend ? woerterAus(text) : []
   const zeichenJeHerz = spiel.zeichen_je_herz ?? 10
   const teilGrenze = spiel.teil_grenze ?? 100
-  const rundeLoesung = (t: string, tl: LueckentextTeil[], rt?: AufgabenTyp) =>
+  // Gemischt: die Übung hat das Format der ersten Runde, jede andere Runde nennt ihr eigenes
+  const basisTyp = gemischt ? (runden[0]?.typ ?? typ) : typ
+  const rundeLoesung = (t: string, tl: LueckentextTeil[], rt?: AufgabenTyp, r?: Runde) =>
     istDiktat
       ? { text: t, gross_klein_beachten: true, teile: [], modus: diktatModus, saetze: saetzeTeilen(t) }
-      : { text: t, gross_klein_beachten: grossKlein, darstellung, kategorien, ...fehlerOptionen, ...(rt && rt !== typ ? { typ: rt } : {}), teile: tl }
+      : {
+          text: t, gross_klein_beachten: grossKlein, darstellung, kategorien, ...fehlerOptionen,
+          ...(rt && rt !== basisTyp ? { typ: rt } : {}),
+          ...(gemischt && r ? { anweisung: (r.anweisung ?? '').trim(), hinweis: (r.hinweis ?? '').trim() } : {}),
+          teile: tl,
+        }
   // gewählte Runde (für die Vorschau)
   const loesung = istErklaerung ? { text: '', gross_klein_beachten: true, teile: [], erklaerung } : rundeLoesung(text, teile, runden[aktiv]?.typ)
   // Diktate haben keine Runden (Jazz, Schritt 6): gespeichert als eine einzige Runde, damit sie als Übung zählen
   const erklaerungLeer = !erklaerung.text && !erklaerung.merke
+  // Vorschau: bei „Gemischt“ Anweisung und Tipp der gewählten Runde
+  const vorschauAnweisung = gemischt ? (runden[aktiv]?.anweisung ?? '') : anweisung
+  const vorschauHinweis = gemischt ? (runden[aktiv]?.hinweis ?? '') : hinweis
   const format = FORMATE[typ]
   const BEISPIEL = format.beispiel
   const hatLuecke = teile.some((t) => t.t === 'luecke') || (aktivTyp === 'fehler' && korrigieren)
@@ -352,11 +380,14 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
           ? 'Der Text fehlt noch oder hat Fehler (siehe oben).'
           : `${fehlerRunden.length === 1 ? 'Runde' : 'Runden'} ${fehlerRunden.join(', ')}: Der Aufgabentext fehlt noch oder hat Fehler.`,
       )
+    const ohneAnweisung = gemischt ? runden.flatMap((r, i) => (r.anweisung?.trim() ? [] : [i + 1])) : []
+    if (ohneAnweisung.length) return setFehler(`${ohneAnweisung.length === 1 ? 'Runde' : 'Runden'} ${ohneAnweisung.join(', ')}: Bitte eine Arbeitsanweisung schreiben.`)
     const datensatz = {
-      typ,
+      typ: basisTyp,
       titel: titel.trim(),
-      anweisung: anweisung.trim(),
-      hinweis: hinweis.trim() || null,
+      // Gemischt: Anweisung der ersten Runde steht auch an der Übung (Liste, Suche); der Tipp gilt nur je Runde
+      anweisung: gemischt ? (runden[0].anweisung ?? '').trim() : anweisung.trim(),
+      hinweis: gemischt ? null : hinweis.trim() || null,
       rueckmeldung_fehler: rueckmeldung.trim() || null,
       farbig,
       stufe,
@@ -367,7 +398,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
             { runden: saetze.map((t) => ({ text: t, gross_klein_beachten: true, teile: [], modus: 'merken', saetze: [t] })) }
           : istFallend
             ? { runden: woerter.map((w) => ({ wort: w, text: w, gross_klein_beachten: true, teile: [] })) }
-            : { runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile, r.typ)) },
+            : { ...(gemischt ? { gemischt: true } : {}), runden: runden.map((r, i) => rundeLoesung(r.text, zerlegt[i].teile, r.typ, r)) },
       monster: monsterName,
       runden_je_durchgang: Math.min(50, Math.max(1, Math.round(rundenJe) || 6)),
       spiel: istDiktat
@@ -423,9 +454,9 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         {istErklaerung ? '← Alle Erklärungen' : '← Alle Übungen'}
       </a>
       <div className="lk-zeile">
-        <h1>{aufgabeId ? `${format.name} bearbeiten` : istErklaerung ? 'Neue Erklärseite' : 'Neue Übung'}</h1>
+        <h1>{aufgabeId ? `${gemischt ? 'Gemischte Übung' : format.name} bearbeiten` : istErklaerung ? 'Neue Erklärseite' : gemischt ? 'Neue gemischte Übung' : 'Neue Übung'}</h1>
         {/* Format nur bei neuen Aufgaben umschaltbar – gespeicherte Antworten passen sonst nicht mehr */}
-        {!aufgabeId && !istErklaerung && (
+        {!aufgabeId && !istErklaerung && !gemischt && (
           <label>
             Format
             <select className="lk-feld" value={typ} onChange={(e) => formatWechseln(e.target.value as AufgabenTyp)}>
@@ -520,10 +551,12 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
             </>
           ) : (
           <>
-          <label>
-            Arbeitsanweisung (sehen die Schüler:innen über der Aufgabe)
-            <input className="lk-feld" value={anweisung} onChange={(e) => setAnweisung(e.target.value)} />
-          </label>
+          {!gemischt && (
+            <label>
+              Arbeitsanweisung (sehen die Schüler:innen über der Aufgabe)
+              <input className="lk-feld" value={anweisung} onChange={(e) => setAnweisung(e.target.value)} />
+            </label>
+          )}
           <label className="lk-haken">
             <input type="checkbox" checked={farbig} onChange={(e) => setFarbig(e.target.checked)} />
             Fachbegriffe in der Anweisung farbig zeigen (z. B. „Verben“ rot)
@@ -568,11 +601,10 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                     </p>
                   ) : typ === 'ueberarbeiten' ? (
                     <p>
-                      Schreiben Sie jede Version eines Satzes in eine <strong>eigene Zeile</strong> (2 bis 4 Versionen) und
-                      markieren Sie die bessere mit <strong>*</strong>. Unter jede Version gehört eine Zeile{' '}
-                      <code>Hinweis: …</code> mit der Begründung. Schüler:innen sehen die Hinweise erst nach dem Prüfen.
-                      Optional steht darüber <code>Kontext: …</code> (z. B. der Satz davor). Eine <strong>Leerzeile</strong>{' '}
-                      beginnt einen neuen Satz. Die Versionen erscheinen in der Reihenfolge, in der Sie sie schreiben.
+                      Schreiben Sie zuerst <code>Frage: …</code> und darunter jede Antwort in eine <strong>eigene Zeile</strong>{' '}
+                      (2 bis 6 Antworten). Markieren Sie jede richtige mit <strong>*</strong>, auch mehrere. Unter einer Antwort darf
+                      eine Zeile <code>Hinweis: …</code> stehen, die Schüler:innen erst nach dem Prüfen sehen. Eine{' '}
+                      <strong>Leerzeile</strong> beginnt eine neue Frage. Die Antworten erscheinen in der Reihenfolge, in der Sie sie schreiben.
                     </p>
                   ) : typ === 'reihenfolge' ? (
                     <p>
@@ -706,20 +738,26 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                         >
                           <span aria-hidden="true">{zu.includes(r.k) ? '▸' : '▾'}</span> <strong>Runde {i + 1}</strong>
                         </button>
-                        <select
-                          className="lk-feld lk-feld--klein"
-                          value={r.typ ?? typ}
-                          onChange={(e) => setRunden(runden.map((x, j) => (j === i ? { ...x, typ: e.target.value === typ ? undefined : (e.target.value as AufgabenTyp) } : x)))}
-                          aria-label={`Format von Runde ${i + 1}`}
-                        >
-                          {RUNDEN_FORMATE.map((f) => (
-                            <option key={f} value={f}>
-                              {FORMATE[f].name}
-                            </option>
-                          ))}
-                        </select>
+                        {gemischt && (
+                          <select
+                            className="lk-feld lk-feld--klein"
+                            value={r.typ ?? typ}
+                            onChange={(e) => {
+                              const neu = e.target.value as AufgabenTyp
+                              // Standard-Anweisung mitwechseln, wenn sie nicht selbst geändert wurde
+                              setRundeFeld(i, { typ: neu, ...(r.anweisung === FORMATE[r.typ ?? typ].anweisung ? { anweisung: FORMATE[neu].anweisung } : {}) })
+                            }}
+                            aria-label={`Format von Runde ${i + 1}`}
+                          >
+                            {RUNDEN_FORMATE.map((f) => (
+                              <option key={f} value={f}>
+                                {FORMATE[f].name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                         <span className="lk-knopfreihe">
-                          <button type="button" className="lk-knopf" onClick={() => rundeEinfuegen(i, r.text, r.typ)} disabled={runden.length >= 100} aria-label={`Runde ${i + 1} kopieren`}>
+                          <button type="button" className="lk-knopf" onClick={() => rundeEinfuegen(i, r.text, r.typ, r.anweisung)} disabled={runden.length >= 100} aria-label={`Runde ${i + 1} kopieren`}>
                             Kopieren
                           </button>
                           <button type="button" className="lk-knopf" disabled={i === 0} onClick={() => rundeVerschieben(i, -1)} aria-label={`Runde ${i + 1} nach oben`}>
@@ -733,8 +771,20 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
                           </button>
                         </span>
                       </div>
+                      {gemischt && !zu.includes(r.k) && (
+                        <div className="lk-formular">
+                          <label>
+                            Arbeitsanweisung dieser Runde
+                            <input className="lk-feld" value={r.anweisung ?? ''} maxLength={500} onChange={(e) => setRundeFeld(i, { anweisung: e.target.value })} />
+                          </label>
+                          <label>
+                            Tipp (freiwillig)
+                            <input className="lk-feld" value={r.hinweis ?? ''} maxLength={500} onChange={(e) => setRundeFeld(i, { hinweis: e.target.value })} placeholder="z. B. Kannst du „dieses“ einsetzen?" />
+                          </label>
+                        </div>
+                      )}
                       {zu.includes(r.k) ? (
-                        <p className="lk-leise lk-runde__kurz">{ausText(r.text).klar.replace(/s+/g, ' ').trim() || '(noch leer)'}</p>
+                        <p className="lk-leise lk-runde__kurz">{ausText(r.text).klar.replace(/\s+/g, ' ').trim() || '(noch leer)'}</p>
                       ) : modus === 'text' ? (
                         <textarea className="lk-feld"
                           id={`runde-${r.k}`}
@@ -871,14 +921,14 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
               ) : (istErklaerung ? !erklaerungLeer : text && textFehler.length === 0) ? (
                 <div className="lk-vorschau">
                   <AufgabeBearbeiten
-                    key={JSON.stringify([loesung, anweisung, hinweis, farbig, diktatModus])}
+                    key={JSON.stringify([loesung, vorschauAnweisung, vorschauHinweis, farbig, diktatModus])}
                     aufgabe={{
                       id: aufgabeId ?? 'vorschau',
                       typ: aktivTyp,
-                      titel: titel || format.name,
-                      anweisung,
+                      titel: titel || (gemischt ? FORMATE[aktivTyp].name : format.name),
+                      anweisung: vorschauAnweisung,
                       farbig,
-                      hinweis: hinweis || null,
+                      hinweis: vorschauHinweis || null,
                       stufe,
                       inhalt: istErklaerung ? { teile: [], erklaerung } : istDiktat ? { teile: [], modus: diktatModus, saetze } : ohneLoesung(teile, darstellung, kategorien, fehlerOptionen),
                       versuche: 0,
@@ -901,14 +951,16 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
         {!istErklaerung && (
         <Aufklappbar
           offen={Boolean(hinweis || rueckmeldung)}
-          titel="3 · Extras (freiwillig): Tipp und Rückmeldung"
+          titel={gemischt ? '3 · Extras (freiwillig): Rückmeldung' : '3 · Extras (freiwillig): Tipp und Rückmeldung'}
           klasse="editor-abschnitt"
           titelKlasse="editor-abschnitt__titel"
         >
-          <label>
-            Tipp (Schüler:innen können ihn aufklappen)
-            <input className="lk-feld" value={hinweis} onChange={(e) => setHinweis(e.target.value)} placeholder="z. B. Kannst du „dieses“ oder „welches“ einsetzen?" />
-          </label>
+          {!gemischt && (
+            <label>
+              Tipp (Schüler:innen können ihn aufklappen)
+              <input className="lk-feld" value={hinweis} onChange={(e) => setHinweis(e.target.value)} placeholder="z. B. Kannst du „dieses“ oder „welches“ einsetzen?" />
+            </label>
+          )}
           <label>
             Rückmeldung bei Fehlern (erscheint nach falschem Prüfen)
             <input className="lk-feld"
@@ -940,7 +992,7 @@ export function AufgabeEditor({ aufgabeId, neuerTyp = 'lueckentext' }: { aufgabe
 function rundeInfo(typ: AufgabenTyp, teile: LueckentextTeil[]): string {
   const zahl = (n: number, eins: string, viele: string) => `${n} ${n === 1 ? eins : viele}`
   if (typ === 'reihenfolge') return `${zahl(teile.length, 'Satz', 'Sätze')} zum Ordnen`
-  if (typ === 'ueberarbeiten') return `${zahl(teile.length, 'Satz', 'Sätze')} mit Versionen`
+  if (typ === 'ueberarbeiten') return `${zahl(teile.length, 'Frage', 'Fragen')} mit Antworten`
   if (typ === 'zuordnen') return zahl(teile.filter((t) => t.t === 'einheit' && t.kategorie).length, 'Zuordnung', 'Zuordnungen')
   if (typ === 'fehler') return zahl(teile.filter((t) => t.t === 'wort' && t.korrekturen).length, 'Fehler', 'Fehler')
   const luecken = teile.filter((t) => t.t === 'luecke').length
@@ -1036,7 +1088,8 @@ function ReihenFormular({ text, onChange }: { text: string; onChange: (text: str
   )
 }
 
-// Formular für „Sätze verbessern“: je Satz Kontext und 2–4 Versionen mit Hinweis; die bessere per Auswahlknopf.
+// Formular für Multiple Choice (Jazz 2026-11-16, früher „Sätze verbessern“): je Frage 2 bis 6 Antworten, richtige ankreuzen (eine oder mehrere).
+// Hinweise je Antwort gibt es nur noch im Textmodus („Hinweis: …“); vorhandene bleiben beim Bearbeiten erhalten.
 const leereVersion = () => ({ text: '', hinweis: '', besser: false })
 
 function VersionenFormular({ text, onChange }: { text: string; onChange: (text: string) => void }) {
@@ -1053,72 +1106,47 @@ function VersionenFormular({ text, onChange }: { text: string; onChange: (text: 
     <div className="lk-formular">
       {bloecke.map((b, i) => (
         <fieldset key={i} className="lk-teil">
-          <legend>Satz {i + 1}</legend>
+          <legend>Frage {i + 1}</legend>
           <label>
-            Kontext (optional, z. B. der Satz davor)
-            <input className="lk-feld" value={b.kontext} onChange={(e) => blockAendern(i, { ...b, kontext: e.target.value })} />
+            Frage
+            <input className="lk-feld" value={b.kontext} onChange={(e) => blockAendern(i, { ...b, kontext: e.target.value })} placeholder="z. B. Welche Wörter sind Nomen?" />
           </label>
+          <p className="lk-leise">Antworten: Kreuzen Sie jede richtige an (eine oder mehrere).</p>
           {b.versionen.map((v, j) => {
             const versionAendern = (neu: Partial<typeof v>) =>
               blockAendern(i, { ...b, versionen: b.versionen.map((x, k) => (k === j ? { ...x, ...neu } : x)) })
             return (
-              <div key={j} className="lk-formular">
+              <div key={j} className="lk-mc-antwort">
                 <label className="lk-haken">
-                  <input
-                    type="radio"
-                    name={`besser-${i}`}
-                    checked={v.besser}
-                    onChange={() => blockAendern(i, { ...b, versionen: b.versionen.map((x, k) => ({ ...x, besser: k === j })) })}
-                  />
-                  Version {j + 1} ist die bessere
+                  <input type="checkbox" checked={v.besser} onChange={(e) => versionAendern({ besser: e.target.checked })} />
+                  richtig
                 </label>
-                <label>
-                  Version {j + 1}
-                  <input className="lk-feld" value={v.text} onChange={(e) => versionAendern({ text: e.target.value })} />
-                </label>
-                <label>
-                  Hinweis zu Version {j + 1} (erscheint nach dem Prüfen)
-                  <input className="lk-feld" value={v.hinweis} onChange={(e) => versionAendern({ hinweis: e.target.value })} />
-                </label>
+                <input className="lk-feld" value={v.text} onChange={(e) => versionAendern({ text: e.target.value })} aria-label={`Antwort ${j + 1}`} placeholder={`Antwort ${j + 1}`} />
                 {b.versionen.length > 2 && (
-                  <button
-                    type="button"
-                    className="lk-knopf"
-                    onClick={() => blockAendern(i, { ...b, versionen: b.versionen.filter((_, k) => k !== j) })}
-                  >
-                    Version {j + 1} entfernen
+                  <button type="button" className="lk-knopf" onClick={() => blockAendern(i, { ...b, versionen: b.versionen.filter((_, k) => k !== j) })} aria-label={`Antwort ${j + 1} entfernen`}>
+                    ✕
                   </button>
                 )}
               </div>
             )
           })}
           <div className="lk-knopfreihe">
-            {b.versionen.length < 4 && (
-              <button
-                type="button"
-                className="lk-knopf"
-                onClick={() => blockAendern(i, { ...b, versionen: [...b.versionen, leereVersion()] })}
-              >
-                + Version
+            {b.versionen.length < 6 && (
+              <button type="button" className="lk-knopf" onClick={() => blockAendern(i, { ...b, versionen: [...b.versionen, leereVersion()] })}>
+                + Antwort
               </button>
             )}
-            <button
-              type="button"
-              className="lk-knopf"
-              onClick={() => setzen(bloecke.filter((_, j) => j !== i))}
-            >
-              Satz {i + 1} entfernen
-            </button>
+            {bloecke.length > 1 && (
+              <button type="button" className="lk-knopf" onClick={() => setzen(bloecke.filter((_, j) => j !== i))}>
+                Frage {i + 1} entfernen
+              </button>
+            )}
           </div>
         </fieldset>
       ))}
       <div className="lk-knopfreihe">
-        <button
-          type="button"
-          className="lk-knopf"
-          onClick={() => setBloecke([...bloecke, { kontext: '', versionen: [leereVersion(), leereVersion()] }])}
-        >
-          + Satz
+        <button type="button" className="lk-knopf" onClick={() => setBloecke([...bloecke, { kontext: '', versionen: [leereVersion(), leereVersion()] }])}>
+          + Frage
         </button>
       </div>
     </div>

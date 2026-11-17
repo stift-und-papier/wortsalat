@@ -40,7 +40,7 @@ In diesem Text haben sich Fehler versteckt. Lies ihn langsam und tippe die Wört
 Hier baust du Sätze. Lege die Bausteine so hintereinander, dass ein richtiger Satz entsteht. Lies ihn dann einmal leise vor.
 
 ## ueberarbeiten
-Hier vergleichst du Sätze. Lies alle Versionen und wähle die, die besser klingt.
+Hier beantwortest du Fragen. Lies die Frage und alle Antworten. Tippe die richtigen Antworten an. Manchmal sind mehrere richtig.
 
 ## erklaerung
 Hier lernst du etwas Neues. Lies alles in Ruhe durch. Wenn du es verstanden hast, tippst du auf „Verstanden“.

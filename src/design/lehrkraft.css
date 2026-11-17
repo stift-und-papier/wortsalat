@@ -344,3 +344,5 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 /* Reihenfolge-Formular: alles untereinander, sonst quetscht die lange Frage das Textfeld am iPad (Jazz 2026-11-16) */
 .lk-teil--spalte { grid-template-columns: minmax(0, 1fr); }
 .lk-teil--spalte > .lk-knopf { justify-self: end; }
+/* Multiple Choice im Editor: Haken, Antwort, Entfernen in einer Zeile (Jazz 2026-11-16) */
+.lk-mc-antwort { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-xs); align-items: center; }

@@ -405,6 +405,9 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
     )
   }
 
+  // Gemischte Übung: Anweisung und Tipp der Runde gehen vor (Jazz 2026-11-16)
+  const anweisung = runde.inhalt.anweisung || aufgabe.anweisung
+  const hinweis = runde.inhalt.hinweis || aufgabe.hinweis
   return (
     <>
       {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={schuss} befreundet={befreundetVorher} />}
@@ -421,9 +424,9 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
             Runde {index + 1} von {daten.runden.length}
           </span>
         </header>
-        {aufgabe.anweisung && (
+        {anweisung && (
           <div className="aufgabe__anweisung">
-            <Anweisung text={aufgabe.anweisung} farbig={aufgabe.farbig} />
+            <Anweisung text={anweisung} farbig={aufgabe.farbig} />
           </div>
         )}
         <LueckentextAnzeige
@@ -440,11 +443,11 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
           gesperrt={Boolean(jetzt)}
         />
 
-        {aufgabe.hinweis && tippOffen && (
+        {hinweis && tippOffen && (
           <EinsteinSagt pose="erklaert">
             <p>
               <strong>Tipp: </strong>
-              {aufgabe.hinweis}
+              {hinweis}
             </p>
           </EinsteinSagt>
         )}
@@ -468,7 +471,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
                 </p>
               </div>
             ))}
-          {aufgabe.hinweis && !jetzt && (
+          {hinweis && !jetzt && (
             <button type="button" className="knopf" onClick={() => setTippOffen(!tippOffen)} aria-expanded={tippOffen}>
               {tippOffen ? 'Tipp ausblenden' : 'Tipp anzeigen'}
             </button>

@@ -11,7 +11,8 @@ type Props = {
   gesperrt?: boolean
 }
 
-// Format „Sätze verbessern“: je Satz 2–4 Versionen untereinander, eine antippen.
+// Format „Multiple Choice“ (Jazz 2026-11-16, früher „Sätze verbessern“): je Frage 2 bis 6 Antworten untereinander.
+// Ist mehr als eine richtig (mehrfach), dürfen mehrere angetippt werden; richtig = genau die richtigen gewählt.
 // Nach dem Prüfen steht unter jeder Version ihr Begründungshinweis (kommt erst mit dem Ergebnis aus der Datenbank).
 // Die Hinweise bleiben stehen, auch wenn danach eine andere Version gewählt wird.
 export function VersionenAnzeige({ teile, antworten, onAntwort, ergebnis, loesungen, gesperrt }: Props) {
@@ -28,13 +29,14 @@ export function VersionenAnzeige({ teile, antworten, onAntwort, ergebnis, loesun
         const gewaehlt = Array.isArray(antworten[teil.id]) ? (antworten[teil.id] as number[]).map(Number) : []
         const zustand = richtig === true ? ' versionen--richtig' : richtig === false ? ' versionen--nochmal' : ''
         return (
-          <div key={teil.id} className="reihe" role="group" aria-label={`Satz ${nr + 1}`}>
+          <div key={teil.id} className="reihe" role="group" aria-label={`Frage ${nr + 1}`}>
             <p className="reihe__nr">
-              Satz {nr + 1}
+              Frage {nr + 1}
               {richtig === true && <span className="marke marke--richtig" aria-label="richtig"> ✓</span>}
               {richtig === false && <span className="marke marke--nochmal" aria-label="schau nochmal hin"> ↻</span>}
             </p>
             {teil.kontext && <p className="versionen__kontext">{teil.kontext}</p>}
+            {teil.mehrfach && <p className="leise">Mehrere Antworten sind richtig.</p>}
             <div className={`versionen${zustand}`}>
               {teil.optionen.map((o, i) => (
                 <div key={i} className="version">
@@ -43,7 +45,9 @@ export function VersionenAnzeige({ teile, antworten, onAntwort, ergebnis, loesun
                     className="chip version"
                     aria-pressed={gewaehlt.includes(i)}
                     disabled={gesperrt || richtig === true}
-                    onClick={() => onAntwort(teil.id, gewaehlt[0] === i ? [] : [i])}
+                    onClick={() =>
+                      onAntwort(teil.id, teil.mehrfach ? (gewaehlt.includes(i) ? gewaehlt.filter((x) => x !== i) : [...gewaehlt, i].sort((a, b) => a - b)) : gewaehlt[0] === i ? [] : [i])
+                    }
                   >
                     <span className="version__haken" aria-hidden="true">
                       {gewaehlt.includes(i) ? '✓' : ''}
@@ -56,7 +60,7 @@ export function VersionenAnzeige({ teile, antworten, onAntwort, ergebnis, loesun
             </div>
             {loesungen?.[teil.id] && (
               <p className="reihe__loesung">
-                <span className="loesung-anzeige">Besser: {loesungen[teil.id].join(' / ')}</span>
+                <span className="loesung-anzeige">Richtig: {loesungen[teil.id].join(' / ')}</span>
               </p>
             )}
           </div>

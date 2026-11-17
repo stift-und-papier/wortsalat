@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase'
 import { ZWEIGE, type Aufgabe } from '../lib/typen'
 import { ListenFilter, useGemerkt, useKompetenzen } from './ListenFilter'
 
-export const TYP_NAMEN: Record<Aufgabe['typ'], string> = { lueckentext: 'Lückentext', auswahl: 'Auswahl', zuordnen: 'Zuordnen', fehler: 'Fehler finden', reihenfolge: 'Reihenfolge', ueberarbeiten: 'Sätze verbessern', erklaerung: 'Erklärung', diktat: 'Diktat', fallende_woerter: 'Fallende Wörter' }
+export const TYP_NAMEN: Record<Aufgabe['typ'], string> = { lueckentext: 'Lückentext', auswahl: 'Auswahl', zuordnen: 'Zuordnen', fehler: 'Fehler finden', reihenfolge: 'Reihenfolge', ueberarbeiten: 'Multiple Choice', erklaerung: 'Erklärung', diktat: 'Diktat', fallende_woerter: 'Fallende Wörter' }
 /** Formate der Übungen (ohne Erklärung) für den Filter */
 export const ARTEN = Object.fromEntries(Object.entries(TYP_NAMEN).filter(([t]) => t !== 'erklaerung'))
 
@@ -22,6 +22,7 @@ const SPALTEN: { spalte: Spalte; name: string }[] = [
 
 type AufgabeMitKompetenzen = Pick<Aufgabe, 'id' | 'typ' | 'titel' | 'stufe' | 'monster' | 'anweisung' | 'geaendert_am'> & {
   runden: unknown[] | null
+  gemischt: boolean | null
   aufgabe_kompetenzen: { kompetenz_id: string }[]
   paket_aufgaben: { pakete: { zweige: string[] } | null }[]
 }
@@ -43,7 +44,7 @@ export function useListenAufgaben(setFehler: (text: string) => void) {
   useEffect(() => {
     void supabase
       .from('aufgaben')
-      .select('id, typ, titel, stufe, monster, anweisung, geaendert_am, runden:loesung->runden, aufgabe_kompetenzen(kompetenz_id), paket_aufgaben(pakete(zweige))')
+      .select('id, typ, titel, stufe, monster, anweisung, geaendert_am, runden:loesung->runden, gemischt:loesung->gemischt, aufgabe_kompetenzen(kompetenz_id), paket_aufgaben(pakete(zweige))')
       .eq('archiviert', false) // Übungsumbau: alte Aufgaben sind archiviert
       .order('geaendert_am', { ascending: false })
       .then(({ data, error }) => (error ? setFehler(fehlerText(error)) : setAufgaben(data as unknown as AufgabeMitKompetenzen[])))
@@ -160,7 +161,7 @@ Sie verschwindet aus allen Paketen, und alle Ergebnisse der Schüler:innen dazu 
                 <td>
                   <a href={`#/lehrkraft/${ort}/${a.id}`}>{a.titel}</a>
                 </td>
-                {!erklaerungen && <td>{TYP_NAMEN[a.typ]}</td>}
+                {!erklaerungen && <td>{a.gemischt ? 'Gemischt' : TYP_NAMEN[a.typ]}</td>}
                 {!erklaerungen && <td><SterneText stufe={a.stufe} /></td>}
                 <td>{a.kompetenz || <span className="lk-leise">keine</span>}</td>
                 <td>{a.kc || <span className="lk-leise">–</span>}</td>

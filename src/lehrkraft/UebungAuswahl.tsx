@@ -135,7 +135,7 @@ function Zeile({ a, gewaehlt, offen, umschalten, ansehen }: { a: ListenAufgabe; 
         <span>
           <strong>{a.titel}</strong>
           <span className="lk-leise">
-            {ist ? (a.kompetenz || 'ohne Kompetenz') : <>{TYP_NAMEN[a.typ]} · <SterneText stufe={a.stufe} /> · {a.anzahlRunden === 1 ? '1 Runde' : `${a.anzahlRunden} Runden`}</>}
+            {ist ? (a.kompetenz || 'ohne Kompetenz') : <>{a.gemischt ? 'Gemischt' : TYP_NAMEN[a.typ]} · <SterneText stufe={a.stufe} /> · {a.anzahlRunden === 1 ? '1 Runde' : `${a.anzahlRunden} Runden`}</>}
           </span>
         </span>
       </label>
