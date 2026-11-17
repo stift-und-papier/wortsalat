@@ -504,3 +504,19 @@
   oder berichtigen; Abschlussübungen ★★ (gemischt von leicht nach schwer). Im Paket nach Sternen sortiert (Kennungen unverändert). Jazz' Übung
   „Satzstellungen …“ behält ★ und steht in DS01 vor dem Abschluss. Vor dem Neueinspielen geprüft: keine Änderungen von Jazz an diesen Übungen,
   keine Zuweisungen. **Getestet:** Datenbank (Sterne und Reihenfolge je Paket). Skript-Lauf ohne Prüffehler.
+
+## Farm erweitern und Münzsystem (Auftrag Jazz 2026-11-17, nur Vorschläge, Branch `lehrkraftseite`)
+Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 Münzsystem, 6 Zusammenfassung). Ergebnisse nur unter `docs/farm/`,
+**keine Änderungen am Spiel**, an Daten oder Assets.
+- **Teilaufgabe 1 – Analyse** (2026-11-17): `docs/farm/analyse-farm.md`, `docs/farm/analyse-muenzen.md` (neu). Nichts geändert.
+  Kernpunkte Farm: Karte fest 21 × 15 Kacheln, Faktor in halben Stufen nach Breite und Höhe; im Querformat bleiben 26–43 % der Breite leer
+  (gemessen: 1024 × 768 Faktor 2 und 16 px Scrollen, 1180 × 820 Faktor 2, 1366 × 1024 Faktor 3); bei Faktor 2 sind Felder, Hühner, Deko nur 32 px
+  zum Antippen (unter 44 pt); feste Plätze in `landschaft.ts`, gespeichert wird nur der Besitz; Einstein und Shop haben auf der Farm keinen Platz.
+  Kernpunkte Münzen: Übungen sind gedeckelt (je Übung höchstens 30/45/60 inkl. Freundschaft, Wiederholen nur Differenz; heute 50 Übungen = max. 2.340);
+  ungedeckelt ist der **Farm-Handel** (Futter Güte 3 → +40/+60 je Tier und Tag, Obstbäume, Gießen auch durch Wiederholen ohne Münzen),
+  Verkauf zählt als „verdient“ fürs Freischalten, 79 Erklärseiten = 395 Münzen für alle; „Ergebnisse zurücksetzen“ löscht Münzen und Besitz.
+  **Getestet:** Messung im Browser mit Pfau-99 (drei Größen), Preise und Anzahlen per Lese-Abfrage. **Nicht getestet:** echtes iPad, Münz-Abläufe
+  im Browser (nur Code gelesen und gerechnet).
+- **Offene Fragen:** Rückfragen 1–9 an Jazz (Übungshäufigkeit, Zieldauer, iPad-Modelle, Hausaufgaben, Einstein und Shop auf der Farm,
+  Hochformat-Hinweis, Platzieren durch das Kind, Zurücksetzen, Erklärseiten-Münzen), siehe Chat.
+- **Nächster Schritt:** Antworten abwarten, dann Teilaufgabe 2 (Layout leer).
