@@ -579,4 +579,12 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Kopfzeile mit Sammelalbum, Vorrat, Laden und Zahnrad, Menü ohne Shop, Hinweis im Hochformat. Migration `hoechstens_zwei_kuehe` (eingespielt,
   DB-Test 162 bestanden). Geprüft im Browser bei 1024 × 768, 1180 × 820, 1366 × 1024 (kein Scrollen), Feld-Menü und Laden-Knopf. Nicht geprüft: echtes iPad, Hochformat am iPad.
 - **Rückmeldung Jazz zu Schritt 1 (2026-11-17), umgesetzt:** Meer nur innerhalb des Rahmens; Trog mit Heu statt Wasser, Trog und Napf antippbar (öffnen das Füttern); Huhn 4 nicht mehr am Ufer (Deko-Platz D14 nach x 24, y 12); Hunger-Meldung sagt, was man antippt; **Meldung oben in der Kopfzeile** statt unten (geprüft: längste Meldung zweizeilig bei 1024, 1180, 1366 px, kein Scrollen; Insel jetzt senkrecht mittig); Eiche im Mockup als Herbst-Eiche (kleiner Herbstbaum aus halloween/fall_trees.png, Stufe 4 herbstlich); neues Testkonto **Leer-01** (Klasse Test) für eine leere Farm. Danach (Jazz): Herbst-Eiche angenommen; Meldung oben im Stil von Einsteins Sprechblase (Rahmen --rahmen-blase, 2-fach, hell und dunkel geprüft). Laden-Knopf in Holz (Hauptknopf), (Jazz: passt so). Zahnrad doch wieder der alte Holzknopf (Jazz).
-- **Nächster Schritt:** Jazz testet Schritt 1 am iPad; danach Schritt 2 (wachsende Deko) und Schritt 3 (kaufbare Deko mit Plätzen und Farben), Teilaufgabe 5 (Münzsystem) später.
+- **Schritt 2 (2026-11-17, Jazz: Datenbank freigegeben, rückwirkend):** wachsende Deko im Spiel. Migration `wachsende_deko`
+  (`wachstum_ereignisse`, `wachstum_stufen`, `wachstum_verteilen`, `wachstum_holen`, `wachstum_gesehen`; DB-Test Block 15.6–15.9, 166 bestanden).
+  Je Kompetenz ein Schritt für „neu“ (erster Lernstand), „besser“, „deutlich“; Schritt an die Deko, die am wenigsten weit ist; Stufen nur höher;
+  „Ergebnisse zurücksetzen“ lässt beides stehen. Bilder aus den Mockup-Daten (`scripts/grafik-holen.mjs` liest `docs/farm/wachsende-deko.js`) nach
+  `src/grafik/wachs_w1..8.png`, Glitzern `glitzern.png`. Plätze `WACHSENDE_DEKO` in `landschaft.ts` (Hindernisse, Test: Seerosen im Wasser).
+  Meldung einmal beim Öffnen, Gewachsenes glitzert ca. 1 s (aus bei „Bewegung reduzieren“). Hilfe: neuer Abschnitt. Geprüft im Browser mit Dachs-19
+  (8 Ereignisse → alle Stufe 2, Meldung, Glitzern, „gesehen“ gespeichert). Zahnrad wieder der alte Holzknopf (Jazz).
+  Nicht getestet: echtes iPad; Aussehen des Glitzerns (nur im Code geprüft, dass es erscheint und verschwindet).
+- **Nächster Schritt:** Jazz prüft Schritt 2; danach Schritt 3 (kaufbare Deko mit Plätzen und Farben), Teilaufgabe 5 (Münzsystem) später.

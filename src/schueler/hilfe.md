@@ -75,6 +75,10 @@ Hühner und Kühe gibt es im Shop, sobald du genug Münzen verdient hast. Tippe 
 
 Du kannst damit Tiere füttern oder alles im **Shop** verkaufen. Dann bekommst du wieder Münzen.
 
+## Warum wachsen auf meiner Farm Bäume und Blumen, die ich nicht gepflanzt habe?
+
+Manche Pflanzen auf deiner Farm wachsen, wenn du dazulernst. Dazu gehören der Kirschbaum, die Eiche, die Sonnenblumen, der Lavendel, der Beerenbusch, die Seerosen und das Vogelhaus. Sie werden nie kleiner.
+
 ## Was bedeuten die Pflanzen in „Mein Lernweg“?
 
 Sie zeigen, wie es in einem Thema bei dir vorangeht. 🌱 heißt: Du hast angefangen. 🌿 heißt: Bleib dran. 🪴 heißt: Du wirst besser. 🌷 heißt: Du bist deutlich besser geworden. Wenn du besser wirst, bekommst du manchmal auch ein Geschenk für deine Farm.

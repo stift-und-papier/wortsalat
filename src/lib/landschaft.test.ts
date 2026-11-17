@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ablagePlaetze, BAUM_PLAETZE, belegung, BOOT, blobTeil, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_DEKO, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KUH_PLAETZE,
-  MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, weg, ZEILEN,
+  MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
 } from './landschaft'
 
 describe('Landschaft', () => {
@@ -80,6 +80,11 @@ describe('ablagePlaetze', () => {
     const feld = FELD_PLAETZE[0]
     expect(ablagePlaetze([[feld]], new Set(), new Set())[0]).toEqual(feld)
     expect(ablagePlaetze([[feld]], new Set(), new Set([`${feld.x},${feld.y}`]))[0]).not.toEqual(feld)
+  })
+  it('Seerosen (wachsende Deko W4) liegen ganz im Wasser, und zwar am Ufer', () => {
+    const w4 = WACHSENDE_DEKO.find((w) => w.id === 'W4')!
+    for (let dx = 0; dx < w4.b; dx++) expect(istGras(w4.x + dx, w4.y)).toBe(false)
+    expect([0, 1].some((dx) => istGras(w4.x + dx, w4.y - 1))).toBe(true)
   })
   it('Boot liegt ganz im Wasser, Obstbäume sind mit allem anderen zusammen erreichbar', () => {
     for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 3; dx++) expect(istGras(BOOT.x + dx, BOOT.y + dy)).toBe(false)

@@ -1173,6 +1173,45 @@ begin
     perform public.belohnungen_gesehen(t_igel, array(select (x ->> 'id')::uuid from jsonb_array_elements(v) x));
     if public.belohnungen_holen(t_igel) <> '[]'::jsonb then raise exception 'Block 15.5: gesehene Belohnung kommt wieder'; end if;
     reset role;
+    -- 15.6 Wachsende Deko (Jazz 2026-11-17): Kinder lesen die Tabellen nicht; Schritte = neu je Kompetenz mit Lernstand + besser + deutlich
+    delete from public.wachstum_ereignisse where schueler_id = v_igel;
+    delete from public.wachstum_stufen where schueler_id = v_igel;
+    set local role anon;
+    begin
+      perform 1 from public.wachstum_ereignisse;
+      raise exception 'Block 15.6: anon liest wachstum_ereignisse';
+    exception when insufficient_privilege then null;
+    end;
+    begin
+      perform 1 from public.wachstum_stufen;
+      raise exception 'Block 15.6: anon liest wachstum_stufen';
+    exception when insufficient_privilege then null;
+    end;
+    v := public.wachstum_holen(t_igel);
+    reset role;
+    if jsonb_array_length(v) <> 8 or v::text ~ 'kompetenz|punkte|trend|schritte' then raise exception 'Block 15.7: falsche Antwort: %', v; end if;
+    -- Igel-11 hat genau 2 Kompetenzen mit Lernstand (s. o.)
+    if (select sum((x ->> 'stufe')::int - 1) from jsonb_array_elements(v) x) <> 2 + v_besser + v_deutlich then
+      raise exception 'Block 15.7: % Schritte statt %: %', (select sum((x ->> 'stufe')::int - 1) from jsonb_array_elements(v) x), 2 + v_besser + v_deutlich, v;
+    end if;
+    if not exists (select 1 from jsonb_array_elements(v) x where (x ->> 'neu')::boolean) then raise exception 'Block 15.7: nichts als neu markiert'; end if;
+    -- 15.8 gleichmäßig: erster Schritt an W1; nach 26 Schritten alles ausgewachsen, mehr ändert nichts
+    if (select array_agg(w_stufe order by w_deko) from public.wachstum_verteilen(1)) <> array[2, 1, 1, 1, 1, 1, 1, 1]
+       or (select array_agg(w_stufe order by w_deko) from public.wachstum_verteilen(26)) <> array[5, 4, 4, 4, 3, 5, 5, 4]
+       or (select array_agg(w_stufe order by w_deko) from public.wachstum_verteilen(99)) <> array[5, 4, 4, 4, 3, 5, 5, 4] then
+      raise exception 'Block 15.8: Verteilung falsch';
+    end if;
+    -- 15.9 gesehen: nichts mehr neu; Ergebnisse weg → nichts schrumpft
+    set local role anon;
+    perform public.wachstum_gesehen(t_igel);
+    reset role;
+    delete from public.versuche where schueler_id = v_igel;
+    set local role anon;
+    if public.wachstum_holen(t_igel) <> (select jsonb_agg(x || '{"neu": false}') from jsonb_array_elements(v) x) then
+      raise exception 'Block 15.9: Stufen geändert oder wieder neu: %', public.wachstum_holen(t_igel);
+    end if;
+    reset role;
+    n := n + 4;
     n := n + 5;
   end;
 

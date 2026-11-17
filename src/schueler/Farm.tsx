@@ -11,7 +11,8 @@ import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
 import {
   ablagePlaetze, BAEUME, BAUM_PLAETZE, BOOT, BRUNNEN, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_KERN, grundKacheln, HEU, HUETTE, HUETTE_KLEIN, hindernisse,
-  HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF_PLAETZE, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, weg, ZEILEN, type Ort,
+  HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF_PLAETZE, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
+  type Ort,
 } from '../lib/landschaft'
 import { artikelBild, DEKO_NAME, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
@@ -72,6 +73,33 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
   useEffect(() => {
     void laden()
   }, [laden])
+
+  // Wachsende Deko (Jazz 2026-11-17): Stufen rechnet der Server aus dem Lernfortschritt; Gewachsenes glitzert einmal und
+  // die Meldung sagt es (Vorrang vor „hungrig“). Ohne Antwort stehen alle in Stufe 1.
+  const [stufen, setStufen] = useState<Record<string, number>>({})
+  const [glitzert, setGlitzert] = useState<string[]>([])
+  useEffect(() => {
+    let uhr: number | undefined
+    void supabase.rpc('wachstum_holen', { p_token: token }).then(({ data, error }) => {
+      if (error || !data) return
+      const liste = data as { deko: string; stufe: number; neu: boolean }[]
+      setStufen(Object.fromEntries(liste.map((w) => [w.deko, w.stufe])))
+      const neu = WACHSENDE_DEKO.filter((w) => liste.some((x) => x.deko === w.id && x.neu))
+      if (!neu.length) return
+      const fertig = (w: (typeof WACHSENDE_DEKO)[number]) => liste.find((x) => x.deko === w.id)!.stufe >= w.stufen
+      setMeldung(
+        WACHSENDE_DEKO.every(fertig)
+          ? 'Alles auf deiner Farm ist ausgewachsen. Super!'
+          : neu.length > 1
+            ? 'Du hast dazugelernt. Auf deiner Farm ist einiges gewachsen!'
+            : fertig(neu[0]) ? neu[0].fertig : `Du hast dazugelernt. ${neu[0].gewachsen}`,
+      )
+      setGlitzert(neu.map((w) => w.id))
+      uhr = window.setTimeout(() => setGlitzert([]), 1200)
+      void supabase.rpc('wachstum_gesehen', { p_token: token }).then() // .then() schickt die Anfrage erst ab
+    })
+    return () => window.clearTimeout(uhr)
+  }, [token])
 
   // Größe (Jazz 2026-11-17, E1): Das Spielfenster füllt Breite und Höhe bis zum Menü unten. Faktor 2 oder 3 (ganzzahlig): der größte,
   // bei dem das ganze Gras des Kerns hineinpasst; der Rest ist Meer, die Landstreifen werden am Rand abgeschnitten.
@@ -459,6 +487,24 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             const b = artikelBild(id)
             const o = DEKO_PLAETZE[i]
             return <Ding key={i} grafik={b.grafik} nummer={b.nummer} x={px(o.x)} y={px(o.y)} mal={mal} z={(o.y + 1) * KACHEL} />
+          })}
+          {/* Wachsende Deko: Bild unten bündig, waagerecht mittig auf ihrem Platz (Höheres ragt nach oben), nicht antippbar */}
+          {WACHSENDE_DEKO.map((w) => {
+            const g = GRAFIK[`wachs_${w.id.toLowerCase()}` as keyof typeof GRAFIK]
+            const links = px(w.x) + Math.round((w.b * KACHEL - g.bildBreite) / 2) * mal, unten = px(w.y + w.h)
+            return (
+              <span key={w.id}>
+                <Ding grafik={g} nummer={Math.min(stufen[w.id] ?? 1, w.stufen) - 1} x={links} y={unten - g.bildHoehe * mal} mal={mal} z={(w.y + w.h) * KACHEL} />
+                {glitzert.includes(w.id) && (
+                  <span
+                    className="farm-ding farm-glitzern"
+                    style={{ left: px(w.x) + ((w.b - 1) * KACHEL * mal) / 2, top: unten - (g.bildHoehe / 2 + 5) * mal, zIndex: 9000, ['--lauf' as string]: `${-48 * mal}px` }}
+                  >
+                    <Sprite grafik={GRAFIK.glitzern} mal={mal} />
+                  </span>
+                )}
+              </span>
+            )
           })}
           {farmMonster && (
             // Jazz 2026-11-15: Hütte in der Dachfarbe des Monsters, nur solange ein Monster da ist; 2026-11-17 (E10): kleine Monster in der kleinen Hütte

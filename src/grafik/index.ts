@@ -69,6 +69,15 @@ import truhe from './truhe.png'
 import feld from './feld.png'
 import figur_blau from './figur_blau.png'
 import figur_katze from './figur_katze.png'
+import wachs_w1 from './wachs_w1.png'
+import wachs_w2 from './wachs_w2.png'
+import wachs_w3 from './wachs_w3.png'
+import wachs_w4 from './wachs_w4.png'
+import wachs_w5 from './wachs_w5.png'
+import wachs_w6 from './wachs_w6.png'
+import wachs_w7 from './wachs_w7.png'
+import wachs_w8 from './wachs_w8.png'
+import glitzern from './glitzern.png'
 import buch from './buch.png'
 import buch_rot from './buch_rot.png'
 import buch_symbol from './buch_symbol.png'
@@ -149,6 +158,15 @@ export const GRAFIK = {
   feld: { url: feld, breite: 14, hoehe: 14, bildBreite: 14, bildHoehe: 14 },
   figur_blau: { url: figur_blau, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },
   figur_katze: { url: figur_katze, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },
+  wachs_w1: { url: wachs_w1, breite: 160, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
+  wachs_w2: { url: wachs_w2, breite: 64, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  wachs_w3: { url: wachs_w3, breite: 64, hoehe: 32, bildBreite: 16, bildHoehe: 32 },
+  wachs_w4: { url: wachs_w4, breite: 128, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
+  wachs_w5: { url: wachs_w5, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  wachs_w6: { url: wachs_w6, breite: 80, hoehe: 32, bildBreite: 16, bildHoehe: 32 },
+  wachs_w7: { url: wachs_w7, breite: 120, hoehe: 33, bildBreite: 24, bildHoehe: 33 },
+  wachs_w8: { url: wachs_w8, breite: 64, hoehe: 32, bildBreite: 16, bildHoehe: 32 },
+  glitzern: { url: glitzern, breite: 48, hoehe: 10, bildBreite: 16, bildHoehe: 10 },
   buch: { url: buch, breite: 2976, hoehe: 216, bildBreite: 248, bildHoehe: 216 },
   buch_rot: { url: buch_rot, breite: 2976, hoehe: 216, bildBreite: 248, bildHoehe: 216 },
   buch_symbol: { url: buch_symbol, breite: 22, hoehe: 26, bildBreite: 22, bildHoehe: 26 },

@@ -5,6 +5,8 @@
 // nie die Pakete selbst (Lizenz verbietet Weitergabe).
 import { createRequire } from 'node:module'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
+import vm from 'node:vm'
 
 // pngjs kommt mit qrcode mit; deshalb keine eigene Bibliothek nötig.
 const { PNG } = createRequire(import.meta.url)('pngjs')
@@ -220,6 +222,46 @@ for (const n of KLEINER) {
   writeFileSync('src/grafik/figur_katze.png', PNG.sync.write(ziel))
   liste.push({ name: 'figur_katze', breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 })
   console.log('figur_katze.png  128×96 (umgebaut)')
+}
+
+// ---------- Wachsende Deko W1 bis W8 (Jazz 2026-11-17, docs/farm/dekorationen.md): Stufen-Liste und Farben aus dem Mockup
+// (docs/farm/farben.js, docs/farm/wachsende-deko.js), damit Spiel und Mockup gleich aussehen. Je Deko ein Streifen, ein Bild je Stufe,
+// unten bündig und waagerecht mittig. Bild mindestens so groß wie der Platz (b × h Kacheln); Größeres ragt nach oben bzw. zur Seite.
+{
+  const kontext = { Math, console }
+  vm.createContext(kontext)
+  for (const datei of ['docs/farm/farben.js', 'docs/farm/wachsende-deko.js'])
+    vm.runInContext(readFileSync(datei, 'utf8').replace(/^const (\w+)/gm, 'var $1'), kontext)
+  vm.runInContext('this.WACHS = WACHS', kontext)
+  for (const w of kontext.WACHS) {
+    const stufen = w.stufen.map(([, q, regeln]) => {
+      const [bogen, x, y, qw, qh] = q
+      const quelle = PNG.sync.read(readFileSync(path.join('docs/farm', bogen.u)))
+      const teil = new PNG({ width: qw, height: qh })
+      PNG.bitblt(quelle, teil, x, y, qw, qh, 0, 0)
+      for (const r of regeln ?? []) // shortcut: nur einfache Farbtausch-Regeln (mehr braucht die wachsende Deko nicht)
+        for (let i = 0; i < teil.data.length; i += 4) {
+          const neu = teil.data[i + 3] && r['#' + teil.data.subarray(i, i + 3).toString('hex')]
+          if (neu) teil.data.set(Buffer.from(neu.slice(1), 'hex'), i)
+        }
+      return teil
+    })
+    const B = Math.max(w.b * 16, ...stufen.map((s) => s.width)), H = Math.max(w.h * 16, ...stufen.map((s) => s.height))
+    const ziel = new PNG({ width: B * stufen.length, height: H })
+    ziel.data.fill(0)
+    stufen.forEach((s, i) => PNG.bitblt(s, ziel, 0, 0, s.width, s.height, i * B + Math.round((B - s.width) / 2), H - s.height))
+    const name = 'wachs_' + w.n.toLowerCase()
+    writeFileSync(`src/grafik/${name}.png`, PNG.sync.write(ziel))
+    liste.push({ name, breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+    console.log(`${name}.png  ${ziel.width}×${H} (${stufen.length} Stufen)`)
+  }
+  // Glitzern beim Wachsen (3 Bilder, Jazz' eigene Vorlage aus Gemini, von Claude auf die Palette gebracht: docs/farm/pixeln.cjs)
+  const glitzer = [1, 2, 3].map((n) => PNG.sync.read(readFileSync(`assets/neu/glitzern_${n}.png`)))
+  const gl = new PNG({ width: 16 * 3, height: 10 })
+  gl.data.fill(0)
+  glitzer.forEach((g, i) => PNG.bitblt(g, gl, 0, 0, 16, 10, i * 16, 0))
+  writeFileSync('src/grafik/glitzern.png', PNG.sync.write(gl))
+  liste.push({ name: 'glitzern', breite: 48, hoehe: 10, bildBreite: 16, bildHoehe: 10 })
 }
 
 // ---------- Buch für Sammelalbum und Shop (Jazz 2026-11-14): „Pixel Book Animation“ (gekauft), auf die Sprout-Lands-Palette umgefärbt.

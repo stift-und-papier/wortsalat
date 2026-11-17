@@ -65,6 +65,20 @@ export const DEKO_PLAETZE: Ort[] = [
   [1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
   [15, 10], [13, 12], [15, 12], [24, 12], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
 ].map(([x, y]) => kern(x, y))
+// Wachsende Deko (Jazz 2026-11-17, docs/farm/dekorationen.md): steht von Anfang an, wächst mit dem Lernfortschritt, nicht antippbar.
+// b × h Kacheln (das Bild ragt ggf. darüber hinaus), stufen = Zahl der Bilder (muss zu wachstum_verteilen in der Datenbank passen).
+export const WACHSENDE_DEKO = [
+  { id: 'W1', name: 'Kirschbaum', ...kern(13, 4), b: 2, h: 2, stufen: 5, gewachsen: 'Dein Kirschbaum ist gewachsen!', fertig: 'Dein Kirschbaum blüht jetzt!' },
+  { id: 'W2', name: 'Wildblumen', ...kern(11, 5), b: 1, h: 1, stufen: 4, gewachsen: 'Deine Wildblumen sind gewachsen!', fertig: 'Dein Lavendel blüht jetzt!' },
+  { id: 'W3', name: 'Sonnenblume', ...kern(17, 7), b: 1, h: 2, stufen: 4, gewachsen: 'Deine Sonnenblume ist gewachsen!', fertig: 'Deine Sonnenblume blüht jetzt!' },
+  { id: 'W4', name: 'Seerosen', ...kern(10, 12), b: 2, h: 1, stufen: 4, wasser: true, gewachsen: 'Deine Seerosen sind gewachsen!', fertig: 'Deine Seerose blüht jetzt!' },
+  { id: 'W5', name: 'Beerenbusch', ...kern(11, 7), b: 1, h: 1, stufen: 3, gewachsen: 'Dein Beerenbusch ist gewachsen!', fertig: 'An deinem Busch hängen jetzt Beeren!' },
+  { id: 'W6', name: 'Vogelhaus', ...kern(25, 6), b: 1, h: 2, stufen: 5, gewachsen: 'An deinem Vogelhaus wurde weitergebaut!', fertig: 'Ein Vogel wohnt jetzt in deinem Vogelhaus!' },
+  { id: 'W7', name: 'Eiche', ...kern(0, 5), b: 1, h: 2, stufen: 5, gewachsen: 'Deine Eiche ist gewachsen!', fertig: 'Deine Eiche ist jetzt ein Baum!' },
+  { id: 'W8', name: 'Sonnenblume', ...kern(8, 8), b: 1, h: 2, stufen: 4, gewachsen: 'Deine Sonnenblume ist gewachsen!', fertig: 'Deine Sonnenblume blüht jetzt!' },
+] as const
+/** Kacheln, die eine wachsende Deko auf dem Land belegt (Seerosen liegen im Wasser) */
+export const wachsKacheln = (): Ort[] => WACHSENDE_DEKO.filter((w) => !('wasser' in w)).flatMap((w) => flaeche(w, w.b, w.h))
 // Monster, das auf der Farm wohnt (Jazz 2026-11-15/17): Hütte links unter dem Acker, Eingang nicht am Wasser; Laufweg vor der Tür.
 // Große Hütte 4 × 4 (Hindernis die unteren 2 Reihen), kleine Hütte 2 × 3 unten mittig für kleine Monster (Jazz, E10).
 export const HUETTE: Ort = kern(4, 8)
@@ -152,6 +166,7 @@ export function belegung(): Map<string, string> {
   DEKO_PLAETZE.forEach((o, i) => setze(`Deko ${i}`, o))
   huettenKacheln().forEach((o) => setze('Hütte', o))
   setze('Monster', MONSTER_PLATZ)
+  wachsKacheln().forEach((o) => setze('wachsende Deko', o))
   setze('Figur', FIGUR_START)
   return belegt
 }
@@ -166,7 +181,7 @@ export const tierFlaeche = (o: Ort, groesse: number) => flaeche(o, groesse, groe
 /** Kacheln, durch die die Figur nicht laufen kann (Wasser zählt extra) */
 export function hindernisse(s: Stand): Set<string> {
   // Felder sind Boden: darauf darf man gehen (sonst kommt man an die mittleren nicht heran)
-  const liste: Ort[] = DEKO_PLAETZE.slice(0, s.deko)
+  const liste: Ort[] = [...DEKO_PLAETZE.slice(0, s.deko), ...wachsKacheln()]
   for (const b of BAEUME) liste.push(...flaeche(b, b.grafik === 'baum' ? 2 : 1, 2))
   if (s.brunnen) liste.push(...flaeche(BRUNNEN, 2, 2))
   if (s.monster) liste.push(MONSTER_PLATZ, ...huettenKacheln())
