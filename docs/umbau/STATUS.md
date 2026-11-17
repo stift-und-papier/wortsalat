@@ -517,6 +517,25 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Verkauf zählt als „verdient“ fürs Freischalten, 79 Erklärseiten = 395 Münzen für alle; „Ergebnisse zurücksetzen“ löscht Münzen und Besitz.
   **Getestet:** Messung im Browser mit Pfau-99 (drei Größen), Preise und Anzahlen per Lese-Abfrage. **Nicht getestet:** echtes iPad, Münz-Abläufe
   im Browser (nur Code gelesen und gerechnet).
-- **Offene Fragen:** Rückfragen 1–9 an Jazz (Übungshäufigkeit, Zieldauer, iPad-Modelle, Hausaufgaben, Einstein und Shop auf der Farm,
-  Hochformat-Hinweis, Platzieren durch das Kind, Zurücksetzen, Erklärseiten-Münzen), siehe Chat.
-- **Nächster Schritt:** Antworten abwarten, dann Teilaufgabe 2 (Layout leer).
+- **Antworten von Jazz (2026-11-17)** auf die Rückfragen 1–9:
+  1. Übungshäufigkeit: etwa **ein Übungspaket pro Woche plus eins als Hausaufgabe**. Kinder üben immer Pakete, nie einzelne Übungen.
+  2. Zieldauer: Die Farm soll **in einem Schuljahr fertig werden können**.
+  3. iPads: Vorschlag angenommen (planen für 1024 × 768, prüfen 1180 × 820 und 1366 × 1024).
+  4. Hausaufgaben werden **später eingebaut**; bis dahin normale Übungen.
+  5. Shop als Knopf auf der Farm: ja. **Einstein kommt nicht auf die Farm**; das Meldungsfeld unten gibt aktuelle Hinweise zur Farm.
+  6. Hinweis „Dreh dein iPad“ im Hochformat (nur Farm): ja.
+  7. Deko: feste Plätze, das Kind wählt, was wohin kommt: ja.
+  8. „Ergebnisse zurücksetzen“ behält Münzen und Farm: ja.
+  9. Erklärseiten erscheinen **nur, wenn sie in einem zugewiesenen Paket vorkommen** (dann auch unter „Erklärungen“).
+  Zusätzlich: Ausrufezeichen über hungrigen Tieren und dem Monster sind zu groß und zu unruhig, **Vorschläge für eine andere Darstellung**;
+  **höchstens 2 Kühe**.
+- **Teilaufgabe 2 – Layout leer** (2026-11-17): `docs/farm/layout-leer.md`, Mockup `docs/farm/layout-leer.html` (echte Bilder und Stile, nur gelesen;
+  `?plaetze=1` zeigt Zonen; Selbstprüfung Gras/Überdeckung/Tippflächen), Fotos `docs/farm/bilder/layout-leer-*.png`. Nichts am Spiel geändert.
+  Vorschlag: Spielfenster über die volle Breite mit Meer, Insel-Kern 27 × 15 mit allen Plätzen plus je 4 Spalten Landstreifen ohne Plätze
+  (dürfen abgeschnitten werden), nur 2- oder 3-fach (nach dem Gras 25 × 13), Farm-Knöpfe inkl. Shop in die Kopfzeile (72 statt 116 px),
+  Meldung unten im Meer, Tippflächen 48 px (freie Kachel zwischen kleinen Dingen, Felder mit Grasweg), Scheune (2 Kühe) und Stall von Anfang an,
+  8 Plätze für wachsende Deko, 18 Deko-Plätze, Hochformat nur Hinweis. Hungrige Tiere: Variante A (leerer Napf/Trog) + Meldung, keine Blasen.
+  Nur Testfarm Pfau-99 hat mehr als 2 Kühe (4). **Getestet:** Mockup bei 1024 × 768, 1180 × 820, 1366 × 1024, 768 × 1024 (Edge Kopfmodus),
+  Selbstprüfung ok. **Nicht getestet:** echtes iPad (Safari-Leisten), dunkler Modus und Bewegung im Mockup.
+- **Offen:** Entscheidungen E1–E5 in `layout-leer.md` Abschnitt 9.
+- **Nächster Schritt:** Rückmeldung von Jazz zu Teilaufgabe 2, dann Teilaufgabe 3 (Layout voll).
