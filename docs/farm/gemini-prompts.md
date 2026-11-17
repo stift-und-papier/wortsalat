@@ -1,6 +1,6 @@
 # Prompts für Gemini: neue Farm-Grafiken (Teilaufgabe 4)
 
-Stand 2026-11-17. Diese Grafiken gibt es in keinem gekauften Paket: Vogelhaus (5 Stufen), Windrad (4 Stufen), Glitzern (3 Bilder), Napf (leer und voll), Buch klein.
+Stand 2026-11-17. Diese Grafiken gibt es in keinem gekauften Paket: Vogelhaus (5 Stufen), Windrad (4 Stufen), Glitzern (3 Bilder), Napf (leer und voll), Buch klein. Dazu der Lavendel (Knospe und Blüte) in der kleinen Größe der Farm.
 
 ## So gehen Sie vor
 
@@ -102,6 +102,27 @@ but simplify it so that it reads clearly at 16 x 16 pixels: closed book, seen sl
 cover in browns (#90625d, #aa7959, #c49a6c), pages in cream (#f3e5c2), 1-pixel darker brown outline.
 One frame only. No text, no letters on the cover.
 ```
+
+## 6. Lavendel für die wachsenden Wildblumen, 2 Bilder
+
+Datei: `assets/neu_lavendel.png`. Größe je Bild: 16 × 16 Pixel (2 Bilder nebeneinander: Knospe und Lavendel).
+Drei Bilder anhängen: die Palette, **`src/grafik/deko_blume_lila.png`** als Vorbild für Größe und Stil und **`assets/lavendel.jpg`** als Vorlage für die Form.
+
+```text
+Redraw the attached lavender plant (the tall purple flower picture) as two tiny sprites that match the attached
+small purple flower sprite exactly in size, style and colours. 2 frames, each 16 x 16 pixels.
+The plant must not be bigger than the small purple flower sprite: about 10 pixels wide and at most 15 pixels tall,
+standing on the bottom edge, with the same little leaf tuft at the base as the small purple flower sprite.
+Keep it simple and readable at this size: a few clear pixel clusters, no fine noise, no tiny single-pixel speckles.
+Colours ONLY from the palette: flowers in soft lavender purples (#5c4e92, #766daa, #867fb8, #a09dd4, #bcafde),
+stem and leaves in the same soft greens as the reference sprite (#67835c, #8db15d, #a4c263, #c0d470),
+outline one shade darker than each colour (#504086 for the flowers, #566560 for the leaves), never black.
+Frame 1: a young lavender: short stem with a small closed purple bud on top, leaf tuft at the base.
+Frame 2: the lavender in full bloom: one upright, slightly pointed spike of small purple flowers with a light highlight
+on the top left, leaf tuft at the base.
+```
+
+Danach ersetze ich Stufe 3 und 4 der Wildblumen durch diese Bilder. Stufe 1 und 2 (Gras) stammen aus dem Paket und passen schon.
 
 ## Nachher (übernimmt Claude)
 
