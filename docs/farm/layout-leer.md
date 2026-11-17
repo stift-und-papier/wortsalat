@@ -66,7 +66,7 @@ So ist gerechnet:
 | **Obstgarten** | links oben (y 1 bis 3) | 3 Obstbäume: Orange, Pfirsich, Birne | über dem Acker bzw. vor dem Stall | jetzt alle drei nebeneinander |
 | **Scheune** | rechts oben (x 18 bis 23, y 1 bis 6) | **2 Kühe** | 4 Kühe | Jazz: höchstens 2 |
 | **Hühnerstall** | rechts unten (Stall bei x 19, y 9) | **4 Hühner** rund um den Stall | 4 | je mit freier Kachel dazwischen |
-| **Monster-Hütte** | links unten (x 4 bis 7, y 10 bis 13) | Hütte und Laufweg des Monsters (x 8 bis 9, y 11) | links unten | **Das Monster läuft nie ins Wasser** (Jazz). Links und rechts vom Laufweg liegen Gras oder die Hütte, darunter Gras. Das Mockup prüft das. |
+| **Monster-Hütte** | links, unter dem Acker (Platz x 4 bis 7, y 8 bis 11) | Hütte und Laufweg des Monsters vor der Tür (x 5 bis 6, y 12) | links unten am Ufer | **Weiter oben, der Eingang zeigt nicht aufs Wasser** (Jazz). **Das Monster läuft nie ins Wasser:** links und rechts vom Laufweg und darunter liegt Gras; das Mockup prüft das. **Zwei Größen:** große Monster (Rübchen, Schleime, Fledermaus) wohnen in der heutigen Hütte (4 × 4); kleine Monster (Gespenst, Spinnen, Maus) bekommen eine **kleine Hütte 2 × 2** unten mittig auf dem Platz. Die kleine Hütte ist eine neue Grafik (32 × 32, in den 9 Dachfarben); im Paket gibt es die Hütte nur in einer Größe. |
 | **Brunnen** | Mitte (x 13 bis 14, y 7 bis 8) | 1 | Mitte | |
 | **Boot** | Bucht oben Mitte (x 12 bis 14, y 1 bis 2) | 1 (im Wasser) | Bucht oben | |
 | **Deko klein** (1 × 1) | verstreut: am Rand, beim Baum, am Brunnen, am Hofweg, am Ufer | **20 Plätze** D1 bis D20 | 18 | Steine, Pilze, Schilder, Baumstumpf, Laterne, Briefkasten und Ähnliches. Bewusst nicht in Reihen (Jazz). |
@@ -177,6 +177,7 @@ Preise und Freischaltung folgen in Teilaufgabe 5, die genaue Auswahl in Teilaufg
 | E5 | Shop-Knopf auf der Farm | Der Knopf **ersetzt** den Menüpunkt Shop unten. Das Buch im Sammelalbum-Knopf wird kleiner. |
 | E6 | Monster | läuft nie ins Wasser (Laufweg vor der Hütte, ringsum Gras) |
 | E7 | Überschrift „Meine Farm“ | entfällt auf der Farm |
+| E10 | Monster-Hütte | weiter oben, Eingang nicht am Wasser; kleine Hütte (2 × 2, neue Grafik) für Gespenst, Spinnen und Maus |
 | E9 | Deko-Verteilung und Blumen | Baumstumpf, Laterne, Briefkasten, Fels verstreut statt in einer Reihe; 6 Blumenbeete mit 16 Plätzen; mehr Blumen im Shop |
 | E8 | Wasser-Platz S2 lag unten im Meldungsfeld | Wasser-Plätze nur noch oben; unter der Insel liegt nichts Antippbares im Wasser (Prüfung im Mockup) |
 

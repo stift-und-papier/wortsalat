@@ -38,9 +38,12 @@ const SCHEUNE = { x: 18, y: 1, b: 6, h: 6 }
 const KUEHE = [{ x: 19, y: 3 }, { x: 21, y: 3 }] // je 2 × 2, höchstens 2 (Jazz 2026-11-17)
 const STALL = { x: 19, y: 9 } // 3 × 3
 const HUEHNER = [{ x: 17, y: 10 }, { x: 23, y: 10 }, { x: 18, y: 12 }, { x: 22, y: 12 }]
-const HUETTE = { x: 4, y: 10 } // Bild 4 × 4
-// Jazz 2026-11-17: Monster läuft nie ins Wasser. Laufweg 2 Kacheln vor der Hütte; links, rechts und darunter ist Gras (Prüfung unten)
-const MONSTER = { x: 8, y: 11 }
+// Jazz 2026-11-17: Hütte weiter oben, der Eingang zeigt nicht mehr aufs Wasser. Platz 4 × 4 für die große Hütte (heutiges Bild);
+// kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte 2 × 2 unten mittig auf diesem Platz (neue Grafik)
+const HUETTE = { x: 4, y: 8 }
+const HUETTE_KLEIN = { x: 5, y: 10 }
+// Jazz 2026-11-17: Monster läuft nie ins Wasser. Laufweg vor der Tür; links, rechts und darunter ist Gras (Prüfung unten)
+const MONSTER = { x: 5, y: 12 }
 const BRUNNEN = { x: 13, y: 7 } // 2 × 2
 const BOOT = { x: 12, y: 1 } // 3 × 2 im Wasser
 const FIGUR = { x: 16, y: 8 } // Füße auf Zeile 9
@@ -71,7 +74,7 @@ const BAEUME_FEST = [{ g: 'baum', x: 13, y: 10, b: 2, h: 2 }, { g: 'baum_klein',
   { g: 'baum_klein', x: 12, y: 4, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 9, b: 1, h: 2 },
   // auf den Landstreifen (nur Landschaft)
   { g: 'baum', x: -3, y: 6, b: 2, h: 2 }, { g: 'baum_klein', x: -2, y: 9, b: 1, h: 2 }, { g: 'baum', x: 28, y: 5, b: 2, h: 2 }, { g: 'baum_klein', x: 27, y: 9, b: 1, h: 2 }]
-const GRAS_DEKO = [[10, 6], [8, 7], [4, 9], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [20, 8], [16, 6], [-2, 4], [29, 8]]
+const GRAS_DEKO = [[10, 6], [8, 7], [8, 12], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [15, 4], [2, 8], [10, 10], [9, 9], [20, 8], [16, 6], [-2, 4], [29, 8]]
 
 // ---------- Selbstprüfung: alles auf Gras, nichts überdeckt sich, Tippflächen 48 px überlappen nicht ----------
 const belegt = new Map()
@@ -196,7 +199,7 @@ async function zeichnen() {
     zone('Acker: 12 Felder, 4 zu Beginn', 3, 4, 4, 3)
     zone('Scheune: 2 Kühe', SCHEUNE.x, SCHEUNE.y, SCHEUNE.b, SCHEUNE.h)
     zone('Hühnerstall + 4 Hühner', 17, 9, 7, 4)
-    zone('Monster-Hütte', HUETTE.x, HUETTE.y, 4, 4)
+    zone('Monster-Hütte (groß 4 × 4, klein 2 × 2)', HUETTE.x, HUETTE.y, 4, 4)
     zone('Monster', MONSTER.x, MONSTER.y, 2, 1)
     zone('Boot', BOOT.x, BOOT.y, 3, 2)
     zone('Brunnen', BRUNNEN.x, BRUNNEN.y, 2, 2)
@@ -246,12 +249,13 @@ function volleFarm(p, setze, platzhalter) {
   platzhalter('Napf leer', 23, 9, 1, 1)
   platzhalter('Trog leer', 21, 2, 2, 1)
   // Monster (Maus) vor seiner Hütte (Dach Nr. 3), läuft hin und her; sein Geschenk liegt daneben und hüpft
-  ding(sprite('huette', 64, 64, 192, 192, 3, m), HUETTE.x, HUETTE.y, 4, 4)
+  // Die Maus ist ein kleines Monster: kleine Hütte (im Mockup das heutige Bild halb so groß, im Spiel eine neue Grafik 32 × 32)
+  ding(sprite('huette', 64, 64, 192, 192, 3, m / 2), HUETTE_KLEIN.x, HUETTE_KLEIN.y, 2, 2)
   ding(sprite('monster_maus', 16, 16, 208, 16, 0, m, 'laufen'), MONSTER.x, MONSTER.y, 1, 1, true)
   // Liegendes hüpft: Ei, Milch, Monster-Geschenk (Samentüte)
   ding(sprite('ei', 16, 16, 16, 16, 0, m, 'huepfen'), 18, 11, 1, 1, true)
   ding(sprite('milch', 16, 16, 16, 16, 0, m, 'huepfen'), 19, 5, 1, 1, true)
-  ding(sprite('saatgut', 16, 16, 32, 208, 4, m, 'huepfen'), 9, 12, 1, 1, true)
+  ding(sprite('saatgut', 16, 16, 32, 208, 4, m, 'huepfen'), 8, 11, 1, 1, true)
   // Deko: 14 kleine Plätze mit vorhandenen Bildern, 6 mit neuen aus den Paketen (Platzhalter, Liste in layout-leer.md Abschnitt 8)
   const vorhanden = ['deko_busch', 'deko_blume_gelb', 'deko_pilz', 'deko_stein', 'deko_blume_lila', 'deko_pilzhaus', 'deko_katze_rosa', 'deko_katze_blau']
   const neu = ['Sonnen-blume', 'Schild', 'Baum-stumpf', 'Laterne', 'Brief-kasten', 'Fels']
