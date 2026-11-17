@@ -23,15 +23,6 @@ function rampe(von, nach, versatz = 0, ab = 0, bis = 7) {
   return m
 }
 
-// Lavendel und Knospe aus assets/objects.png (kräftige Farben) auf die Palette gebracht, Blätter wie das Gras der Farm
-const OBJEKTE = { u: '../../assets/objects.png', w: 144, h: 61 }
-const OBJEKTE_PALETTE = {
-  '#37017e': '#504086', '#4c00c7': '#5c4e92', '#6930f8': '#766daa', '#7c70ff': '#867fb8', '#d7a8ff': '#bcafde',
-  '#470576': '#504086', '#7100bd': '#5c4e92', '#900acb': '#685d9e', '#bf25f0': '#867fb8', '#f676ff': '#bcafde',
-  '#152a29': '#474a4b', '#174a31': '#566560', '#1b5d5f': '#5f7a79', '#2d9543': '#78a158', '#447722': '#67835c', '#93b734': '#a4c263',
-  '#b76f51': '#aa7959', '#954163': '#90625d',
-}
-
 // Pilzhütte ohne Totenkopf: Kopf-Pixel werden Hutfarbe, dazu drei helle Tupfen
 const OHNE_TOTENKOPF = [
   { in: [3, 2, 10, 5], tausch: { '#ebd6e0': '#a77bb3', '#7b568c': '#a77bb3' } },
@@ -94,7 +85,7 @@ async function faerbeAlle() {
 // Selbstprüfung: jede Regel-Farbe ist ein gültiges #rrggbb, jede Zielfarbe stammt aus der Palette
 {
   const palette = new Set(Object.values(RAMPEN).flat())
-  const ziele = [OBJEKTE_PALETTE, ...OHNE_TOTENKOPF.map((r) => r.tausch ?? {}), ...Object.values(DEKO_FARBEN).flatMap((v) => v.flatMap(([, rs]) => rs))]
+  const ziele = [...OHNE_TOTENKOPF.map((r) => r.tausch ?? {}), ...Object.values(DEKO_FARBEN).flatMap((v) => v.flatMap(([, rs]) => rs))]
     .flatMap((t) => Object.values(t.tausch ?? t)).filter((f) => typeof f === 'string')
   const falsch = ziele.filter((f) => !palette.has(f))
   if (falsch.length) console.error('Fehler: Farben nicht aus der Palette:', falsch.join(' '))

@@ -10,16 +10,18 @@ const BAEUME2 = { u: PAKET + 'Sprout Sorry pack/Early Access/Plant update 2/Tree
 const EICHE_GRUEN = rampe('tuerkisgruen', 'gruen')
 const BUSCH_GRUEN = rampe('tuerkisgruen', 'gruen', -2)
 const GRAS_WIE_LAVENDEL = rampe('tuerkisgruen', 'gruen')
+// Neue Bilder von Jazz (Gemini), von Claude auf echte Pixel und die Palette gebracht; liegen in assets/neu/ (nicht im Repo)
+const NEU = (n, w, h) => [{ u: '../../assets/neu/' + n + '.png', w, h }, 0, 0, w, h]
 const BLUMEN = { u: PAKET + 'Sprout Lands - Sprites - premium pack/Objects/Mushrooms, Flowers, Stones.png', w: 192, h: 80 }
 
 const WACHS = [
   { n: 'W1', name: 'Kirschbaum', x: 13, y: 4, b: 2, h: 2, stufen: [
     ['Keimling', [KIRSCHE, 34, 37, 10, 10]], ['Zweig mit Blättern', [KIRSCHE, 48, 2, 16, 13], [rampe('gruen', 'rosa')]], ['Busch', [KIRSCHE, 80, 64, 16, 16]],
     ['Bäumchen', [KIRSCHE, 65, 18, 14, 29]], ['Kirschbaum in Blüte', [KIRSCHE, 84, 16, 24, 31]]] },
-  // Jazz: letzte Stufe = Lavendel aus assets/objects.png (eigenes Bild von Jazz), verkleinert auf Blumen- und Pilzgröße; Gras davor im Grün seiner Blätter
+  // Jazz: Knospe und Lavendel neu gezeichnet in Blumen- und Pilzgröße; Gras davor im Grün seiner Blätter
   { n: 'W2', name: 'Wildblumen', x: 11, y: 5, b: 1, h: 1, stufen: [
     ['Grashalme', [BLUMEN, 33, 37, 14, 10], [GRAS_WIE_LAVENDEL]], ['Grasbüschel', [BLUMEN, 48, 34, 16, 13], [GRAS_WIE_LAVENDEL]],
-    ['Knospe', [OBJEKTE, 98, 9, 12, 17, 7, 10], [OBJEKTE_PALETTE]], ['Lavendel', [OBJEKTE, 80, 32, 16, 26, 10, 16], [OBJEKTE_PALETTE]]] },
+    ['Knospe', NEU('lavendel_1', 9, 10)], ['Lavendel', NEU('lavendel_2', 9, 15)]] },
   { n: 'W3', name: 'Sonnenblume', x: 17, y: 7, b: 1, h: 2, stufen: [
     ['Grashalm', [BLUMEN, 33, 37, 14, 10]], ['kleine Blüte', [BLUMEN, 18, 54, 11, 9]], ['Knospe', [BLUMEN, 35, 51, 11, 12]],
     ['Sonnenblume', [BLUMEN, 49, 49, 14, 29]]] },
@@ -30,12 +32,14 @@ const WACHS = [
     ['kleiner Busch', [BAEUME2, 145, 19, 13, 12], [BUSCH_GRUEN]], ['Busch', [BAEUME2, 144, 32, 16, 16], [BUSCH_GRUEN]], ['Busch mit Beeren', [BAEUME2, 128, 64, 16, 16], [BUSCH_GRUEN]]] },
   // V3 (Jazz): W6 bis W8 liegen nicht mehr an den engen Stellen (rechts vom Stall, oben Mitte)
   { n: 'W6', name: 'Vogelhaus', x: 25, y: 6, b: 1, h: 2, stufen: [
-    ['Pfahl'], ['Pfahl mit Brett'], ['Vogelhaus'], ['Vogelhaus mit Futter'], ['Vogel sitzt auf dem Dach']] },
+    ['Pfahl', NEU('vogelhaus_1', 6, 18)], ['Pfahl mit Brett', NEU('vogelhaus_2', 13, 22)], ['Vogelhaus', NEU('vogelhaus_3', 13, 29)],
+    ['Vogelhaus mit Futter', NEU('vogelhaus_4', 13, 29)], ['Vogel sitzt auf dem Dach', NEU('vogelhaus_5', 13, 32)]] },
   { n: 'W7', name: 'Eiche', x: 0, y: 5, b: 1, h: 2, stufen: [
     ['Eichel', [BAEUME2, 3, 4, 9, 9], [EICHE_GRUEN]], ['Eichel keimt', [BAEUME2, 2, 20, 10, 11], [EICHE_GRUEN]], ['Sprössling', [BAEUME2, 2, 37, 10, 10], [EICHE_GRUEN]],
     ['kleiner Baum', [BAEUME2, 18, 16, 12, 15], [EICHE_GRUEN]], ['junge Eiche', [BAEUME2, 49, 17, 14, 29], [EICHE_GRUEN]]] },
   { n: 'W8', name: 'Windrad', x: 8, y: 8, b: 1, h: 2, stufen: [
-    ['Pfahl'], ['Gestell'], ['Windrad mit zwei Flügeln'], ['Windrad mit vier Flügeln und Fähnchen']] },
+    ['Pfahl', NEU('windrad_1', 5, 17)], ['Gestell', NEU('windrad_2', 9, 28)], ['Windrad mit zwei Flügeln', NEU('windrad_3', 9, 32)],
+    ['Windrad mit vier Flügeln und Fähnchen', NEU('windrad_4', 13, 31)]] },
 ]
 
 // Bild einer Stufe, unten mittig im Platz (b × h Kacheln), Faktor mal; neue Grafik = beschrifteter Platzhalter

@@ -243,9 +243,10 @@ function volleFarm(p, setze, platzhalter) {
   // 2 Kühe in der Scheune, 4 Hühner am Stall (laufen bzw. picken)
   KUEHE.forEach((o, i) => ding(sprite('kuh', 32, 32, 256, 64, i * 8, m, 'laufen'), o.x, o.y, 2, 2, true))
   HUEHNER.forEach((o, i) => ding(sprite('huhn', 16, 16, 128, 48, i % 2 ? 8 : 0, m, 'laufen'), o.x, o.y, 1, 1, true))
-  // Hungrig (Jazz, E4): leerer Napf neben zwei Hühnern, leerer Trog in der Scheune (Napf ist eine neue Grafik)
-  platzhalter('Napf leer', 17, 9, 1, 1) // Napf steht über dem Huhn, so bleibt rechts vom Stall Luft
-  platzhalter('Napf leer', 23, 9, 1, 1)
+  // Hungrig (Jazz, E4): leerer Napf neben zwei Hühnern, leerer Trog in der Scheune (Napf: neues Bild in assets/neu/, nicht im Repo)
+  const napf = `<div class="sprite" style="width:${16 * m}px;height:${13 * m}px;margin-top:${3 * m}px;background:url('../../assets/neu/napf_1.png') 0 0/${16 * m}px ${13 * m}px"></div>`
+  ding(napf, 17, 9, 1, 1) // Napf steht über dem Huhn, so bleibt rechts vom Stall Luft
+  ding(napf, 23, 9, 1, 1)
   platzhalter('Trog leer', 21, 2, 2, 1)
   // Monster (Maus) vor seiner Hütte (Dach Nr. 3), läuft hin und her; sein Geschenk liegt daneben und hüpft
   // Die Maus ist ein kleines Monster: kleiner Hühnerstall (32 × 48, lila Dach) als Hütte.
