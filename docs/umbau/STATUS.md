@@ -552,5 +552,6 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   19 einzeln hüpfende Dinge. Überladung: Hof frei, Zonen erkennbar; eng rechts vom Stall und oben Mitte; Tippflächen überlappen bei Ei/Milch
   neben dem Tier → V1: Eier im Stall-Eingang, Milch an der Scheunentür. **Getestet:** Mockup in drei Größen + Hochformat, Selbstprüfung ok.
   **Nicht getestet:** echtes iPad (Leistung), dunkler Modus, neue Deko-Bilder (nur Platzhalter).
-- **Offen:** Vorschläge V1–V4 in `layout-voll.md` Abschnitt 4.
-- **Nächster Schritt:** Rückmeldung von Jazz, dann Teilaufgabe 4 (Dekorationskonzept).
+- **Entscheidungen Jazz zu Teilaufgabe 3 (2026-11-17):** V1–V4 angenommen (Eier im Stall-Eingang, Milch an der Scheunentür; Bewegungs-Budget;
+  enge Stellen in Teilaufgabe 4 lösen; Erinnerung an Liegendes per Meldung). Shop-Knopf breiter mit dem Wort „Laden“ (Mockups und Fotos erneuert).
+- **Nächster Schritt:** Teilaufgabe 4 (Dekorationskonzept).

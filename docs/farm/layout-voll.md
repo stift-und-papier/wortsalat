@@ -16,7 +16,8 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 **Kopfzeile wie im Spiel** (Wunsch von Jazz), in leerer und voller Farm:
 - Dunkel-Schalter aus dem UI-Pack;
 - Zahnrad als runder Holzknopf (`Symbol` „einstellungen“);
-- Sammelalbum, Vorrat und Shop als Bildknöpfe auf Tafel-Hintergrund;
+- Sammelalbum und Vorrat als Bildknöpfe auf Tafel-Hintergrund;
+- Shop-Knopf breiter, mit Symbol und dem Wort „Laden“ (Jazz);
 - als Seitenhintergrund die Wiese des Spiels.
 
 ## 1. Was „voll“ heißt (realistisches Maximum)
@@ -86,7 +87,7 @@ Dazu kommt die Figur, solange sie läuft. Das sind **14**.
 | Überdecken sich Tippflächen in der vollen Farm? | **ja, an einer Stelle:** Liegendes direkt neben einem Tier (Ei neben Huhn, Milch neben Kuh) | siehe V1 |
 | Sind hungrige Tiere ohne Lesen erkennbar? | ja, am leeren Napf bzw. Trog; die Meldung sagt es zusätzlich | – |
 
-## 4. Vorschläge für Jazz
+## 4. Vorschläge für Jazz (alle angenommen am 2026-11-17)
 
 | Nr. | Frage | Vorschlag |
 |---|---|---|

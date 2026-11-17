@@ -9,7 +9,9 @@
   .kopf .pixel-schild { margin: 0; }
   .kopf .pixel-schild h1 { font-size: 1.35rem; }
   /* Dunkel-Schalter, Bildknöpfe (.farm-bildknopf) und Zahnrad (.holzknopf) kommen unverändert aus bausteine.css wie im Spiel */
-  .farm-bildknopf--shop { color: var(--color-aktion); }
+  /* Jazz 2026-11-17: Shop-Knopf breiter, mit dem Wort „Laden“ neben dem Symbol */
+  .farm-bildknopf--shop { width: auto; display: inline-flex; gap: 6px; padding: 0 6px; color: var(--color-album-tinte); font-weight: 800; font-size: 17px; line-height: 1; }
+  .farm-bildknopf--shop .symbol { color: var(--color-aktion); }
   .farm-bildknopf--shop .symbol { width: 28px; height: 28px; }
   .rundknopf { width: 56px; height: 56px; box-sizing: border-box; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-direction: column; font-size: 11px; line-height: 1; }
   .rundknopf img { image-rendering: pixelated; }

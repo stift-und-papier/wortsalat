@@ -29,7 +29,7 @@ Grundlage sind `analyse-farm.md` und die Antworten von Jazz vom 2026-11-17 (sieh
 4. **Farm-Knöpfe in der Kopfzeile** (64 statt 116 px hoch).
    - Links: Sammelalbum und Vorrat. Rechts: Shop, Farm einrichten und Münzen.
    - **Die Überschrift „Meine Farm“ entfällt auf der Farm** (Jazz). Das spart Platz.
-   - **Der Shop-Knopf ersetzt den Menüpunkt „Shop“ unten.** Das Menü hat dann 5 Punkte: Lernweg, Übungen, Erklärungen, Farm, Hilfe.
+   - **Der Shop-Knopf ersetzt den Menüpunkt „Shop“ unten.** Er ist breiter und trägt neben dem Symbol das Wort **„Laden“** (Jazz). Das Menü hat dann 5 Punkte: Lernweg, Übungen, Erklärungen, Farm, Hilfe.
    - **Das Buch im Sammelalbum-Knopf wird kleiner**, etwa so groß wie die Truhe (siehe Abschnitt 8).
 5. **Die Meldung** ist ein Papier-Banner unten im Meer. Dort stehen aktuelle Hinweise zur Farm. Einstein kommt nicht auf die Farm.
 6. **Felder liegen dicht wie heute (4 × 3).**
