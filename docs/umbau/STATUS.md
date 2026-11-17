@@ -500,3 +500,7 @@
   Hinweis ohne Zuordnung passt zu Erklärseiten (Suche und Filter statt Lernstand). Speichern war schon für alle Arten vorhanden.
   **Getestet** (Browser): „Erklärung: Das Satzgefüge und sein Komma“: Kompetenz entfernt, gespeichert, neu geladen (3); über die Auswahl (Gymnasium, Suche
   „Einsch“) wieder angekreuzt, gespeichert, neu geladen (4). `npm test` 152, lint ohne Fehler.
+- **Sterne der Grammatik-7-Übungen** (Jazz 2026-11-17): nach Schwierigkeit statt überall ★★: ★ erkennen/zuordnen, ★★ einsetzen/entscheiden, ★★★ selbst bilden
+  oder berichtigen; Abschlussübungen ★★ (gemischt von leicht nach schwer). Im Paket nach Sternen sortiert (Kennungen unverändert). Jazz' Übung
+  „Satzstellungen …“ behält ★ und steht in DS01 vor dem Abschluss. Vor dem Neueinspielen geprüft: keine Änderungen von Jazz an diesen Übungen,
+  keine Zuweisungen. **Getestet:** Datenbank (Sterne und Reihenfolge je Paket). Skript-Lauf ohne Prüffehler.

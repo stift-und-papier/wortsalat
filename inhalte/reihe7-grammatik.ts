@@ -4,15 +4,16 @@
 // Erzeugen und einspielen: scripts/reihe7-sql.ts
 export type Format = 'lueckentext' | 'auswahl' | 'zuordnen' | 'fehler' | 'reihenfolge' | 'ueberarbeiten'
 export type Runde = { typ: Format; text: string; kategorien?: string[]; anweisung?: string; hinweis?: string }
-type Uebung = { titel: string; typ: Format; anweisung?: string; hinweis?: string; kategorien?: string[]; kompetenzen?: string[]; runden: string[] }
+type Uebung = { titel: string; typ: Format; stufe: 1 | 2 | 3; anweisung?: string; hinweis?: string; kategorien?: string[]; kompetenzen?: string[]; runden: string[] }
 type Paket = {
   kurz: string
   titel: string
   monster: string
   kompetenzen: string[]
   erklaerung: { titel: string; text: string; merke: string; beispiele: string[] }
-  /** von leicht nach schwer; { vorhanden: id } = Übung, die Jazz schon angelegt hat */
-  uebungen: (Uebung | { vorhanden: string })[]
+  /** Jazz 2026-11-17: Sterne nach Schwierigkeit (★ erkennen, ★★ einsetzen/entscheiden, ★★★ selbst bilden/berichtigen); im Paket
+   *  nach Sternen sortiert. { vorhanden: id } = Übung, die Jazz schon angelegt hat (ihre Sterne bleiben, stufe nur für die Reihenfolge) */
+  uebungen: (Uebung | { vorhanden: string; stufe: 1 | 2 | 3 })[]
   abschlussTitel: string
   /** je Format eine Runde, von leicht nach schwer */
   abschluss: Runde[]
@@ -42,6 +43,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Zeitformen bestimmen',
+        stufe: 1,
         typ: 'auswahl',
         anweisung: 'Welche Zeitform hat der Satz? Tippe sie an.',
         hinweis: 'Suche das gebeugte Verb. Gibt es noch eine zweite Verbform am Satzende?',
@@ -58,6 +60,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Verbformen bilden',
+        stufe: 2,
         typ: 'lueckentext',
         anweisung: 'Bilde die Formen für „er“.',
         hinweis: 'Perfekt: hat oder ist + Partizip II. Futur I: wird + Grundform.',
@@ -74,6 +77,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Plusquamperfekt finden',
+        stufe: 2,
         typ: 'zuordnen',
         anweisung: 'Was ist zuerst passiert? Tippe die Verben an und ordne sie zu.',
         hinweis: 'Plusquamperfekt: hatte oder war + Partizip II. Ordne beide Teile zu.',
@@ -91,6 +95,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Plusquamperfekt bilden',
+        stufe: 3,
         typ: 'lueckentext',
         anweisung: 'Setze das Verb in Klammern ins Plusquamperfekt.',
         hinweis: 'hatte oder war + Partizip II, z. B. hatte gelernt, war gelaufen.',
@@ -106,7 +111,7 @@ export const PAKETE: Paket[] = [
         ],
       },
       // von Jazz angelegt: „Satzstellungen bei Sätzen im Plusquamperfekt“ (Reihenfolge)
-      { vorhanden: '99b22766-b22a-4c28-af81-d6855d049fc6' },
+      { vorhanden: '99b22766-b22a-4c28-af81-d6855d049fc6', stufe: 3 },
     ],
     abschlussTitel: 'Abschluss: Zeitformen und Plusquamperfekt',
     abschluss: [
@@ -139,6 +144,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'hatte oder war?',
+        stufe: 1,
         typ: 'auswahl',
         anweisung: 'Wähle das passende Hilfsverb.',
         hinweis: 'Bilde zuerst das Perfekt: ist gelaufen → war gelaufen, hat gelernt → hatte gelernt.',
@@ -155,6 +161,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Unregelmäßige Verben im Plusquamperfekt',
+        stufe: 2,
         typ: 'lueckentext',
         anweisung: 'Bilde das Plusquamperfekt für „er“.',
         hinweis: 'Diese Verben sind unregelmäßig. Denk an hatte oder war.',
@@ -171,6 +178,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Sätze mit nachdem',
+        stufe: 3,
         typ: 'lueckentext',
         anweisung: 'Setze die Verben in die passende Zeitform: zuerst Plusquamperfekt, danach Präteritum.',
         hinweis: 'Der Teil mit nachdem ist zuerst passiert: Plusquamperfekt. Der Hauptsatz steht im Präteritum.',
@@ -187,6 +195,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Falsche Zeitform verbessern',
+        stufe: 3,
         typ: 'fehler',
         anweisung: 'Finde die falsche Verbform und schreibe sie richtig.',
         hinweis: 'Was vor einem vergangenen Geschehen passiert ist, steht im Plusquamperfekt.',
@@ -228,6 +237,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Konjunktionen finden',
+        stufe: 1,
         typ: 'zuordnen',
         anweisung: 'Tippe die Konjunktionen an, die Sätze verbinden, und ordne sie zu.',
         hinweis: 'ADUSO + doch sind nebenordnend. Nach unterordnenden steht das Verb am Ende.',
@@ -245,6 +255,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Nebenordnend oder unterordnend?',
+        stufe: 2,
         typ: 'ueberarbeiten',
         anweisung: 'Tippe die richtigen Antworten an.',
         runden: [
@@ -260,6 +271,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Die passende Konjunktion',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Wähle die Konjunktion, die passt.',
         hinweis: 'Was drückt der Satz aus: Grund, Gegensatz, Zeit, Bedingung oder Zweck?',
@@ -276,6 +288,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Sätze verbinden',
+        stufe: 3,
         typ: 'reihenfolge',
         anweisung: 'Bilde einen Satz. Achte darauf, wo das gebeugte Verb steht.',
         hinweis: 'Nach weil, dass, obwohl, als, während steht das Verb am Ende. Nach denn, aber steht es an zweiter Stelle.',
@@ -323,6 +336,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Hauptsatz oder Satzreihe?',
+        stufe: 1,
         typ: 'auswahl',
         anweisung: 'Ist es ein einzelner Hauptsatz oder eine Satzreihe?',
         hinweis: 'Zähle die gebeugten Verben mit eigenem Subjekt.',
@@ -339,6 +353,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Komma oder kein Komma?',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Braucht der Satz an dieser Stelle ein Komma?',
         hinweis: 'Vor aber, denn, doch, sondern steht immer ein Komma. Teilen sich zwei Verben ein Subjekt, steht kein Komma.',
@@ -355,6 +370,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Kommaregeln der Satzreihe',
+        stufe: 2,
         typ: 'ueberarbeiten',
         anweisung: 'Tippe die richtigen Antworten an.',
         runden: [
@@ -370,6 +386,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Satzreihen bilden',
+        stufe: 3,
         typ: 'reihenfolge',
         anweisung: 'Bilde eine Satzreihe. Das gebeugte Verb steht in jedem Hauptsatz an zweiter Stelle.',
         hinweis: 'Die Konjunktion zählt nicht mit. Danach kommt das Subjekt oder ein anderes Satzglied, dann das Verb.',
@@ -410,6 +427,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Hauptsatz und Nebensatz erkennen',
+        stufe: 1,
         typ: 'zuordnen',
         anweisung: 'Tippe jeden Teilsatz an und ordne ihn zu.',
         hinweis: 'Im Nebensatz steht das gebeugte Verb am Ende.',
@@ -427,6 +445,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Kommas im Satzgefüge',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Braucht der Satz an dieser Stelle ein Komma?',
         hinweis: 'Vor das Einleitewort kommt ein Komma. Nach dem Verb am Ende kommt ein Komma, wenn der Satz weitergeht.',
@@ -443,6 +462,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Satzreihe oder Satzgefüge?',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Ist es eine Satzreihe oder ein Satzgefüge?',
         hinweis: 'Satzgefüge: In einem Teilsatz steht das gebeugte Verb am Ende.',
@@ -459,6 +479,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Satzgefüge bilden',
+        stufe: 3,
         typ: 'reihenfolge',
         anweisung: 'Bilde ein Satzgefüge. Im Nebensatz steht das gebeugte Verb am Ende.',
         hinweis: 'Nebensatz: Konjunktion, Subjekt, …, gebeugtes Verb.',
@@ -504,6 +525,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Signalwort und Nominalisierung finden',
+        stufe: 1,
         typ: 'zuordnen',
         anweisung: 'Tippe das Signalwort und die Nominalisierung an und ordne sie zu.',
         hinweis: 'Signalwörter: Artikel, beim/zum/im, Adjektiv, etwas/nichts/viel/alles, sein/dieses.',
@@ -521,6 +543,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Groß oder klein?',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Wähle die richtige Schreibweise.',
         hinweis: 'Steht ein Signalwort davor? Klappt die Probe mit Artikel und Adjektiv?',
@@ -537,6 +560,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Die Probe mit Artikel und Adjektiv',
+        stufe: 2,
         typ: 'ueberarbeiten',
         anweisung: 'Tippe die richtigen Antworten an.',
         runden: [
@@ -552,6 +576,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Fehler im Tagebuch',
+        stufe: 3,
         typ: 'fehler',
         anweisung: 'Finde die falsch geschriebenen Wörter und schreibe sie richtig.',
         hinweis: 'Achte auf Signalwörter vor Verben und Adjektiven.',
@@ -600,6 +625,7 @@ export const PAKETE: Paket[] = [
     uebungen: [
       {
         titel: 'Präteritum oder Plusquamperfekt?',
+        stufe: 3,
         typ: 'lueckentext',
         anweisung: 'Setze die Verben ins Präteritum oder ins Plusquamperfekt.',
         hinweis: 'Was zuerst passiert ist, steht im Plusquamperfekt.',
@@ -617,6 +643,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Nebenordnend oder unterordnend?',
+        stufe: 1,
         typ: 'auswahl',
         anweisung: 'Ist die Konjunktion nebenordnend oder unterordnend?',
         hinweis: 'ADUSO + doch sind nebenordnend.',
@@ -634,6 +661,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Komma setzen und bestimmen',
+        stufe: 2,
         typ: 'auswahl',
         anweisung: 'Fehlt ein Komma? Ist es eine Satzreihe oder ein Satzgefüge?',
         hinweis: 'Suche das gebeugte Verb in jedem Teilsatz.',
@@ -651,6 +679,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Groß oder klein?',
+        stufe: 2,
         typ: 'lueckentext',
         anweisung: 'Schreibe das Wort in Klammern richtig: groß oder klein?',
         hinweis: 'Steht ein Signalwort davor? Dann groß.',
@@ -668,6 +697,7 @@ export const PAKETE: Paket[] = [
       },
       {
         titel: 'Fehler im Text berichtigen',
+        stufe: 3,
         typ: 'fehler',
         anweisung: 'Finde die Fehler bei Zeitformen und Großschreibung und schreibe richtig.',
         hinweis: 'Lies zweimal: erst auf die Zeitformen achten, dann auf die Großschreibung.',

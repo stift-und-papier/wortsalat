@@ -57,10 +57,10 @@ const kompetenzen = (id: string, namen: string[]) => {
     `insert into public.aufgabe_kompetenzen (aufgabe_id, kompetenz_id) select '${id}', k.id from public.kompetenzen k where k.kerncurriculum = 'Gymnasium' and k.kurzname in (${namen.map(sql).join(', ')});`,
   )
 }
-const aufgabe = (id: string, f: { typ: string; titel: string; anweisung: string; hinweis?: string; loesung: unknown; monster: string; je: number; spiel: unknown }) =>
+const aufgabe = (id: string, f: { typ: string; titel: string; anweisung: string; hinweis?: string; loesung: unknown; monster: string; je: number; spiel: unknown; stufe?: number }) =>
   aus.push(
-    `insert into public.aufgaben (id, owner, typ, titel, anweisung, hinweis, stufe, loesung, monster, runden_je_durchgang, spiel) values ('${id}', ${OWNER}, ${sql(f.typ)}, ${sql(f.titel)}, ${sql(f.anweisung)}, ${f.hinweis ? sql(f.hinweis) : 'null'}, 2, ${json(f.loesung)}, ${sql(f.monster)}, ${f.je}, ${json(f.spiel)})` +
-      ` on conflict (id) do update set typ = excluded.typ, titel = excluded.titel, anweisung = excluded.anweisung, hinweis = excluded.hinweis, stufe = 2, loesung = excluded.loesung, monster = excluded.monster, runden_je_durchgang = excluded.runden_je_durchgang, spiel = excluded.spiel, archiviert = false;`,
+    `insert into public.aufgaben (id, owner, typ, titel, anweisung, hinweis, stufe, loesung, monster, runden_je_durchgang, spiel) values ('${id}', ${OWNER}, ${sql(f.typ)}, ${sql(f.titel)}, ${sql(f.anweisung)}, ${f.hinweis ? sql(f.hinweis) : 'null'}, ${f.stufe ?? 2}, ${json(f.loesung)}, ${sql(f.monster)}, ${f.je}, ${json(f.spiel)})` +
+      ` on conflict (id) do update set typ = excluded.typ, titel = excluded.titel, anweisung = excluded.anweisung, hinweis = excluded.hinweis, stufe = excluded.stufe, loesung = excluded.loesung, monster = excluded.monster, runden_je_durchgang = excluded.runden_je_durchgang, spiel = excluded.spiel, archiviert = false;`,
   )
 
 let anzahl = 0
@@ -75,8 +75,9 @@ for (const p of PAKETE) {
   })
   kompetenzen(eId, p.kompetenzen)
   ids.push(eId)
-  // Übungen ohne Monster, je Aufgabe des Arbeitsblatts eine
-  for (const [nr, u] of p.uebungen.entries()) {
+  // Übungen ohne Monster, je Aufgabe des Arbeitsblatts eine; im Paket nach Sternen (stabil), die Kennung hängt an der Stelle in der Datei
+  const nachStufe = [...p.uebungen.entries()].sort((a, b) => a[1].stufe - b[1].stufe)
+  for (const [nr, u] of nachStufe) {
     if ('vorhanden' in u) {
       ids.push(u.vorhanden)
       continue
@@ -84,7 +85,7 @@ for (const p of PAKETE) {
     const id = uuid(`${p.kurz}:uebung:${nr}`)
     if (u.runden.length < 6) throw new Error(`${p.kurz} ${u.titel}: zu wenige Runden`)
     const runden = u.runden.map((text, i) => rundeLoesung({ typ: u.typ, text, kategorien: u.kategorien }, `${p.kurz} ${u.titel} Runde ${i + 1}`))
-    aufgabe(id, { typ: u.typ, titel: u.titel, anweisung: u.anweisung ?? ANWEISUNG[u.typ], hinweis: u.hinweis, loesung: { runden }, monster: 'kein', je: 5, spiel: {} })
+    aufgabe(id, { typ: u.typ, titel: u.titel, anweisung: u.anweisung ?? ANWEISUNG[u.typ], hinweis: u.hinweis, loesung: { runden }, monster: 'kein', je: 5, spiel: {}, stufe: u.stufe })
     kompetenzen(id, u.kompetenzen ?? p.kompetenzen)
     ids.push(id)
     anzahl++
