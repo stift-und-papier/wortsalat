@@ -63,6 +63,8 @@ import monster_fledermaus from './monster_fledermaus.png'
 import huette from './huette.png'
 import blase_ausruf from './blase_ausruf.png'
 import fallen_wiese from './fallen_wiese.png'
+import huette_klein from './huette_klein.png'
+import napf from './napf.png'
 import truhe from './truhe.png'
 import feld from './feld.png'
 import figur_blau from './figur_blau.png'
@@ -92,7 +94,7 @@ export const GRAFIK = {
   gras: { url: gras, breite: 176, hoehe: 80, bildBreite: 16, bildHoehe: 16 },
   wand: { url: wand, breite: 48, hoehe: 48, bildBreite: 16, bildHoehe: 16 },
   heu: { url: heu, breite: 32, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
-  trog: { url: trog, breite: 32, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
+  trog: { url: trog, breite: 96, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
   dialog_blase: { url: dialog_blase, breite: 30, hoehe: 28, bildBreite: 30, bildHoehe: 28 },
   herz: { url: herz, breite: 16, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   menue_rahmen: { url: menue_rahmen, breite: 106, hoehe: 122, bildBreite: 106, bildHoehe: 122 },
@@ -141,6 +143,8 @@ export const GRAFIK = {
   huette: { url: huette, breite: 192, hoehe: 192, bildBreite: 64, bildHoehe: 64 },
   blase_ausruf: { url: blase_ausruf, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   fallen_wiese: { url: fallen_wiese, breite: 576, hoehe: 324, bildBreite: 576, bildHoehe: 324 },
+  huette_klein: { url: huette_klein, breite: 96, hoehe: 96, bildBreite: 32, bildHoehe: 48 },
+  napf: { url: napf, breite: 28, hoehe: 8, bildBreite: 14, bildHoehe: 8 },
   truhe: { url: truhe, breite: 16, hoehe: 14, bildBreite: 16, bildHoehe: 14 },
   feld: { url: feld, breite: 14, hoehe: 14, bildBreite: 14, bildHoehe: 14 },
   figur_blau: { url: figur_blau, breite: 128, hoehe: 96, bildBreite: 16, bildHoehe: 32 },

@@ -2,17 +2,18 @@
 import { GRAFIK } from '../grafik'
 
 // Farm (Jazz 2026-11-15): dach = Bild der Hütte (Dachfarbe passend zum Monster); farm = Verkleinerung, damit das Monster
+// Jazz 2026-11-17 (E10): kleine Monster wohnen in der kleinen Hütte; klein = Bild darin (0 rosa, 1 orange, 2 gelb, 3 grün, 4 türkis, 5 lila).
 // höchstens so groß ist wie die Spielfigur (21 Pixel hoch; Rübchen ist 25, Schleime 23 Pixel hoch). Fehlt farm, bleibt die Größe.
 export const MONSTER = {
   ruebchen: { name: 'Rübchen', grafik: GRAFIK.monster_ruebchen, mal: 2, dach: 0, farm: 0.84 },
   schleim_gruen: { name: 'Schleim grün', grafik: GRAFIK.monster_schleim_gruen, mal: 2, dach: 1, farm: 0.91 },
   schleim_blau: { name: 'Schleim blau', grafik: GRAFIK.monster_schleim_blau, mal: 2, dach: 7, farm: 0.91 },
   schleim_feuer: { name: 'Feuerschleim', grafik: GRAFIK.monster_schleim_feuer, mal: 2, dach: 5, farm: 0.91 },
-  gespenst: { name: 'Gespenst', grafik: GRAFIK.monster_gespenst, mal: 3, dach: 8 },
-  spinne_gruen: { name: 'Spinne grün', grafik: GRAFIK.monster_spinne_gruen, mal: 3, dach: 0 },
-  spinne_lila: { name: 'Spinne lila', grafik: GRAFIK.monster_spinne_lila, mal: 3, dach: 6 },
-  spinne_gold: { name: 'Spinne gold', grafik: GRAFIK.monster_spinne_gold, mal: 3, dach: 2 },
-  maus: { name: 'Maus', grafik: GRAFIK.monster_maus, mal: 3, dach: 3 },
+  gespenst: { name: 'Gespenst', grafik: GRAFIK.monster_gespenst, mal: 3, dach: 8, klein: 4 },
+  spinne_gruen: { name: 'Spinne grün', grafik: GRAFIK.monster_spinne_gruen, mal: 3, dach: 0, klein: 3 },
+  spinne_lila: { name: 'Spinne lila', grafik: GRAFIK.monster_spinne_lila, mal: 3, dach: 6, klein: 5 },
+  spinne_gold: { name: 'Spinne gold', grafik: GRAFIK.monster_spinne_gold, mal: 3, dach: 2, klein: 2 },
+  maus: { name: 'Maus', grafik: GRAFIK.monster_maus, mal: 3, dach: 3, klein: 0 },
   fledermaus: { name: 'Fledermaus', grafik: GRAFIK.monster_fledermaus, mal: 2, dach: 6 },
 } as const
 

@@ -59,7 +59,8 @@ const BILDER = [
   // Scheune von oben (offenes Dach wie im Titelbild): Wand-Rahmen (9 Teile), offene Tür, Heu, Wassertrog
   { name: 'wand', datei: SPRITES + 'Tilesets/Building parts/Wooden_House_Walls_Tilset.png', x: 0, y: 0, breite: 48, hoehe: 48, bildBreite: 16, bildHoehe: 16 },
   { name: 'heu', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Barn structures.png', x: 0, y: 32, breite: 32, hoehe: 16 },
-  { name: 'trog', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Water tray.png', x: 0, y: 0, breite: 32, hoehe: 16 },
+  // Jazz 2026-11-17 (E4): alle 3 Bilder (voll, halb, leer); leerer Trog = Kühe hungrig
+  { name: 'trog', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Water tray.png', x: 0, y: 0, breite: 96, hoehe: 16, bildBreite: 32, bildHoehe: 16 },
   // Herz-Sprechblase: eigenes Werk der Lehrkraft (bubble emotes)
   // Sprechblase der Figur auf der Farm (Dialouge UI, „dialog box“): 30 × 28, Spitze links unten
   { name: 'dialog_blase', datei: UI + 'Dialouge UI/dialog box.png', x: 7, y: 11, breite: 30, hoehe: 28 },
@@ -135,6 +136,10 @@ const BILDER = [
   { name: 'blase_ausruf', datei: 'assets/bubble emotes july update.png', x: 0, y: 128, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   // Jazz 2026-11-15: Hintergrund der Fallenden Wörter = Wiese mit Wolken (Nature Landscapes, nature_2), in den Sprout-Lands-Farben
   { name: 'fallen_wiese', datei: 'assets/entpackt/Nature Landscapes/nature_2/orig.png', palette: true },
+  // Jazz 2026-11-17 (E10): kleine Hütte für kleine Monster = kleiner Hühnerstall mit einem Fenster, 6 Dachfarben (rosa, orange, gelb, grün, türkis, lila)
+  { name: 'huette_klein', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Chikcen_Houses.png', x: 160, y: 80, breite: 96, hoehe: 96, bildBreite: 32, bildHoehe: 48 },
+  // Jazz 2026-11-17 (E4): Napf leer und voll, eigenes Bild (nach Gemini-Vorlage der Lehrkraft von Claude gezeichnet, docs/farm/handgezeichnet.cjs)
+  { name: 'napf', datei: 'assets/neu/napf.png', x: 0, y: 0, breite: 28, hoehe: 8, bildBreite: 14, bildHoehe: 8 },
   { name: 'truhe', datei: 'assets/entpackt/Sprout Lands - Sprites - Basic pack/Objects/Chest.png', x: 16, y: 18, breite: 16, hoehe: 14 },
 ]
 

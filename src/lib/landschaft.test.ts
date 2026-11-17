@@ -16,6 +16,16 @@ describe('Landschaft', () => {
     for (const k of KUH_PLAETZE.slice(0, 2)) expect(innen(k.x, k.y) && innen(k.x + 1, k.y + 1)).toBe(true)
     for (const o of [HEU, TROG]) expect(innen(o.x, o.y) && innen(o.x + 1, o.y)).toBe(true)
   })
+  it('kleine antippbare Dinge (außer Feldern) haben ringsum eine freie Kachel (Tippfläche 48 px, Jazz E3)', () => {
+    const klein = [...HUHN_PLAETZE, ...DEKO_PLAETZE]
+    for (let i = 0; i < klein.length; i++)
+      for (let j = i + 1; j < klein.length; j++)
+        expect(Math.max(Math.abs(klein[i].x - klein[j].x), Math.abs(klein[i].y - klein[j].y)), JSON.stringify([klein[i], klein[j]])).toBeGreaterThanOrEqual(2)
+  })
+  it('das Monster läuft nie ins Wasser (Jazz E6): Laufweg, links, rechts und darunter Gras oder Hütte', () => {
+    for (let x = MONSTER_PLATZ.x - 1; x <= MONSTER_PLATZ.x + 2; x++) expect(istGras(x, MONSTER_PLATZ.y), String(x)).toBe(true)
+    for (let x = MONSTER_PLATZ.x; x <= MONSTER_PLATZ.x + 1; x++) expect(istGras(x, MONSTER_PLATZ.y + 1)).toBe(true)
+  })
   it('Grasdeko liegt nur innen (alle 8 Nachbarn Gras)', () => {
     for (const d of GRAS_DEKO)
       for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) expect(istGras(d.x + dx, d.y + dy), `${d.x},${d.y}`).toBe(true)
@@ -30,7 +40,7 @@ describe('Landschaft', () => {
     expect(grundKacheln().filter((k) => k.grafik === 'wasser')).toHaveLength(SPALTEN * ZEILEN)
   })
   it('mit allem gekauft erreicht die Figur jedes Feld und jedes Tier (auch in der Scheune)', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 4 })
+    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2 })
     expect(besetzt.has(`${FIGUR_START.x},${FIGUR_START.y}`)).toBe(false)
     const ziele = [
       ...FELD_PLAETZE.map((o) => [o]),
@@ -40,7 +50,7 @@ describe('Landschaft', () => {
     for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
   })
   it('mit Monster und Hütte (Jazz 2026-11-15) bleibt alles erreichbar, auch das Monster', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 4, monster: true })
+    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2, monster: true })
     const ziele = [...FELD_PLAETZE.map((o) => [o]), ...HUHN_PLAETZE.map((o) => [o]), [MONSTER_PLATZ]]
     for (const z of ziele) expect(weg(FIGUR_START, nebenan(z), besetzt), JSON.stringify(z[0])).not.toBeNull()
   })
@@ -56,7 +66,7 @@ describe('Landschaft', () => {
 
 describe('ablagePlaetze', () => {
   it('legt Dinge auf freie, verschiedene Kacheln neben den Ursprung', () => {
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 4 })
+    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2 })
     const huhn = tierFlaeche(HUHN_PLAETZE[0], 1)
     const plaetze = ablagePlaetze([huhn, huhn, huhn], besetzt, new Set())
     expect(new Set(plaetze.map((o) => `${o.x},${o.y}`)).size).toBe(3)
@@ -73,7 +83,7 @@ describe('ablagePlaetze', () => {
   })
   it('Boot liegt ganz im Wasser, Obstbäume sind mit allem anderen zusammen erreichbar', () => {
     for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 3; dx++) expect(istGras(BOOT.x + dx, BOOT.y + dy)).toBe(false)
-    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 4, obstbaeume: Object.keys(BAUM_PLAETZE) })
+    const besetzt = hindernisse({ deko: DEKO_PLAETZE.length, brunnen: true, huehner: 4, kuehe: 2, obstbaeume: Object.keys(BAUM_PLAETZE) })
     for (const o of Object.values(BAUM_PLAETZE)) expect(weg(FIGUR_START, nebenan(tierFlaeche(o, 2)), besetzt)).not.toBeNull()
     for (const o of FELD_PLAETZE) expect(weg(FIGUR_START, nebenan([o]), besetzt)).not.toBeNull()
   })

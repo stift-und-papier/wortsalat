@@ -771,6 +771,18 @@ begin
     -- mit 1110 verdient: Tomate (ab 200) jetzt im Angebot
     if not (public.schueler_shop(t_eule) -> 'angebot') @> '[{"id":"tomate"}]' then raise exception 'Block 9.6: Freischalten wirkt nicht'; end if;
     reset role;
+    -- Jazz 2026-11-17: höchstens 2 Kühe (die Scheune hat 2 Plätze)
+    insert into public.besitz (schueler_id, artikel_id, preis) select v_eule, 'kuh', 0 from generate_series(1, 2);
+    insert into public.muenz_ereignisse (schueler_id, grund, schluessel, muenzen) values (v_eule, 'lehrkraft', 'test-kuh', 500);
+    set local role anon;
+    begin
+      perform public.kaufen(t_eule, 'kuh');
+      raise exception 'Block 9.6: dritte Kuh gekauft';
+    exception when raise_exception then
+      if sqlerrm !~ 'nur 2 Kühe' then raise; end if;
+    end;
+    n := n + 1;
+    reset role;
     n := n + 1;
     perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
     set local role authenticated;

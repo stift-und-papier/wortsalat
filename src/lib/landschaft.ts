@@ -1,73 +1,81 @@
 // Aufbau der Farm-Landschaft (Lehrkraft 2026-11-12: wie das Sprout-Lands-Titelbild, verspielte Inselform, Platz für Deko).
-// Alle Angaben in Kacheln zu 16 Pixeln. Felder links oben, Scheune rechts oben, Hühnerstall rechts unten (beide erst mit dem
-// ersten Tier), dazwischen Bäume, Brunnen und Deko-Plätze. Durch Gebäude, Bäume, Deko und Tiere läuft die Figur nicht.
+// Jazz 2026-11-17 (Farm-Layout, docs/farm/layout-leer.md): Insel-Kern 27 × 15 Kacheln mit allen Plätzen, links und rechts je
+// 4 Spalten Landstreifen nur mit Landschaft (dürfen am Fensterrand abgeschnitten werden). Alle Angaben in Kacheln zu 16 Pixeln,
+// gezählt ab dem linken Landstreifen (Kern-Spalte 0 = Spalte 4). Scheune und Hühnerstall stehen von Anfang an.
 export const KACHEL = 16
+export const RAND = 4 // Landstreifen links und rechts
 
 // # = Gras, . = Wasser. Neue Plätze für Deko einfach auf Gras legen (der Test prüft das).
-const KARTE = [
-  '.....................',
-  '...#######....####...',
-  '..########...######..',
-  '.###################.',
-  '.###################.',
-  '..##################.',
-  '..#################..',
-  '.##################..',
-  '.###################.',
-  '.###################.',
-  '..##################.',
-  '..#################..',
-  '...######..########..',
-  '....####....######...',
-  '.....................',
+const KERN = [
+  '...........................',
+  '...#########....########...',
+  '..##########....###########',
+  '############....###########',
+  '###########################',
+  '###########################',
+  '###########################',
+  '###########################',
+  '###########################',
+  '###########################',
+  '###########################',
+  '###########################',
+  '...#######...##############',
+  '....#####.....#########....',
+  '...........................',
 ]
+const LINKS = ['....', '....', '....', '..##', '.###', '.###', '.###', '.###', '.###', '..##', '..##', '...#', '....', '....', '....']
+const RECHTS = ['....', '....', '#...', '##..', '###.', '###.', '###.', '###.', '###.', '###.', '##..', '##..', '#...', '....', '....']
+const KARTE = KERN.map((z, i) => LINKS[i] + z + RECHTS[i])
 export const SPALTEN = KARTE[0].length
 export const ZEILEN = KARTE.length
 export const istGras = (x: number, y: number) => KARTE[y]?.[x] === '#'
+/** Gras des Kerns ohne Wasserrand (Kern-Spalten 1 bis 25, Zeilen 1 bis 13): muss immer ganz ins Fenster passen */
+export const GRAS_KERN = { x: RAND + 1, y: 1, breite: 25, hoehe: 13 }
 
 export type Ort = { x: number; y: number }
 type Rechteck = { x0: number; y0: number; x1: number; y1: number }
+const kern = (x: number, y: number): Ort => ({ x: x + RAND, y })
 
-export const FELD_PLAETZE: Ort[] = Array.from({ length: 12 }, (_, i) => ({ x: 3 + (i % 4), y: 3 + Math.floor(i / 4) }))
-export const STALL: Ort = { x: 14, y: 9 } // 3 × 3 Kacheln
-export const HUHN_PLAETZE: Ort[] = [{ x: 13, y: 10 }, { x: 17, y: 10 }, { x: 13, y: 12 }, { x: 16, y: 12 }]
+// Felder dicht wie heute (Jazz, E3), 4 × 3 links
+export const FELD_PLAETZE: Ort[] = Array.from({ length: 12 }, (_, i) => kern(3 + (i % 4), 4 + Math.floor(i / 4)))
+export const STALL: Ort = kern(19, 9) // 3 × 3 Kacheln
+export const HUHN_PLAETZE: Ort[] = [kern(17, 10), kern(23, 10), kern(18, 12), kern(22, 12)]
+// Napf (Jazz, E4): links vom Stall für Huhn 1 und 3, rechts für Huhn 2 und 4; leer, solange eines davon hungrig ist
+export const NAPF_PLAETZE: Ort[] = [kern(17, 9), kern(23, 9)]
 // Scheune von oben mit offenem Dach; unten in der Mitte ein Durchgang ohne Tür (2 Kacheln).
-// Heu und Trog stehen hinten an der Wand, die Kühe davor, ganz unten bleibt ein Gang frei.
-export const SCHEUNE: Rechteck = { x0: 13, y0: 2, x1: 18, y1: 7 }
-export const TUER: Ort = { x: 15, y: 7 }
-export const HEU: Ort = { x: 14, y: 3 } // 2 × 1
-export const TROG: Ort = { x: 16, y: 3 } // 2 × 1
-export const KUH_PLAETZE: Ort[] = [{ x: 14, y: 4 }, { x: 16, y: 4 }, { x: 9, y: 8 }, { x: 9, y: 10 }] // je 2 × 2; erst innen, dann davor
+// Heu und Trog stehen hinten an der Wand, die zwei Kühe davor (Jazz 2026-11-17: höchstens 2 Kühe).
+export const SCHEUNE: Rechteck = { x0: RAND + 18, y0: 1, x1: RAND + 23, y1: 6 }
+export const TUER: Ort = kern(20, 6)
+export const HEU: Ort = kern(19, 2) // 2 × 1
+export const TROG: Ort = kern(21, 2) // 2 × 1
+export const KUH_PLAETZE: Ort[] = [kern(19, 3), kern(21, 3)] // je 2 × 2
 export const BAEUME: (Ort & { grafik: 'baum' | 'baum_klein' })[] = [
-  { grafik: 'baum', x: 8, y: 1 },
-  { grafik: 'baum_klein', x: 1, y: 7 },
-  { grafik: 'baum_klein', x: 12, y: 3 }, // Jazz 2026-11-16: von (10, 2) weg, dort ist jetzt die Bucht fürs Boot
-  { grafik: 'baum_klein', x: 2, y: 3 }, // Jazz 2026-11-15: von (4, 12) weg, dort läuft jetzt das Monster
+  { grafik: 'baum', ...kern(13, 10) }, { grafik: 'baum_klein', ...kern(24, 6) }, { grafik: 'baum_klein', ...kern(2, 2) },
+  { grafik: 'baum_klein', ...kern(12, 4) }, { grafik: 'baum_klein', ...kern(2, 9) },
+  // auf den Landstreifen (nur Landschaft)
+  { grafik: 'baum', ...kern(-3, 6) }, { grafik: 'baum_klein', ...kern(-2, 9) }, { grafik: 'baum', ...kern(28, 5) }, { grafik: 'baum_klein', ...kern(27, 9) },
 ]
-export const BRUNNEN: Ort = { x: 8, y: 6 } // 2 × 2
-// Obstbäume (je einer, 2 × 2 Kacheln Stamm und Krone; das Bild ist 48 × 48 und ragt darüber hinaus): zwei über dem Acker, einer vor dem Stall
-export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: { x: 3, y: 1 }, pfirsichbaum: { x: 5, y: 1 }, birnenbaum: { x: 11, y: 9 } }
-// Boot (3 × 2 Kacheln) liegt im Wasser; kein Hindernis (Wasser ist es schon)
-// Jazz 2026-11-16: in der Bucht oben (unten verdeckt es die Meldung, am Rand der Holzrahmen)
-export const BOOT: Ort = { x: 10, y: 1 }
+export const BRUNNEN: Ort = kern(13, 7) // 2 × 2
+// Obstbäume nebeneinander im Obstgarten über dem Acker (je 2 × 2 Kacheln Stamm und Krone; das Bild 48 × 48 ragt darüber hinaus)
+export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: kern(3, 2), pfirsichbaum: kern(6, 2), birnenbaum: kern(9, 2) }
+// Boot (3 × 2 Kacheln) in der Bucht oben; kein Hindernis (Wasser ist es schon)
+export const BOOT: Ort = kern(12, 1)
+// 20 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel
 export const DEKO_PLAETZE: Ort[] = [
-  // Jazz 2026-11-15: drei Plätze links unten für die Monster-Hütte verschoben ((2, 8) → (1, 9), (3, 10) → (15, 1), (5, 9) → (7, 2))
-  { x: 8, y: 4 }, { x: 10, y: 5 }, { x: 11, y: 3 }, { x: 1, y: 9 }, { x: 15, y: 1 }, { x: 7, y: 2 },
-  { x: 7, y: 9 }, { x: 6, y: 11 }, { x: 8, y: 12 }, { x: 19, y: 8 }, { x: 18, y: 10 }, { x: 11, y: 11 },
-  { x: 6, y: 7 }, { x: 4, y: 7 }, { x: 12, y: 6 }, { x: 17, y: 9 }, { x: 19, y: 9 }, { x: 2, y: 5 },
-]
-// Lehrkraft 2026-11-12: Start so weit rechts, dass die Sprechblase links von der Figur Platz hat (mit 2-facher Größe gut 140 Grafik-Pixel)
-// Monster, das auf der Farm wohnt (Jazz 2026-11-15): links unten vor seiner Hütte, läuft dort hin und her (FarmTier).
-// Die Hütte (Bild 4 × 4 Kacheln) steht nur, solange ein Monster da ist; Hindernis sind die unteren 2 Reihen, durchs Dach läuft man dahinter.
-export const HUETTE: Ort = { x: 2, y: 8 }
+  [1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
+  [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
+].map(([x, y]) => kern(x, y))
+// Monster, das auf der Farm wohnt (Jazz 2026-11-15/17): Hütte links unter dem Acker, Eingang nicht am Wasser; Laufweg vor der Tür.
+// Große Hütte 4 × 4 (Hindernis die unteren 2 Reihen), kleine Hütte 2 × 3 unten mittig für kleine Monster (Jazz, E10).
+export const HUETTE: Ort = kern(4, 8)
+export const HUETTE_KLEIN: Ort = kern(5, 9)
 export const huettenKacheln = (): Ort[] => flaeche({ x: HUETTE.x, y: HUETTE.y + 2 }, 4, 2)
-export const MONSTER_PLATZ: Ort = { x: 4, y: 12 }
-export const FIGUR_START: Ort = { x: 10, y: 7 } // Mitte der Karte (21 × 15 Kacheln), Jazz 2026-11-14
+export const MONSTER_PLATZ: Ort = kern(5, 12) // läuft 2 Kacheln nach rechts, ringsum Gras (Jazz, E6)
+export const FIGUR_START: Ort = kern(16, 8) // im Hof
 // Kleine Halme und Blümchen auf dem Gras (nur innen, nie am Rand)
 export const GRAS_DEKO: (Ort & { nummer: number })[] = [
-  { x: 7, y: 3 }, { x: 10, y: 4 }, { x: 4, y: 9 }, { x: 7, y: 8 }, { x: 11, y: 6 }, { x: 3, y: 7 },
-  { x: 8, y: 10 }, { x: 12, y: 8 }, { x: 11, y: 8 }, { x: 6, y: 10 },
-].map((o, i) => ({ ...o, nummer: [0, 3, 5, 1, 9, 7, 4, 11, 2, 10][i] }))
+  [10, 6], [8, 7], [16, 11], [10, 4], [12, 9], [15, 6], [17, 12], [21, 8], [17, 5], [2, 8], [10, 10], [9, 9], [20, 8], [16, 6], [-1, 4], [28, 7],
+].map(([x, y], i) => ({ ...kern(x, y), nummer: [0, 3, 5, 1, 9, 7, 4, 11, 2, 10, 6, 8][i % 12] }))
 
 /** Teil eines 3 × 3-Rahmens (0 links oben … 4 Mitte … 8 rechts unten) für die Kachel (x, y) im Rechteck r */
 export function neunerTeil(x: number, y: number, r: Rechteck): number {
@@ -137,7 +145,7 @@ export function belegung(): Map<string, string> {
   setze('Stall', STALL, 3, 3)
   HUHN_PLAETZE.forEach((o, i) => setze(`Huhn ${i}`, o))
   setze('Scheune', { x: SCHEUNE.x0, y: SCHEUNE.y0 }, SCHEUNE.x1 - SCHEUNE.x0 + 1, SCHEUNE.y1 - SCHEUNE.y0 + 1)
-  KUH_PLAETZE.slice(2).forEach((o, i) => setze(`Kuh draußen ${i}`, o, 2, 2))
+  NAPF_PLAETZE.forEach((o, i) => setze(`Napf ${i}`, o))
   BAEUME.forEach((b) => setze(b.grafik, b, b.grafik === 'baum' ? 2 : 1, 2))
   setze('Brunnen', BRUNNEN, 2, 2)
   Object.entries(BAUM_PLAETZE).forEach(([name, o]) => setze(name, o, 2, 2))
@@ -163,9 +171,10 @@ export function hindernisse(s: Stand): Set<string> {
   if (s.brunnen) liste.push(...flaeche(BRUNNEN, 2, 2))
   if (s.monster) liste.push(MONSTER_PLATZ, ...huettenKacheln())
   for (const b of s.obstbaeume ?? []) if (BAUM_PLAETZE[b]) liste.push(...flaeche(BAUM_PLAETZE[b], 2, 2))
-  if (s.huehner) liste.push(...flaeche(STALL, 3, 3), ...HUHN_PLAETZE.slice(0, s.huehner))
+  // Stall und Scheune stehen von Anfang an (Jazz, E2)
+  liste.push(...flaeche(STALL, 3, 3), ...NAPF_PLAETZE, ...scheunenKacheln().filter((k) => k.nummer !== 4), ...flaeche(HEU, 2, 1), ...flaeche(TROG, 2, 1))
+  if (s.huehner) liste.push(...HUHN_PLAETZE.slice(0, s.huehner))
   if (s.kuehe) {
-    liste.push(...scheunenKacheln().filter((k) => k.nummer !== 4), ...flaeche(HEU, 2, 1), ...flaeche(TROG, 2, 1))
     // eine Kuh allein läuft in der ganzen Scheune hin und her (FarmTier): dann auch den zweiten Platz drinnen sperren
     for (const k of KUH_PLAETZE.slice(0, s.kuehe === 1 ? 2 : s.kuehe)) liste.push(...tierFlaeche(k, 2))
   }

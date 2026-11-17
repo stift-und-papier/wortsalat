@@ -80,6 +80,12 @@ UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-La
 
 Das frühere `album_seite.png` (Humble Gift – Paper UI System) wird seit dem 2026-11-14 nicht mehr benutzt.
 
+## Farm-Umbau (Jazz 2026-11-17)
+
+- `trog.png`: jetzt alle 3 Bilder aus Sprout Lands Premium, Animal Structures/Water tray.png (voll, halb, leer).
+- `huette_klein.png`: Sprout Lands Premium, Animal Structures/Chikcen_Houses.png, kleiner Hühnerstall mit einem Fenster in 6 Dachfarben (Hütte für kleine Monster).
+- `napf.png`: eigenes Bild der Lehrkraft, mit KI-Hilfe (Gemini) als Vorlage erstellt und von Claude im Stil von Sprout Lands nachgezeichnet (`docs/farm/handgezeichnet.cjs`). Keine Namensnennung nötig.
+
 ## TastenHeld
 
 Grafiken aus TastenHeld (https://github.com/ChalkJunkie/TastenHeld) werden hier aufgeführt, sobald welche benutzt

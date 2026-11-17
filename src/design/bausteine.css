@@ -641,7 +641,6 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 /* Jazz 2026-11-14: Spiel-Oberfläche ohne Karte. Die Farm darf breiter sein als die Textspalte und füllt das iPad in der Breite
    (1008 px = 3-fach); gleich große, auch negative Ränder halten sie in der Mitte. Leiste, Meldung und Vorrat so breit wie das Spielfenster. */
 .farm { width: min(100vw - 16px, 1344px); margin: var(--space-md) calc((100% - min(100vw - 16px, 1344px)) / 2); }
-.farm > :not(.farm-rahmen) { max-width: var(--farm-breite); margin-inline: auto; }
 .farm-deko-wahl { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 .farm-menue h4 { margin: var(--space-sm) 0 var(--space-2xs); font-size: 1em; }
 .farm-menue a { color: inherit; } /* Papier ist immer hell: Link in der dunklen Schrift, unterstrichen */
@@ -864,9 +863,6 @@ a.knopf { text-decoration: none; }
 .lernweg-legende li { display: inline-flex; align-items: center; gap: var(--space-xs); font-weight: 700; }
 .lernweg-kasten summary::before { order: 2; } /* Pfeil rechts, links das Symbol der Kernkompetenz */
 /* Farm: Leiste über dem Spielfenster (Sammelalbum, Schild, Zahnrad), darunter der Hinweis in einer eigenen Box */
-.farm-leiste { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-sm); }
-.farm-leiste > :first-child { justify-self: start; }
-.farm-leiste > :last-child { justify-self: end; }
 .farm-album { flex-direction: column; gap: 0; padding: 2px var(--space-sm); font-size: var(--text-klein); line-height: 1.1; }
 /* Schiebeschalter aus dem UI Pack (dunkler Modus, Deko): Bahn 28 × 14, Knopf 18 × 19 Bildpunkte, 3-fach. Der Knopf gleitet nach rechts. */
 .garten-seite .schalter { padding: 0; border: 0; border-radius: 0; background: none; color: inherit; gap: var(--space-xs); }
@@ -918,7 +914,6 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-monster-neu { text-align: center; line-height: 0; margin: 0; }
 /* Jazz 2026-11-15: Sammelalbum und Vorrat nebeneinander in der Leiste; Ausrufezeichen-Blase über hungrigen Tieren und dem Monster
    (3 Bilder, wackelt), wandert mit dem Tier mit (liegt in .farm-tier__weg, nicht im gespiegelten Bild) */
-.farm-leiste__knoepfe { display: flex; gap: var(--space-xs); }
 /* Farm ohne Scrollen: weniger Abstand oben, Schild mit einfachem statt doppeltem Rahmen */
 .farm { margin-top: 0; }
 /* Jazz 2026-11-15: kleine Bildknöpfe auf hellem Papier (Tafel aus dem UI Pack, bleibt auch im dunklen Modus hell), darauf sieht man das braune Buch */
@@ -930,7 +925,6 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-bildknopf:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
 /* beim Hineinscrollen das Spielfeld über dem Menü unten halten (Menü etwa 83 px) */
 .fallen { scroll-margin-bottom: 100px; }
-.farm-leiste { margin-bottom: var(--space-xs); display: flex; justify-content: space-between; }
 .muenzen-stand .pixel-schild { border-width: 16px 17px 17px; border-image-width: 16px 17px 17px; padding-block: 0; margin: 0; }
 .muenzen-stand .pixel-schild h1 { font-size: 1.35rem; }
 /* Jazz 2026-11-15: Titel in der Mitte (drei Spalten), Dunkel-Schalter 2-fach statt 3-fach (Tippfläche bleibt 48 px hoch) */
@@ -943,7 +937,7 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .garten-seite .muenzen-stand .schalter[aria-checked='true'] .schalter__knopf { left: 20px; }
 /* Meldung als Papier-Banner unten im Spielfenster wie ein Dialogfeld (liegt über Rahmen und Wasser); Papier bleibt hell, Schrift dunkel */
 .farm-rahmen .farm-meldung {
-  position: absolute; z-index: 10001; bottom: 6px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 48px);
+  position: absolute; z-index: 10001; bottom: 44px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 48px);
   padding: 4px var(--space-sm); border: solid transparent; border-width: 10px;
   border-image: url('../grafik/tafel.png') 5 fill / 10px; image-rendering: pixelated;
   color: var(--color-album-tinte); text-align: center; font-size: var(--text-klein); line-height: 1.3; pointer-events: none;
@@ -951,6 +945,30 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-rahmen .farm-meldung p { margin: 0; }
 .farm-rahmen .farm-meldung .leise { color: var(--color-album-tinte); }
 .farm-tier__weg { position: relative; }
-.farm-ausruf { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); line-height: 0; }
-.farm-ausruf > .sprite { animation: farm-laufen 0.75s steps(3) infinite; }
-@media (prefers-reduced-motion: reduce) { .farm-ausruf > .sprite { animation: none; } }
+
+/* ---------- Farm-Layout (Jazz 2026-11-17, docs/farm/layout-leer.md) ----------
+   Spielfenster über die ganze Breite, innen Meer (Hintergrund in Kachelgröße, Farm.tsx), die Insel liegt absolut darin.
+   Farm-Knöpfe in der Kopfzeile: links Sammelalbum und Vorrat, rechts Laden und Zahnrad, dann die Münzen. */
+/* Die Farm endet schon über dem Menü unten (Farm.tsx rechnet die Höhe aus): kein Abstand darunter, sonst scrollt die Seite */
+.garten-seite--farm { padding-bottom: 0; }
+.kopf-knoepfe { display: flex; align-items: center; gap: var(--space-xs); }
+.kopf-knoepfe--rechts { margin-left: auto; }
+.farm-bildknopf--laden {
+  width: auto; display: inline-flex; gap: var(--space-xs); padding: 0 var(--space-xs); align-items: center;
+  color: var(--color-album-tinte); font-weight: 800; font-size: 17px; line-height: 1; text-decoration: none;
+}
+/* Papier bleibt im dunklen Modus hell: Symbol in der dunklen Papier-Tinte (Holzfarbe wäre dort hell) */
+.farm-bildknopf--laden .symbol { width: 28px; height: 28px; color: var(--color-album-tinte); }
+/* Kopfzeile der Farm über die ganze Breite wie das Spielfenster: auf der Farm-Seite keine schmale Textspalte */
+.garten-seite--farm .garten-seite__inhalt { max-width: none; }
+.farm-rahmen { overflow: hidden; }
+.farm-rahmen > .spiel-fenster { width: 100%; box-sizing: border-box; overflow: hidden; background-repeat: repeat; image-rendering: pixelated; }
+.farm-rahmen .farm-landschaft { position: absolute; margin: 0; }
+.farm-rahmen .farm-landschaft canvas { clip-path: none; }
+.farm-rahmen .farm-meldung { max-width: calc(100% - 100px); }
+/* Im Hochformat (iPad) nur ein Hinweis statt der Farm */
+.farm-drehen { display: none; }
+@media (orientation: portrait) and (pointer: coarse) {
+  .farm-drehen { display: block; margin: var(--space-2xl) auto; text-align: center; font-size: 1.4rem; font-weight: 800; }
+  .farm-rahmen { display: none; }
+}

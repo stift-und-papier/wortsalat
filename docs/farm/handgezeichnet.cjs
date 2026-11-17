@@ -47,3 +47,5 @@ function male(zeilen, datei) {
 vogelhaus.forEach((z, i) => male(z, `assets/neu/vogelhaus_${i + 1}.png`))
 lavendel.forEach((z, i) => male(z, `assets/neu/lavendel_${i + 1}.png`))
 napf.forEach((z, i) => male(z, `assets/neu/napf_${i + 1}.png`))
+// Napf leer und voll nebeneinander für das Spiel (scripts/grafik-holen.mjs → src/grafik/napf.png)
+male(napf[0].map((z, y) => z + napf[1][y]), 'assets/neu/napf.png')

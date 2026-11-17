@@ -259,7 +259,8 @@ export function SchuelerBereich({ token, pfad }: Props) {
   // Jazz 2026-11-14: Die Farm ist ein eigener Menüpunkt; Startseite ist der Lernweg (unten)
   if (bereich === 'farm') {
     return (
-      <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster} titel="Meine Farm">
+      // Jazz 2026-11-17 (E7): auf der Farm keine Überschrift; dort stehen die Farm-Knöpfe in der Kopfzeile
+      <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster} farmKopf>
         {wartendHinweis}
         <Farm key={farmStand} token={token} figur={daten.figur ?? 'gruen'} nachFigur={() => void laden()} shop={`#${basis}/shop`} album={`#${basis}/album`} />
       </Rahmen>
@@ -268,7 +269,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
 
   if (bereich === 'shop') {
     return (
-      <Rahmen basis={basis} aktiv="shop" muenzen={muenzen} fenster={fenster}>
+      <Rahmen basis={basis} aktiv="farm" muenzen={muenzen} fenster={fenster}>
         <Shop token={token} nachKauf={() => void laden()} />
       </Rahmen>
     )
@@ -477,12 +478,12 @@ function AufgabeSeite({ token, paketId, aufgabe, neuesFormat, nachAbgabe, onWart
 }
 
 // Jazz 2026-11-14: erst Lernen (Lernweg ist die Startseite), dann Spielen. Einstellungen entfallen (Dunkel-Schalter oben, Figur auf der Farm).
-const MENUE: { id: 'start' | 'uebungen' | 'erklaerungen' | 'farm' | 'shop' | 'hilfe'; symbol: SymbolName; text: string; ziel: string }[] = [
+// Jazz 2026-11-17 (E5): kein Menüpunkt „Shop“ mehr, der Laden-Knopf steht auf der Farm
+const MENUE: { id: 'start' | 'uebungen' | 'erklaerungen' | 'farm' | 'hilfe'; symbol: SymbolName; text: string; ziel: string }[] = [
   { id: 'start', symbol: 'lernweg', text: 'Lernweg', ziel: '' },
   { id: 'uebungen', symbol: 'uebungen', text: 'Übungen', ziel: '/uebungen' },
   { id: 'erklaerungen', symbol: 'erklaerung', text: 'Erklärungen', ziel: '/erklaerungen' },
   { id: 'farm', symbol: 'garten', text: 'Farm', ziel: '/farm' },
-  { id: 'shop', symbol: 'shop', text: 'Shop', ziel: '/shop' },
   { id: 'hilfe', symbol: 'hilfe', text: 'Hilfe', ziel: '/hilfe' },
 ]
 
@@ -552,10 +553,10 @@ function BelohnungFenster({ belohnungen, schliessen }: { belohnungen: Belohnung[
   )
 }
 
-function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, children }: { basis: string; aktiv: string; menue?: boolean; muenzen?: number | null; fenster?: ReactNode; titel?: string; children: ReactNode }) {
+function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, farmKopf, children }: { basis: string; aktiv: string; menue?: boolean; muenzen?: number | null; fenster?: ReactNode; titel?: string; farmKopf?: boolean; children: ReactNode }) {
   const [dunkel, setDunkel] = useDunkel()
   return (
-    <div className="garten-seite">
+    <div className={`garten-seite${farmKopf ? ' garten-seite--farm' : ''}`}>
       <main className="garten-seite__inhalt">
         {/* Jazz 2026-11-14: auf jeder Seite oben links der Schalter für den dunklen Modus, ganz rechts die Münzen */}
         <div className={`muenzen-stand${titel ? ' muenzen-stand--titel' : ''}`}>
@@ -566,6 +567,8 @@ function Rahmen({ basis, aktiv, menue = true, muenzen = null, fenster, titel, ch
             Dunkel
           </button>
           {/* Jazz 2026-11-15: Überschrift jeder Seite als Holzschild in der Mitte zwischen Dunkel-Schalter und Münzen (immer an derselben Stelle) */}
+          {farmKopf && <div id="kopf-links" className="kopf-knoepfe" />}
+          {farmKopf && <div id="kopf-rechts" className="kopf-knoepfe kopf-knoepfe--rechts" />}
           {titel && (
             <header className="pixel-schild">
               <h1>{titel}</h1>

@@ -573,4 +573,9 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Belohnungen bleiben; Meldungstexte; im 2. Schuljahr vorerst nichts Neues; wachsende Motive nicht im Shop; Kategorien, Platzarten, Preisstufen A–D;
   „Möchtest du es gleich aufstellen?“; Vogelhaus und Windrad ohne Dauerbewegung).
 - **Nachtrag Jazz zu Teilaufgabe 4 (2026-11-17):** Farben angepasst (Kirschbaum Stufe 2 rosa, Eiche gelbgrün, Beerenbusch dunkelgrün; Wildblumen enden im Lavendel aus `assets/objects.png`, eigenes Bild von Jazz, verkleinert auf Blumengröße, 1 × 1). Mehrfach gekaufte Deko bekommt je Stück eine andere Farbe (Busch und Stein einfarbig; schon Gekauftes darf sich ändern, nur Testkonten), Gelb nur bei der Sonnenblume, Pilzhaus ohne Totenkopf (`dekorationen.md` 5.2a, Mockup-Färbung `docs/farm/farben.js`). Prompts für die neuen Bilder: `docs/farm/gemini-prompts.md`; Vogelhaus, Windrad, Glitzern, Napf und kleiner Lavendel von Jazz mit Gemini erzeugt, aufbereitet mit `docs/farm/pixeln.cjs` nach `assets/neu/` (nicht im Repo), in den Mockups eingebaut. Windrad gestrichen, W8 ist eine zweite Sonnenblume (Jazz). Offen: kleines Buch.
-- **Nächster Schritt:** Teilaufgabe 5 (Münzsystem).
+- **Farm-Umsetzung Schritt 1** (2026-11-17, Branch `farm-umsetzung`, Jazz: Schritt für Schritt, Münzsystem später, Gemini-Bilder als eigene Bilder):
+  neue Karte (Kern 27 × 15 + Landstreifen, alle Plätze aus dem Mockup, `landschaft.ts` mit Tests), Spielfenster über die ganze Breite mit Meer,
+  Faktor 2 oder 3, Scheune und Stall von Anfang an, Napf und Trog statt Ausrufezeichen, Meldung „Deine … sind hungrig.“, kleine Hütte für kleine Monster,
+  Kopfzeile mit Sammelalbum, Vorrat, Laden und Zahnrad, Menü ohne Shop, Hinweis im Hochformat. Migration `hoechstens_zwei_kuehe` (eingespielt,
+  DB-Test 162 bestanden). Geprüft im Browser bei 1024 × 768, 1180 × 820, 1366 × 1024 (kein Scrollen), Feld-Menü und Laden-Knopf. Nicht geprüft: echtes iPad, Hochformat am iPad.
+- **Nächster Schritt:** Jazz testet Schritt 1 am iPad; danach Schritt 2 (wachsende Deko) und Schritt 3 (kaufbare Deko mit Plätzen und Farben), Teilaufgabe 5 (Münzsystem) später.
