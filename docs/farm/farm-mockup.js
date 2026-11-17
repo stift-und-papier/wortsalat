@@ -244,7 +244,7 @@ function volleFarm(p, setze, platzhalter) {
   KUEHE.forEach((o, i) => ding(sprite('kuh', 32, 32, 256, 64, i * 8, m, 'laufen'), o.x, o.y, 2, 2, true))
   HUEHNER.forEach((o, i) => ding(sprite('huhn', 16, 16, 128, 48, i % 2 ? 8 : 0, m, 'laufen'), o.x, o.y, 1, 1, true))
   // Hungrig (Jazz, E4): leerer Napf neben zwei Hühnern, leerer Trog in der Scheune (Napf: neues Bild in assets/neu/, nicht im Repo)
-  const napf = `<div class="sprite" style="width:${16 * m}px;height:${13 * m}px;margin-top:${3 * m}px;background:url('../../assets/neu/napf_1.png') 0 0/${16 * m}px ${13 * m}px"></div>`
+  const napf = `<div class="sprite" style="width:${14 * m}px;height:${8 * m}px;margin:${8 * m}px 0 0 ${m}px;background:url('../../assets/neu/napf_1.png') 0 0/${14 * m}px ${8 * m}px"></div>`
   ding(napf, 17, 9, 1, 1) // Napf steht über dem Huhn, so bleibt rechts vom Stall Luft
   ding(napf, 23, 9, 1, 1)
   platzhalter('Trog leer', 21, 2, 2, 1)

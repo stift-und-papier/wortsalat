@@ -226,12 +226,12 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | Deko | Stufen × Größe | Status | Quelle |
 |---|---|---|---|
 | W1 Kirschbaum | 5 Stufen: 10 × 10, 16 × 13, 16 × 16, 14 × 29, 24 × 31 | vorhanden, Stufe 2 rosa umgefärbt | Sorry Pack `Plant update 2/Cherry Blossom Biom.png` |
-| W2 Wildblumen | 4 Stufen: 14 × 10, 16 × 13, Knospe 9 × 10, Lavendel 9 × 15 | Gras vorhanden und umgefärbt, Knospe und Lavendel **neu von Jazz** | Gras: Premium `Objects/Mushrooms, Flowers, Stones.png`; Knospe und Lavendel: von Jazz mit Gemini nach dem eigenen Bild `assets/lavendel.jpg` gezeichnet, aufbereitet in `assets/neu/lavendel_1.png` und `_2.png` |
+| W2 Wildblumen | 4 Stufen: 14 × 10, 16 × 13, Knospe und Lavendel je 16 × 16 | Gras vorhanden und umgefärbt, Knospe und Lavendel **neu** | Gras: Premium `Objects/Mushrooms, Flowers, Stones.png`; Knospe und Lavendel: nach Jazz’ Bild und Gemini-Vorlage von Claude Pixel für Pixel gezeichnet (`docs/farm/handgezeichnet.cjs`, Blätter wie die Traubenblume) |
 | W3 Sonnenblume | 4 Stufen: 14 × 10, 11 × 9, 11 × 12, 14 × 29 | vorhanden | Premium `Objects/Mushrooms, Flowers, Stones.png` |
 | W4 Seerosen | 4 Stufen: 13 × 9, 14 × 11, 13 × 9, 14 × 12 | vorhanden | Sorry Pack `Plant update 2/Cherry Blossom Biom water plants.png` |
 | W5 Beerenbusch | 3 Stufen: je bis 16 × 16 | vorhanden, dunkelgrün umgefärbt | Sorry Pack `Plant update 2/Trees, stumps and bushes v2.png` |
 | W7 Eiche | 5 Stufen: 9 × 9, 10 × 11, 10 × 10, 12 × 15, 14 × 29 | vorhanden, gelbgrün umgefärbt | Sorry Pack `Plant update 2/Trees, stumps and bushes v2.png` |
-| **W6 Vogelhaus** | 5 Stufen: 6 × 18, 13 × 22, 13 × 29, 13 × 29, 13 × 32 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/vogelhaus_1.png` bis `_5.png` |
+| **W6 Vogelhaus** | 5 Stufen je 14 × 32 | **neu**: nach der Gemini-Vorlage von Jazz von Claude Pixel für Pixel gezeichnet | `docs/farm/handgezeichnet.cjs` → `assets/neu/vogelhaus_1.png` bis `_5.png` |
 | W8 Sonnenblume | wie W3 | vorhanden | wie W3 (Jazz: Windrad gestrichen) |
 | **Glitzern beim Wachsen** | 3 Bilder je 16 × 10 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/glitzern_1.png` bis `_3.png` |
 
@@ -240,7 +240,7 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | Grafik | Größe | Status | Quelle |
 |---|---|---|---|
 | Kleine Monster-Hütte | 32 × 48, 6 Dachfarben | vorhanden | Premium `Animal Structures/Chikcen_Houses.png` (kleiner Stall mit einem Fenster, Jazz) |
-| **Napf** leer und voll | 2 × 16 × 13 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/napf_1.png`, `_2.png` |
+| **Napf** leer und voll | 2 × 14 × 8 | **neu**: nach der Gemini-Vorlage von Hand gezeichnet (`handgezeichnet.cjs`) | `assets/neu/napf_1.png`, `_2.png` |
 | Trog leer und voll | 2 × 32 × 16 | `trog.png` vorhanden; ob es ein leeres Bild gibt, ist nicht geprüft | Spiel `src/grafik/trog.png` |
 | **Buch klein** für den Sammelalbum-Knopf | 16 × 16 | **neu** (wie das heutige eigene Buch-Bild, nur kleiner) | |
 | Kaufbare Deko (etwa 40 Gegenstände) | meist 16 × 16, groß bis 32 × 32 | vorhanden | `layout-leer.md` Abschnitt 8 |
@@ -286,5 +286,5 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini**
 - dunkler Modus der neuen Bilder;
 - ob die Sterne aus dem UI Pack als Glitzern passen;
 - ob es den Trog schon leer gibt;
-- wie die aufbereiteten Gemini-Bilder am iPad wirken (Umrisse werden beim Verkleinern teils dünn, das Vogelhaus ist schmal);
+- wie die neuen Bilder am iPad wirken;
 - wie KI-Bilder in `LIZENZ.md` und in der Namensnennung stehen sollen.
