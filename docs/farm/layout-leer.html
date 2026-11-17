@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="../../src/design/tokens.css">
 <link rel="stylesheet" href="../../src/design/bausteine.css">
 <style>
-  :root { --kopf: 72px; --menue: 83px; --rand: 8px; }
+  :root { --kopf: 64px; --menue: 83px; --rand: 8px; }
   html, body { margin: 0; height: 100%; overflow: hidden; }
   body { position: relative; }
   body { background: var(--color-papier, #f6ecd2); }
@@ -64,7 +64,7 @@
   <span class="schalter"><i></i> Dunkel</span>
   <button class="knopf rundknopf" aria-label="Sammelalbum"><img src="../../src/grafik/buch_symbol.png" width="27" height="32" alt=""></button>
   <button class="knopf rundknopf" aria-label="Vorrat"><img src="../../src/grafik/truhe.png" width="32" height="28" alt=""></button>
-  <div class="mitte"><div class="pixel-schild"><h1>Meine Farm</h1></div></div>
+  <div class="mitte"></div><!-- Jazz 2026-11-17: Überschrift „Meine Farm“ entfällt auf der Farm -->
   <button class="knopf rundknopf" aria-label="Shop"><img src="../../src/grafik/muenze.png" width="24" height="24" alt="">Shop</button>
   <button class="knopf rundknopf" aria-label="Farm einrichten" style="font-size:26px">⚙</button>
   <span class="muenzen"><img src="../../src/grafik/muenze.png" width="24" height="24" alt="">0</span>
@@ -126,7 +126,8 @@ const KUEHE = [{ x: 19, y: 3 }, { x: 21, y: 3 }] // je 2 × 2, höchstens 2 (Jaz
 const STALL = { x: 19, y: 9 } // 3 × 3
 const HUEHNER = [{ x: 17, y: 10 }, { x: 23, y: 10 }, { x: 18, y: 12 }, { x: 22, y: 12 }]
 const HUETTE = { x: 4, y: 10 } // Bild 4 × 4
-const MONSTER = { x: 8, y: 12 }
+// Jazz 2026-11-17: Monster läuft nie ins Wasser. Laufweg 2 Kacheln vor der Hütte; links, rechts und darunter ist Gras (Prüfung unten)
+const MONSTER = { x: 8, y: 11 }
 const BRUNNEN = { x: 13, y: 7 } // 2 × 2
 const BOOT = { x: 12, y: 1 } // 3 × 2 im Wasser
 const FIGUR = { x: 16, y: 8 } // Füße auf Zeile 9
@@ -136,10 +137,11 @@ const WACHSEND = [ // Teilaufgabe 4 legt fest, was hier wächst; hier nur Platz 
   { x: 16, y: 1, b: 1, h: 1, n: 'W7' }, { x: 24, y: 11, b: 1, h: 1, n: 'W8' },
 ]
 // Deko-Plätze in drei Größen: klein 1 × 1 (D), groß 2 × 2 (G), im Wasser 1 × 1 (S)
-const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 10], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
+const DEKO = [[1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
   [15, 10], [13, 12], [15, 12], [20, 13], [25, 8], [25, 10], [3, 8], [5, 8], [7, 8], [9, 8]].map(([x, y]) => ({ x, y }))
 const DEKO_GROSS = [{ x: 8, y: 4 }, { x: 16, y: 4 }]
-const DEKO_WASSER = [[14, 3], [11, 13], [2, 13], [24, 13], [25, 1]].map(([x, y]) => ({ x, y }))
+// Wasser-Plätze nur oben (Jazz: unten lag S2 im Meldungsfeld)
+const DEKO_WASSER = [[14, 3], [1, 2], [15, 1], [24, 1]].map(([x, y]) => ({ x, y }))
 const BAEUME_FEST = [{ g: 'baum', x: 13, y: 10, b: 2, h: 2 }, { g: 'baum_klein', x: 24, y: 6, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 2, b: 1, h: 2 },
   { g: 'baum_klein', x: 12, y: 4, b: 1, h: 2 }, { g: 'baum_klein', x: 2, y: 9, b: 1, h: 2 },
   // auf den Landstreifen (nur Landschaft)
@@ -171,6 +173,14 @@ DEKO.forEach((d, i) => lege('Deko ' + (i + 1), d.x, d.y))
 DEKO_GROSS.forEach((d, i) => lege('Deko groß ' + (i + 1), d.x, d.y, 2, 2))
 DEKO_WASSER.forEach((d, i) => { lege('Deko Wasser ' + (i + 1), d.x, d.y, 1, 1, true); if (gras(d.x, d.y)) fehler.push(`Wasser-Deko ${i + 1} liegt auf Gras`) })
 BAEUME_FEST.forEach((t) => lege(t.g, t.x, t.y, t.b, t.h))
+// Monster: Laufweg auf Gras, daneben (links/rechts) Gras oder Hütte, darunter Gras
+for (let i = MONSTER.x - 1; i <= MONSTER.x + 2; i++) {
+  const huette = i >= HUETTE.x && i < HUETTE.x + 4
+  if (!huette && !gras(i, MONSTER.y)) fehler.push(`Monster-Laufweg grenzt an Wasser bei (${i}, ${MONSTER.y})`)
+  if (i >= MONSTER.x && i <= MONSTER.x + 1 && !gras(i, MONSTER.y + 1)) fehler.push(`Unter dem Monster ist Wasser bei (${i}, ${MONSTER.y + 1})`)
+}
+// Nichts Antippbares im Wasser unter der Insel (dort liegt das Meldungsfeld)
+DEKO_WASSER.forEach((d, i) => { if (d.y >= 12) fehler.push(`Wasser-Deko ${i + 1} liegt zu weit unten`) })
 GRAS_DEKO.forEach(([x, y]) => { if (belegt.has(`${x},${y}`) || !gras(x, y)) fehler.push(`Grasdeko (${x}, ${y}) liegt schlecht`) })
 // Antippbare 1 × 1-Dinge brauchen ringsum eine freie Kachel (dann passt bei 2-fach eine Tippfläche von 48 × 48 px ohne Überlappung)
 // Ausnahme (Jazz, E3): Felder untereinander liegen dicht, ihre Tippfläche bleibt bei 2-fach 32 px
@@ -205,7 +215,7 @@ const bild = (n) => new Promise((ok) => { const i = new Image(); i.onload = () =
 let mal = 2
 async function zeichnen() {
   const fenster = document.getElementById('fenster'), buehne = document.getElementById('buehne')
-  const kopf = 72, menue = 83, rand = 8, rahmenB = 68, rahmenH = 66
+  const kopf = 64, menue = 83, rand = 8, rahmenB = 68, rahmenH = 66
   const W = q.has("b") ? +q.get("b") : document.documentElement.clientWidth, H = q.has("b") ? +q.get("h") : document.documentElement.clientHeight
   const breite = W - 2 * rand - rahmenB
   const hoehe = H - kopf - menue - rand - rahmenH

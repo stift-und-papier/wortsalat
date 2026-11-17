@@ -542,4 +542,6 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Monster ohne Ausrufezeichen, Geschenke hüpfen weiter. E5: Shop-Knopf über der Farm **ersetzt** den Menüpunkt Shop; Buch im Sammelalbum-Knopf kleiner.
   Umgesetzt im Mockup und in `layout-leer.md`: 27 Deko-Plätze (20 klein, 2 groß 2 × 2, 5 im Wasser), Liste von etwa 30 passenden Deko-Bildern aus den
   gekauften Paketen (Abschnitt 8). Selbstprüfung in allen drei Größen ok.
+- **Nachtrag Jazz (2026-11-17):** Monster läuft nie ins Wasser (Laufweg vor der Hütte, Prüfung im Mockup), Überschrift „Meine Farm“ entfällt
+  (Kopfzeile 64 px), Wasser-Deko nur oben (S2 lag im Meldungsfeld) → 26 Deko-Plätze (20 klein, 2 groß, 4 Wasser). Selbstprüfung in allen Größen ok.
 - **Nächster Schritt:** Teilaufgabe 3 (Layout voll).

@@ -2,7 +2,7 @@
 
 Stand: 2026-11-17, Branch `lehrkraftseite`. **Nur Vorschlag und Mockup, am Spiel ist nichts geändert.**
 Grundlage sind `analyse-farm.md` und die Antworten von Jazz vom 2026-11-17 (siehe `docs/umbau/STATUS.md`).
-Überarbeitet nach der Rückmeldung von Jazz zu E1 bis E5 (Abschnitt 9).
+Überarbeitet nach den Rückmeldungen von Jazz zu E1 bis E5 und E6 bis E8 (Abschnitt 9).
 
 **Mockup:** `docs/farm/layout-leer.html`.
 - Am besten über den Entwicklungs-Server öffnen: `http://localhost:5174/wortsalat/docs/farm/layout-leer.html`.
@@ -26,14 +26,15 @@ Grundlage sind `analyse-farm.md` und die Antworten von Jazz vom 2026-11-17 (sieh
    - Auf breiten iPads sieht man mehr davon, auf schmalen werden sie am Rahmen abgeschnitten.
 3. **Vergrößerung nur 2-fach oder 3-fach (ganzzahlig).**
    - Es gilt die größte ganze Zahl, bei der das ganze Gras des Kerns (25 × 13 Kacheln) ins Fenster passt.
-4. **Farm-Knöpfe in der Kopfzeile** (72 statt 116 px hoch).
-   - Links: Sammelalbum und Vorrat. Mitte: das Schild „Meine Farm“. Rechts: Shop, Farm einrichten und Münzen.
+4. **Farm-Knöpfe in der Kopfzeile** (64 statt 116 px hoch).
+   - Links: Sammelalbum und Vorrat. Rechts: Shop, Farm einrichten und Münzen.
+   - **Die Überschrift „Meine Farm“ entfällt auf der Farm** (Jazz). Das spart Platz.
    - **Der Shop-Knopf ersetzt den Menüpunkt „Shop“ unten.** Das Menü hat dann 5 Punkte: Lernweg, Übungen, Erklärungen, Farm, Hilfe.
    - **Das Buch im Sammelalbum-Knopf wird kleiner**, etwa so groß wie die Truhe (siehe Abschnitt 8).
 5. **Die Meldung** ist ein Papier-Banner unten im Meer. Dort stehen aktuelle Hinweise zur Farm. Einstein kommt nicht auf die Farm.
 6. **Felder liegen dicht wie heute (4 × 3).**
    - Das hat sich in Tests bewährt.
-   - Der gewonnene Platz geht an die Deko: **27 Deko-Plätze statt 18**, in drei Größen.
+   - Der gewonnene Platz geht an die Deko: **26 Deko-Plätze statt 18**, in drei Größen.
 7. **Tippflächen:**
    - Hühner und Deko bekommen mindestens 48 × 48 px.
    - Felder bleiben bei 2-fach 32 px. Das ist eine bewusste Ausnahme (Jazz, E3).
@@ -43,17 +44,17 @@ Grundlage sind `analyse-farm.md` und die Antworten von Jazz vom 2026-11-17 (sieh
 
 | Fenster (Querformat) | Faktor | 1 Kachel | Insel-Kern | Innenfläche Spielfenster | sichtbarer Landstreifen | heute (zum Vergleich) |
 |---|---|---|---|---|---|---|
-| 1024 × 768 | 2 | 32 px | 864 × 480 | 940 × 539 | je ~38 px (gut 1 Kachel) | Farm 672 px breit, Seite scrollt 16 px |
-| 1180 × 820 | 2 | 32 px | 864 × 480 | 1096 × 591 | je ~116 px (gut 3½ Kacheln) | Farm 672 px breit, 43 % leer |
-| 1366 × 1024 | 3 | 48 px | 1296 × 720 | 1282 × 795 | keiner (der Wasserrand des Kerns wird je 7 px abgeschnitten) | Farm 1008 px breit |
+| 1024 × 768 | 2 | 32 px | 864 × 480 | 940 × 547 | je ~38 px (gut 1 Kachel) | Farm 672 px breit, Seite scrollt 16 px |
+| 1180 × 820 | 2 | 32 px | 864 × 480 | 1096 × 599 | je ~116 px (gut 3½ Kacheln) | Farm 672 px breit, 43 % leer |
+| 1366 × 1024 | 3 | 48 px | 1296 × 720 | 1282 × 803 | keiner (der Wasserrand des Kerns wird je 7 px abgeschnitten) | Farm 1008 px breit |
 
 So ist gerechnet:
 - **Innenfläche:** Fensterbreite minus 2 × 8 px Rand und 68 px Holzrahmen.
-- **Höhe:** Fensterhöhe minus Kopfzeile (72), Menü (83), 8 px Rand und 66 px Holzrahmen.
+- **Höhe:** Fensterhöhe minus Kopfzeile (64), Menü (83), 8 px Rand und 66 px Holzrahmen.
 - Die Insel steht oben. Darunter bleibt Meer für die Meldung.
 
 **Safari am echten iPad** zieht oben noch Adress- und Tableiste ab, geschätzt 50 bis 70 px.
-- Bei 1024 × 768 bleiben dann etwa 470 px Höhe. Das Gras braucht 416 px, es passt also.
+- Bei 1024 × 768 bleiben dann etwa 480 px Höhe. Das Gras braucht 416 px, es passt also.
 - **Nicht getestet**, weil kein iPad zur Hand war.
 - Am sichersten ist die Farm als Web-App auf dem Home-Bildschirm. Dann gibt es keine Safari-Leisten.
 
@@ -65,12 +66,12 @@ So ist gerechnet:
 | **Obstgarten** | links oben (y 1 bis 3) | 3 Obstbäume: Orange, Pfirsich, Birne | über dem Acker bzw. vor dem Stall | jetzt alle drei nebeneinander |
 | **Scheune** | rechts oben (x 18 bis 23, y 1 bis 6) | **2 Kühe** | 4 Kühe | Jazz: höchstens 2 |
 | **Hühnerstall** | rechts unten (Stall bei x 19, y 9) | **4 Hühner** rund um den Stall | 4 | je mit freier Kachel dazwischen |
-| **Monster-Hütte** | links unten (x 4 bis 7, y 10 bis 13) | Hütte und Laufweg des Monsters (x 8 bis 9, y 12) | links unten | |
+| **Monster-Hütte** | links unten (x 4 bis 7, y 10 bis 13) | Hütte und Laufweg des Monsters (x 8 bis 9, y 11) | links unten | **Das Monster läuft nie ins Wasser** (Jazz). Links und rechts vom Laufweg liegen Gras oder die Hütte, darunter Gras. Das Mockup prüft das. |
 | **Brunnen** | Mitte (x 13 bis 14, y 7 bis 8) | 1 | Mitte | |
 | **Boot** | Bucht oben Mitte (x 12 bis 14, y 1 bis 2) | 1 (im Wasser) | Bucht oben | |
 | **Deko klein** (1 × 1) | am Rand, unter dem Acker, im Hof | **20 Plätze** D1 bis D20 | 18 | Blumen, Steine, Pilze, Schilder und Ähnliches |
 | **Deko groß** (2 × 2) | neben dem Acker, vor der Scheune | **2 Plätze** G1, G2 | – | Picknick, Bank mit Tisch, Bienenstock, Kirschblütenbusch |
-| **Deko im Wasser** (1 × 1) | Buchten und Ufer | **5 Plätze** S1 bis S5 | – | Seerosen, Schilf, Steine im Wasser, Frosch |
+| **Deko im Wasser** (1 × 1) | nur oben: Bucht und Ufer | **4 Plätze** S1 bis S4 | – | Seerosen, Schilf, Steine im Wasser, Frosch |
 | **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 | – | Was dort wächst, legt Teilaufgabe 4 fest. Sie sind nicht antippbar. |
 | **Figur** | Start im Hof (x 16, y 8) | – | Mitte | |
 | **Liegendes** (Ernte, Ei, Milch, Monster-Geschenk) | Ernte auf dem Feld selbst; Ei/Milch und Geschenk an einem festen Platz neben Tier bzw. Hütte | – | „daneben“ | Geschenke **hüpfen weiter** (Jazz, E4). |
@@ -172,6 +173,9 @@ Preise und Freischaltung folgen in Teilaufgabe 5, die genaue Auswahl in Teilaufg
 | E3 | Felder mit Grasweg dazwischen | **nein:** Felder dicht wie heute, dafür mehr Deko-Plätze und mehr Deko im Shop (Abschnitt 8) |
 | E4 | Hungrige Tiere | Napf/Trog, Meldung „Deine Hühner/Kühe/Tiere sind hungrig.“, Monster ohne Ausrufezeichen, **Geschenke hüpfen weiter** |
 | E5 | Shop-Knopf auf der Farm | Der Knopf **ersetzt** den Menüpunkt Shop unten. Das Buch im Sammelalbum-Knopf wird kleiner. |
+| E6 | Monster | läuft nie ins Wasser (Laufweg vor der Hütte, ringsum Gras) |
+| E7 | Überschrift „Meine Farm“ | entfällt auf der Farm |
+| E8 | Wasser-Platz S2 lag unten im Meldungsfeld | Wasser-Plätze nur noch oben; unter der Insel liegt nichts Antippbares im Wasser (Prüfung im Mockup) |
 
 ## 10. Was später im Code zu ändern wäre (nicht jetzt)
 
