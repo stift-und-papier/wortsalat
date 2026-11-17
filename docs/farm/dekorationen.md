@@ -238,7 +238,7 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags.
 - Das Vogelhaus steht am rechten Rand beim Baum (x 25, y 6), nicht mehr bei x 22, y 8 neben dem Stall.
 - Die Selbstprüfung des Mockups ist danach in allen drei Größen „ok“ (leere und volle Farm).
 
-## 8. Offene Entscheidungen für Jazz
+## 8. Entscheidungen von Jazz (alle angenommen am 2026-11-17)
 
 | Nr. | Frage | Vorschlag |
 |---|---|---|

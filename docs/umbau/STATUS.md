@@ -569,4 +569,7 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   `besitz.platz`. Asset-Liste: 15 neue Bilder (Vogelhaus 5, Windrad 4, Glitzern 3, Napf 2, Buch 1). V3 gelöst (W7 und W8 umgelegt, Frosch auf S2).
   Offen D1–D9. **Getestet:** Paketbilder vermessen, Stufen-Seite und Mockups in drei Größen, Selbstprüfung ok. **Nicht getestet:** Tempo (Schätzung
   15–30 Schritte/Jahr, Simulation in Teilaufgabe 5), echtes iPad, dunkler Modus.
-- **Nächster Schritt:** Rückmeldung von Jazz zu D1–D9, dann Teilaufgabe 5 (Münzsystem).
+- **Entscheidungen Jazz zu Teilaufgabe 4 (2026-11-17):** D1–D9 alle angenommen (8 wachsende Deko wie vorgeschlagen; „neu dazugelernt“ zählt;
+  Belohnungen bleiben; Meldungstexte; im 2. Schuljahr vorerst nichts Neues; wachsende Motive nicht im Shop; Kategorien, Platzarten, Preisstufen A–D;
+  „Möchtest du es gleich aufstellen?“; Vogelhaus und Windrad ohne Dauerbewegung).
+- **Nächster Schritt:** Teilaufgabe 5 (Münzsystem).
