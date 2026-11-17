@@ -40,6 +40,7 @@ const OHNE_TOTENKOPF = [
 ]
 
 // Kaufbare Deko, die es mehrfach gibt: jedes gekaufte Stück bekommt die nächste Farbe. Gelb bleibt der wachsenden Sonnenblume.
+// Jazz: Busch und Stein bleiben einfarbig.
 const DEKO_FARBEN = {
   deko_blume_gelb: [['rosa', [rampe('gelb', 'rosa', 1, 1)]], ['blau', [rampe('gelb', 'blau', 0, 1)]], ['lila', [rampe('gelb', 'lila', 0, 1)]],
     ['weiß', [rampe('gelb', 'grau', 2, 1)]], ['orange', [rampe('gelb', 'orange', 0, 1)]]],
@@ -47,18 +48,16 @@ const DEKO_FARBEN = {
   deko_pilz: [['rot', []], ['braun', [rampe('rosa', 'braun', 0, 0, 4)]], ['orange', [rampe('rosa', 'orange', 0, 0, 4)]], ['blau', [rampe('rosa', 'blau', 0, 0, 4)]]],
   deko_pilzhaus: [['lila', OHNE_TOTENKOPF], ['rot', [...OHNE_TOTENKOPF, rampe('lila', 'rosa')]],
     ['blau', [...OHNE_TOTENKOPF, rampe('lila', 'blau')]], ['braun', [...OHNE_TOTENKOPF, rampe('lila', 'braun')]]],
-  deko_busch: [['grün', []], ['gelbgrün', [rampe('tuerkisgruen', 'gruen')]], ['blaugrün', [rampe('tuerkisgruen', 'tuerkis')]], ['Herbst', [rampe('tuerkisgruen', 'orange')]]],
-  deko_stein: [['grau', []], ['Sandstein', [rampe('grau', 'sand')]], ['rötlich', [rampe('grau', 'braun')]], ['bläulich', [rampe('grau', 'blau')]]],
 }
 
-// Ausschnitt q = [Bilderbogen {u}, x, y, Breite, Höhe] mit Regeln als <canvas> (gefärbt wird kurz danach in faerbeAlle)
+// Ausschnitt q = [Bilderbogen {u}, x, y, Breite, Höhe, Zielbreite?, Zielhöhe?] (Ziel = pixelgenau verkleinert) mit Regeln als <canvas> (gefärbt wird kurz danach in faerbeAlle)
 const FAERBEN = []
 let faerbenGeplant = 0
 function farbBild(q, regeln, mal, stil = '', klasse = '') {
   FAERBEN.push([q, regeln])
   clearTimeout(faerbenGeplant)
   faerbenGeplant = setTimeout(faerbeAlle, 0)
-  return `<canvas class="sprite ${klasse}" data-f="${FAERBEN.length - 1}" width="${q[3]}" height="${q[4]}" style="${stil}width:${q[3] * mal}px;height:${q[4] * mal}px"></canvas>`
+  return `<canvas class="sprite ${klasse}" data-f="${FAERBEN.length - 1}" width="${q[5] ?? q[3]}" height="${q[6] ?? q[4]}" style="${stil}width:${(q[5] ?? q[3]) * mal}px;height:${(q[6] ?? q[4]) * mal}px"></canvas>`
 }
 
 const bilder = {}
@@ -82,9 +81,10 @@ function setze(d, i, f) { for (let c = 0; c < 3; c++) d[i + c] = parseInt(f.slic
 async function faerbeAlle() {
   for (const c of document.querySelectorAll('canvas[data-f]:not([data-fertig])')) {
     c.dataset.fertig = '1'
-    const [[datei, x, y, w, h], regeln] = FAERBEN[+c.dataset.f]
+    const [[datei, x, y, qw, qh, w = qw, h = qh], regeln] = FAERBEN[+c.dataset.f]
     const g = c.getContext('2d')
-    g.drawImage(await ladeBild(datei.u), x, y, w, h, 0, 0, w, h)
+    g.imageSmoothingEnabled = false
+    g.drawImage(await ladeBild(datei.u), x, y, qw, qh, 0, 0, w, h)
     const bild = g.getImageData(0, 0, w, h)
     wende(bild.data, w, regeln)
     g.putImageData(bild, 0, 0)

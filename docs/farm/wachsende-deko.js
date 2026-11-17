@@ -16,10 +16,10 @@ const WACHS = [
   { n: 'W1', name: 'Kirschbaum', x: 13, y: 4, b: 2, h: 2, stufen: [
     ['Keimling', [KIRSCHE, 34, 37, 10, 10]], ['Zweig mit Blättern', [KIRSCHE, 48, 2, 16, 13], [rampe('gruen', 'rosa')]], ['Busch', [KIRSCHE, 80, 64, 16, 16]],
     ['Bäumchen', [KIRSCHE, 65, 18, 14, 29]], ['Kirschbaum in Blüte', [KIRSCHE, 84, 16, 24, 31]]] },
-  // Jazz: letzte Stufe = Lavendel aus assets/objects.png, Gras davor im Grün seiner Blätter
-  { n: 'W2', name: 'Wildblumen', x: 11, y: 4, b: 1, h: 2, stufen: [
+  // Jazz: letzte Stufe = Lavendel aus assets/objects.png (eigenes Bild von Jazz), verkleinert auf Blumen- und Pilzgröße; Gras davor im Grün seiner Blätter
+  { n: 'W2', name: 'Wildblumen', x: 11, y: 5, b: 1, h: 1, stufen: [
     ['Grashalme', [BLUMEN, 33, 37, 14, 10], [GRAS_WIE_LAVENDEL]], ['Grasbüschel', [BLUMEN, 48, 34, 16, 13], [GRAS_WIE_LAVENDEL]],
-    ['Knospe', [OBJEKTE, 98, 9, 12, 17], [OBJEKTE_PALETTE]], ['Lavendel', [OBJEKTE, 80, 32, 16, 26], [OBJEKTE_PALETTE]]] },
+    ['Knospe', [OBJEKTE, 98, 9, 12, 17, 7, 10], [OBJEKTE_PALETTE]], ['Lavendel', [OBJEKTE, 80, 32, 16, 26, 10, 16], [OBJEKTE_PALETTE]]] },
   { n: 'W3', name: 'Sonnenblume', x: 17, y: 7, b: 1, h: 2, stufen: [
     ['Grashalm', [BLUMEN, 33, 37, 14, 10]], ['kleine Blüte', [BLUMEN, 18, 54, 11, 9]], ['Knospe', [BLUMEN, 35, 51, 11, 12]],
     ['Sonnenblume', [BLUMEN, 49, 49, 14, 29]]] },
@@ -42,7 +42,7 @@ const WACHS = [
 function wachsBild(w, s, mal) {
   const [t, q, regeln] = w.stufen[s]
   if (!q) return `<div class="platzhalter" style="position:absolute;inset:0">neu: ${w.name}<br>${t}</div>`
-  const [datei, x, y, bw, bh] = q
+  const [datei, x, y, qw, qh, bw = qw, bh = qh] = q
   const links = Math.round((w.b * 16 - bw) / 2) * mal, oben = Math.max(0, w.h * 16 - bh) * mal
   if (regeln) return farbBild(q, regeln, mal, `position:absolute;left:${links}px;top:${oben}px;`)
   return `<div class="sprite" style="position:absolute;left:${links}px;top:${oben}px;width:${bw * mal}px;height:${bh * mal}px;` +

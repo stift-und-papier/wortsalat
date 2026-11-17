@@ -23,7 +23,7 @@ aus den Migrationen `lernstand`, `belohnungen` und `uebungen_runden` (nur gelese
 | Platz | Deko | Größe | Stufen (Beschreibung) | Bilder |
 |---|---|---|---|---|
 | W1 (unter der Bucht, x 13, y 4) | **Kirschbaum** | 2 × 2 | 1. ein winziger Keimling · 2. ein Zweig mit rosa Blättern · 3. ein runder rosa Busch · 4. ein schmales Bäumchen · 5. ein Kirschbaum in voller Blüte | vorhanden |
-| W2 (x 11, y 4) | **Wildblumen** | 1 × 2 | 1. ein paar Grashalme · 2. ein dichter Grasbüschel · 3. eine Lavendel-Knospe · 4. ein hoher Lavendel (Jazz: Bild aus `assets/objects.png`, Gras im Grün seiner Blätter) | vorhanden, umgefärbt |
+| W2 (x 11, y 5) | **Wildblumen** | 1 × 1 | 1. ein paar Grashalme · 2. ein dichter Grasbüschel · 3. eine Lavendel-Knospe · 4. ein Lavendel (Jazz: eigenes Bild `assets/objects.png`, verkleinert auf die Größe von Blumen und Pilzen; Gras im Grün seiner Blätter) | vorhanden, umgefärbt |
 | W3 (am Hühnerstall, x 17, y 7) | **Sonnenblume** | 1 × 2 | 1. ein Grashalm · 2. eine kleine gelbe Blüte · 3. eine große Knospe · 4. eine hohe Sonnenblume | vorhanden |
 | W4 (Wasser am Südufer, x 10, y 12) | **Seerosen** | 2 × 1 Wasser | 1. ein kleines Blatt · 2. ein großes Blatt · 3. ein Blatt mit rosa Knospe · 4. eine blühende Seerose | vorhanden |
 | W5 (x 11, y 7) | **Beerenbusch** | 1 × 1 | 1. ein kleiner Busch · 2. ein voller Busch · 3. ein Busch mit roten Beeren (nur Deko, nicht zum Ernten); dunkles Grün | vorhanden, umgefärbt |
@@ -188,13 +188,12 @@ Wer dasselbe Ding mehrmals kauft, bekommt **jedes Mal eine andere Farbe**: das 1
 | Traubenblume (heute „Blume lila“) | lila, blau, rosa, weiß |
 | Pilz | rot, braun, orange, blau |
 | Pilzhütte | lila, rot, blau, braun; **ohne Totenkopf**, dafür mit drei hellen Tupfen |
-| Busch | grün, gelbgrün, blaugrün, Herbst |
-| Stein | grau, Sandstein, rötlich, bläulich |
+| Busch und Stein | einfarbig wie heute (Jazz) |
 | Katzenblumen | rosa und blau wie heute (Belohnung, nicht im Shop) |
 
 Neue kaufbare Deko aus den Paketen bekommt bei der Umsetzung ebenfalls mehrere Farben, wenn man sie mehrmals kaufen kann.
 
-**Technik dazu:** Der Besitz merkt sich die Farbe (z. B. Spalte `besitz.farbe`, eine Zahl); der Server vergibt beim Kauf die nächste. Schon gekaufte Deko behält ihr heutiges Aussehen, auch eine schon gekaufte gelbe Blume bleibt gelb (Vorschlag); nur neue Käufe sind nie gelb. Ausnahme ist die Pilzhütte: Sie verliert überall den Totenkopf. Das ist eine Schema-Änderung, also erst nach Ihrer Freigabe. Die Bilder kämen fertig gefärbt nach `src/grafik/`; im Mockup färbt `farben.js` sie nur beim Anzeigen.
+**Technik dazu:** Der Besitz merkt sich die Farbe (z. B. Spalte `besitz.farbe`, eine Zahl); der Server vergibt beim Kauf die nächste. Schon gekaufte Deko darf sich dabei ändern (Jazz: es gibt bisher nur Testkonten); sie bekommt die Farben in Kaufreihenfolge, auch eine gekaufte gelbe Blume wird umgefärbt. Die Pilzhütte verliert überall den Totenkopf. Das ist eine Schema-Änderung, also erst nach Ihrer Freigabe. Die Bilder kämen fertig gefärbt nach `src/grafik/`; im Mockup färbt `farben.js` sie nur beim Anzeigen.
 
 ### 5.3 Preisstufen (grob, genaue Preise in Teilaufgabe 5)
 
@@ -228,7 +227,7 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | Deko | Stufen × Größe | Status | Quelle |
 |---|---|---|---|
 | W1 Kirschbaum | 5 Stufen: 10 × 10, 16 × 13, 16 × 16, 14 × 29, 24 × 31 | vorhanden, Stufe 2 rosa umgefärbt | Sorry Pack `Plant update 2/Cherry Blossom Biom.png` |
-| W2 Wildblumen | 4 Stufen: 14 × 10, 16 × 13, 12 × 17, 16 × 26 | vorhanden, umgefärbt | Gras: Premium `Objects/Mushrooms, Flowers, Stones.png`; Knospe und Lavendel: `assets/objects.png` (**Herkunft und Lizenz noch offen**), Farben auf die Palette gesetzt |
+| W2 Wildblumen | 4 Stufen: 14 × 10, 16 × 13, Knospe 7 × 10 und Lavendel 10 × 16 (pixelgenau verkleinert aus 12 × 17 und 16 × 26) | vorhanden, umgefärbt | Gras: Premium `Objects/Mushrooms, Flowers, Stones.png`; Knospe und Lavendel: `assets/objects.png` (eigenes Bild von Jazz, darf ins Spiel), Farben auf die Palette gesetzt; schöner wäre eine von Hand gezeichnete kleine Fassung |
 | W3 Sonnenblume | 4 Stufen: 14 × 10, 11 × 9, 11 × 12, 14 × 29 | vorhanden | Premium `Objects/Mushrooms, Flowers, Stones.png` |
 | W4 Seerosen | 4 Stufen: 13 × 9, 14 × 11, 13 × 9, 14 × 12 | vorhanden | Sorry Pack `Plant update 2/Cherry Blossom Biom water plants.png` |
 | W5 Beerenbusch | 3 Stufen: je bis 16 × 16 | vorhanden, dunkelgrün umgefärbt | Sorry Pack `Plant update 2/Trees, stumps and bushes v2.png` |
@@ -246,7 +245,7 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | Trog leer und voll | 2 × 32 × 16 | `trog.png` vorhanden; ob es ein leeres Bild gibt, ist nicht geprüft | Spiel `src/grafik/trog.png` |
 | **Buch klein** für den Sammelalbum-Knopf | 16 × 16 | **neu** (wie das heutige eigene Buch-Bild, nur kleiner) | |
 | Kaufbare Deko (etwa 40 Gegenstände) | meist 16 × 16, groß bis 32 × 32 | vorhanden | `layout-leer.md` Abschnitt 8 |
-| Farbvarianten der heutigen Deko | 25 Bilder je 16 × 16 (Abschnitt 5.2a) | aus den heutigen Bildern umgefärbt | `src/grafik/deko_*.png` mit `farben.js` |
+| Farbvarianten der heutigen Deko | 17 Bilder je 16 × 16 (Abschnitt 5.2a) | aus den heutigen Bildern umgefärbt | `src/grafik/deko_*.png` mit `farben.js` |
 
 **Neu zu zeichnen sind damit 15 Bilder:** Vogelhaus 5, Windrad 4, Glitzern 3 (falls die Sterne nicht passen), Napf 2, Buch 1. Wählt Jazz eine Ersatz-Idee, kommen deren neue Bilder dazu (Zaun: 1 Ranke, Vogelnest: 2).
 Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini** dazu stehen in `docs/farm/gemini-prompts.md`.
@@ -279,7 +278,7 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini**
 - die Bilder in den gekauften Paketen, vergrößert angesehen und vermessen (Wachstumsstufen von Kirschbaum, Eiche, Tanne, Sonnenblume, Seerosen, Busch; kein Windrad und kein Vogelhaus in den Paketen);
 - alle Stufen auf der Seite `wachsende-deko.html` (Foto mit Edge im Kopfmodus);
 - die Mockups leer und voll mit den echten Stufen-Bildern bei 1024 × 768, 1180 × 820 und 1366 × 1024, Selbstprüfung „ok“;
-- die umgefärbten Stufen und alle Deko-Farben auf `wachsende-deko.html` (Foto), die Mockups danach wieder mit Selbstprüfung „ok“ in allen drei Größen (Lavendel jetzt 1 × 2);
+- die umgefärbten Stufen und alle Deko-Farben auf `wachsende-deko.html` (Foto), die Mockups danach wieder mit Selbstprüfung „ok“ in allen drei Größen (Lavendel 1 × 1);
 - im Code gelesen: `lern_kategorie`, `belohnungen_holen`, `ergebnisse_zuruecksetzen` (löscht heute auch Belohnungen und Besitz; nach Jazz' Antwort 8 soll die Farm bleiben).
 
 **Nicht geprüft:**
@@ -288,5 +287,4 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini**
 - dunkler Modus der neuen Bilder;
 - ob die Sterne aus dem UI Pack als Glitzern passen;
 - ob es den Trog schon leer gibt;
-- woher `assets/objects.png` (Lavendel) stammt und ob die Lizenz die Nutzung im Spiel erlaubt;
 - die Gemini-Prompts selbst (noch kein Bild damit erzeugt).
