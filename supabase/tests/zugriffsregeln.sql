@@ -362,10 +362,10 @@ begin
       raise exception 'Block 6.6: falscher Token wird angenommen';
     exception when no_data_found then n := n + 1;
     end;
-    -- Stufe 1 (Start): ohne Bereich nur T-lueckentext (★), im Bereich „Test“ gibt es nur ★★ → T-auswahl; Erklärseite immer
+    -- Jazz 2026-11-17: alle sehen alle Aufgaben des Pakets, egal mit wie vielen Sternen (keine Stufen-Auswahl mehr)
     v_start := public.schueler_start(t_fuchs);
-    if jsonb_array_length(v_start -> 'pakete' -> 0 -> 'aufgaben') <> 3
-       or v_start::text ~ 'T-zuordnen' or v_start::text !~ 'T-auswahl' then
+    if jsonb_array_length(v_start -> 'pakete' -> 0 -> 'aufgaben') <> 4
+       or v_start::text !~ 'T-zuordnen' or v_start::text !~ 'T-auswahl' or v_start::text !~ 'T-lueckentext' then
       raise exception 'Block 6.7: Fuchs sieht die falschen Aufgaben: %', v_start;
     end if;
     if v_start::text ~ '"(loesung|loesungen|richtig|korrekturen|kategorie|gross_klein_beachten)"' then
@@ -415,10 +415,11 @@ begin
       raise exception 'Block 6.16: Regel für den Aufstieg falsch';
     end if;
     n := n + 1;
+    -- eine (alte) feste Stufe filtert nichts mehr
     update public.schueler set stufe_manuell = 2 where pseudonym = 'Eule-02';
     v_start := public.schueler_start(t_eule);
-    if v_start::text !~ 'T-zuordnen' or v_start::text ~ 'T-lueckentext' then
-      raise exception 'Block 6.17: manuelle Stufe ★★ wirkt nicht: %', v_start;
+    if v_start::text !~ 'T-zuordnen' or v_start::text !~ 'T-lueckentext' then
+      raise exception 'Block 6.17: feste Stufe blendet noch Aufgaben aus: %', v_start;
     end if;
     n := n + 1;
     for i in 1..5 loop
@@ -433,10 +434,10 @@ begin
     end loop;
     v_start := public.schueler_start(t_fuchs);
     reset role;
-    if (select stufe from public.schueler_stufen st join public.schueler s on s.id = st.schueler_id
-        where s.pseudonym = 'Fuchs-01' and st.bereich = '') is distinct from 2::smallint
-       or v_start::text !~ 'T-zuordnen' or v_start::text ~ 'S-1' then
-      raise exception 'Block 6.18: automatischer Aufstieg auf ★★ fehlt: %', v_start;
+    -- kein automatischer Aufstieg mehr; alle Aufgaben bleiben sichtbar
+    if exists (select 1 from public.schueler_stufen st join public.schueler s on s.id = st.schueler_id where s.pseudonym = 'Fuchs-01')
+       or v_start::text !~ 'T-zuordnen' or v_start::text !~ 'S-1' then
+      raise exception 'Block 6.18: automatischer Aufstieg läuft noch oder Aufgaben fehlen: %', v_start;
     end if;
     n := n + 1;
   end;
@@ -1470,15 +1471,15 @@ begin
     reset role;
     n := n + 1;
 
-    -- 17.13 Sterne-Aufstieg mit Übungen: drei ★★-Übungen, erster Versuch 2/3, 1 und 1 → 2,667 ≥ 0,8 · 3 → ★★★
+    -- 17.13 Jazz 2026-11-17: kein automatischer Sterne-Aufstieg mehr, die Stufe bleibt stehen
     -- (die ★★-Aufgaben aus Block 6 vorher entfernen, sonst zählen sie mit)
     delete from public.versuche where schueler_id = v_s.id and aufgabe_id in (select id from public.aufgaben where owner = c_lk_a and titel like 'T-%');
     -- Fuchs hat hier keine Stufe mehr im Bereich ''; für den Test auf ★★ setzen
     insert into public.schueler_stufen (schueler_id, owner, bereich, stufe) values (v_s.id, c_lk_a, '', 2)
       on conflict (schueler_id, bereich) do update set stufe = 2;
     perform public.stufen_aktualisieren(v_s);
-    if (select stufe from public.schueler_stufen where schueler_id = v_s.id and bereich = '') is distinct from 3::smallint then
-      raise exception 'Block 17.13: Aufstieg mit Übungen fehlt';
+    if (select stufe from public.schueler_stufen where schueler_id = v_s.id and bereich = '') is distinct from 2::smallint then
+      raise exception 'Block 17.13: automatischer Aufstieg läuft noch';
     end if;
     n := n + 1;
 

@@ -309,3 +309,5 @@
 - 2026-11-16 (Jazz): Kachel **„Gemischt“** (Format, Arbeitsanweisung und Tipp je Runde; sonst gilt das Format für alle Runden). **Multiple Choice** ersetzt
   „Sätze verbessern“ (gleiche Kennung `ueberarbeiten`, Frage + 2 bis 6 Antworten, eine oder mehrere richtig). Editor: Einordnen oben, neue Runde klappt die
   übrigen ein. Farm: Boot in der Bucht oben. Testfarm Pfau-99 und Lernstand-Testdaten (markiert) für die Testklassen.
+- 2026-11-17 (Jazz): **Alle Schüler:innen sehen alle Sterne-Aufgaben.** Keine automatische Zuordnung oder Steigerung mehr; die Lehrkraft entscheidet
+  über die Pakete. Sterne zeigen nur die Schwierigkeit.

@@ -480,3 +480,9 @@
     Testübung und Testpaket danach archiviert. `npm test` 152, lint, build, `npm run test:datenbank` ALLE TESTS BESTANDEN (161, Block 22 neu).
   - **Nicht getestet:** echtes iPad; Multiple Choice mit Hinweisen je Antwort; „Test: Zwei Formate ohne Monster“ steht in der Liste noch als „Lückentext“
     (hat kein Kennzeichen `gemischt`, öffnet aber als „Gemischt“ und bekommt es beim nächsten Speichern).
+- **Alle sehen alle Sterne** (Jazz 2026-11-17, Migration `alle_sterne_sichtbar`, eingespielt): `sichtbare_aufgaben` gibt alle nicht archivierten Übungen
+  eines zugewiesenen Pakets zurück; `stufen_aktualisieren` tut nichts mehr (kein automatischer Aufstieg). Sterne = nur Schwierigkeit (gewichten weiter die
+  Lernstand-Punkte). `schueler_stufen` und `stufe_manuell` bleiben unangetastet in der Datenbank. Klassenseite ohne Spalte „Sterne-Stufe“, Texte in
+  Paketseite, Zurücksetzen und Schüler-Hilfe angepasst. DB-Test Block 6.7/6.17/6.18/17.13 auf die neue Regel umgestellt: ALLE TESTS BESTANDEN (161).
+  **Getestet:** Klassenseite „Test“ im Browser (keine Spalte, keine Fehler). **Nicht getestet:** Schüleransicht eines Pakets mit gemischten Sternen im Browser
+  (nur über den DB-Test).

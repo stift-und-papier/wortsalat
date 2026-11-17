@@ -19,7 +19,7 @@ Wortsalat ist dein Übungsplatz für Deutsch. Deine Lehrkraft stellt hier Übung
 
 ## Was bedeuten die Sterne?
 
-Die Sterne zeigen, wie viel eine Aufgabe von dir verlangt: ein Stern, zwei Sterne oder drei Sterne. Sie sind keine Note. Wenn du in einem Thema mindestens fünf Aufgaben gemacht hast und die meisten davon gleich beim ersten Versuch klappen, bekommst du dort Aufgaben mit mehr Sternen. Manchmal stellt deine Lehrkraft die Sterne auch für dich ein.
+Die Sterne zeigen, wie viel eine Aufgabe von dir verlangt: ein Stern, zwei Sterne oder drei Sterne. Sie sind keine Note.
 
 ## Warum bekomme ich andere Aufgaben als meine Mitschüler:innen?
 

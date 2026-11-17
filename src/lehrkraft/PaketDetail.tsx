@@ -168,8 +168,7 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
           onFehler={setFehler}
         />
         <p className="lk-leise">
-          Schüler:innen sehen je Themenbereich nur die Übungen ihrer Sterne-Stufe (Erklärseiten sehen alle). Legen Sie
-          dieselbe Übung in mehreren Stufen an, bekommt jede:r die passende.
+          Schüler:innen, denen Sie das Paket zuweisen, sehen alle Übungen darin. Die Sterne zeigen nur, wie schwer eine Übung ist.
         </p>
         {inhalt.length > 0 && (
           <div className="lk-knopfreihe">

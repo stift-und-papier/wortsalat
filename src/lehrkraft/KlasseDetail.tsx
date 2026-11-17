@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase'
 import type { Klasse, Schueler } from '../lib/typen'
 import { FreigebenKlasse } from './Freigeben'
 
-// alt (Übungswiese), gekürzt: Klasse umbenennen, KC wählen, Pseudonyme anlegen/umbenennen/löschen, Sterne-Stufe fest einstellen.
+// alt (Übungswiese), gekürzt: Klasse umbenennen, KC wählen, Pseudonyme anlegen/umbenennen/löschen, (feste Sterne-Stufe entfällt seit 2026-11-17: alle sehen alle Übungen)
 // Dazu Lernstand (Phase 7) und „Ergebnisse zurücksetzen“ (alt).
 export function KlasseDetail({ klasseId }: { klasseId: string }) {
   const [klasse, setKlasse] = useState<Klasse | null>(null)
@@ -81,7 +81,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
 
   function einzelnZuruecksetzen(s: Schueler) {
     const ok = window.confirm(
-      `Ergebnisse von ${s.pseudonym} zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht, die Sterne-Stufe beginnt wieder bei einem Stern (außer einer fest eingestellten). Pseudonym und Link bleiben.`,
+      `Ergebnisse von ${s.pseudonym} zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht. Pseudonym und Link bleiben.`,
     )
     if (ok) zuruecksetzen([s], `Ergebnisse von ${s.pseudonym} zurückgesetzt.`)
   }
@@ -89,7 +89,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
   function klasseZuruecksetzen() {
     if (!klasse) return
     const eingabe = window.prompt(
-      `Die Ergebnisse aller ${schueler.length} Schüler:innen der Klasse „${klasse.name}“ zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht, die Sterne-Stufen beginnen wieder bei einem Stern (außer fest eingestellten). Pseudonyme und Links bleiben. Zur Bestätigung den Klassennamen eintippen:`,
+      `Die Ergebnisse aller ${schueler.length} Schüler:innen der Klasse „${klasse.name}“ zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht. Pseudonyme und Links bleiben. Zur Bestätigung den Klassennamen eintippen:`,
     )
     if (eingabe?.trim() === klasse.name) zuruecksetzen(schueler, `Ergebnisse der Klasse „${klasse.name}“ zurückgesetzt.`)
   }
@@ -197,7 +197,6 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
               <thead>
                 <tr>
                   <th>Pseudonym</th>
-                  <th>Sterne-Stufe</th>
                   <th>Link</th>
                   <th>Ergebnisse</th>
                   <th>Münzen</th>
@@ -218,21 +217,6 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
                         onBlur={(e) => umbenennen(s, e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
                       />
-                    </td>
-                    <td>
-                      <select
-                        className="lk-feld"
-                        aria-label={`Sterne-Stufe von ${s.pseudonym}`}
-                        value={s.stufe_manuell ?? ''}
-                        onChange={(e) =>
-                          void aendern(supabase.from('schueler').update({ stufe_manuell: e.target.value ? Number(e.target.value) : null }).eq('id', s.id))
-                        }
-                      >
-                        <option value="">automatisch</option>
-                        <option value="1">★ fest</option>
-                        <option value="2">★★ fest</option>
-                        <option value="3">★★★ fest</option>
-                      </select>
                     </td>
                     <td>
                       <div className="lk-knopfreihe">
@@ -268,8 +252,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
             </table>
           </div>
           <p className="lk-leise">
-            Pseudonym antippen, ändern und mit Enter speichern. Sterne-Stufe „automatisch“: alle beginnen mit einem Stern und steigen
-            selbst auf. Eine feste Stufe gilt, bis Sie wieder „automatisch“ wählen.
+            Pseudonym antippen, ändern und mit Enter speichern.
           </p>
         </>
       )}
@@ -376,8 +359,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
       <section className="lk-abschnitt">
         <h2>Ergebnisse zurücksetzen</h2>
         <p className="lk-leise">
-          Zum Beispiel am Schuljahresende: Löscht alle Antworten und Münzen der Klasse endgültig. Sterne-Stufen beginnen wieder bei einem Stern (fest
-          eingestellte bleiben). Pseudonyme und Links bleiben.
+          Zum Beispiel am Schuljahresende: Löscht alle Antworten und Münzen der Klasse endgültig. Pseudonyme und Links bleiben.
         </p>
         <div>
           <button type="button" className="lk-knopf" disabled={schueler.length === 0} onClick={klasseZuruecksetzen}>
