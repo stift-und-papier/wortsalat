@@ -34,7 +34,7 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 | Deko klein (20) | 14 mit heutigen Bildern, 6 mit neuen Bildern aus den Paketen (im Mockup als Platzhalter) |
 | Deko groß (2) | Picknick, Bienenstock (neu) |
 | Deko im Wasser (4) | Schilf, Frosch (auf S2, V3), Steine, Schilf (neu) |
-| Wachsende Deko (8) | alle in der letzten Stufe (echte Bilder aus den Paketen; Vogelhaus und Windrad als Platzhalter, siehe `dekorationen.md`) |
+| Wachsende Deko (8) | alle in der letzten Stufe (Bilder aus den Paketen, Vogelhaus und kleiner Lavendel neu; siehe `dekorationen.md`) |
 | Figur | im Hof |
 | Meldung | „Deine Hühner sind hungrig.“ |
 | Münzen | 4-stellig (1.240): Die Anzeige reicht dafür. |

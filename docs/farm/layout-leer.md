@@ -73,7 +73,7 @@ So ist gerechnet:
 | **Deko groß** (2 × 2) | neben dem Acker, vor der Scheune | **2 Plätze** G1, G2 | – | Picknick, Bank mit Tisch, Bienenstock, Kirschblütenbusch |
 | **Deko im Wasser** (1 × 1) | nur oben: Bucht und Ufer | **4 Plätze** S1 bis S4 | – | Seerosen, Schilf, Steine im Wasser, Frosch |
 | **Blumenbeete** (Jazz: mehr Blumen) | am Acker, am Brunnen, an der Hütte, an der Scheunentür, am Ufer, am Obstgarten | **6 Beete mit 16 Blumenplätzen** (je 2 bis 4 Kacheln) | – | Die Blumen eines Beets stehen dicht wie die Felder. Antippen öffnet unter „Farm einrichten“ die Auswahl für das Beet. Nur Blumen passen hinein. |
-| **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 (1 × 1 bis 2 × 2) | – | Kirschbaum, Wildblumen, Sonnenblume, Seerosen, Beerenbusch, Vogelhaus, Eiche, Windrad; Stufen und Plätze in `dekorationen.md`. Sie sind nicht antippbar. |
+| **Wachsende Deko** | gut sichtbar verteilt | **8 Plätze** W1 bis W8 (1 × 1 bis 2 × 2) | – | Kirschbaum, Wildblumen, Sonnenblume, Seerosen, Beerenbusch, Vogelhaus, Eiche, zweite Sonnenblume; Stufen und Plätze in `dekorationen.md`. Sie sind nicht antippbar. |
 | **Figur** | Start im Hof (x 16, y 8) | – | Mitte | |
 | **Liegendes** (Ernte, Ei, Milch, Monster-Geschenk) | Ernte auf dem Feld selbst; Ei/Milch und Geschenk an einem festen Platz neben Tier bzw. Hütte | – | „daneben“ | Geschenke **hüpfen weiter** (Jazz, E4). |
 | **Meldung** | Banner unten im Meer | – | Banner im Spielfenster | Hinweise zur Farm, siehe Abschnitt 6 |

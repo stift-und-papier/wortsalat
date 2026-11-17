@@ -29,7 +29,7 @@ aus den Migrationen `lernstand`, `belohnungen` und `uebungen_runden` (nur gelese
 | W5 (x 11, y 7) | **Beerenbusch** | 1 × 1 | 1. ein kleiner Busch · 2. ein voller Busch · 3. ein Busch mit roten Beeren (nur Deko, nicht zum Ernten); dunkles Grün | vorhanden, umgefärbt |
 | W6 (rechter Rand beim Baum, x 25, y 6) | **Vogelhaus** | 1 × 2 | 1. ein Pfahl · 2. ein Pfahl mit Brett · 3. ein Vogelhaus · 4. Futter liegt im Vogelhaus · 5. ein Vogel sitzt auf dem Dach (Standbild, bewegt sich nicht) | **neu** |
 | W7 (linker Rand am Obstgarten, x 0, y 5) | **Eiche** | 1 × 2 | 1. eine Eichel · 2. die Eichel keimt · 3. ein Sprössling · 4. ein kleiner Baum · 5. eine junge Eiche; helles Gelbgrün | vorhanden, umgefärbt |
-| W8 (zwischen Acker und Hütte, x 8, y 8) | **Windrad** | 1 × 2 | 1. ein Pfahl · 2. ein Gestell · 3. ein Windrad mit zwei Flügeln · 4. ein Windrad mit vier Flügeln und Fähnchen (dreht sich nicht dauernd, siehe Bewegungs-Budget) | **neu** |
+| W8 (zwischen Acker und Hütte, x 8, y 8) | **zweite Sonnenblume** (Jazz, statt Windrad) | 1 × 2 | wie W3 | vorhanden |
 
 **Farben (Jazz, 2026-11-17):** Die Obstbäume sind türkisgrün. Damit sich die wachsenden Pflanzen davon abheben, ist die Eiche hell gelbgrün und der Beerenbusch dunkelgrün; die 2. Kirschbaum-Stufe ist rosa wie die übrigen. Umgefärbt wird nur mit Farben der Sprout-Lands-Palette (`docs/farm/farben.js`, Reihe gegen Reihe gleicher Helligkeit).
 
@@ -112,7 +112,6 @@ Grundlage ist die heutige Einteilung im Lernweg. Je Kompetenz gibt es die Stufen
 | Beerenbusch | Dein Beerenbusch ist gewachsen! | An deinem Busch hängen jetzt Beeren! |
 | Vogelhaus | An deinem Vogelhaus wurde weitergebaut! | Ein Vogel wohnt jetzt in deinem Vogelhaus! |
 | Eiche | Deine Eiche ist gewachsen! | Deine Eiche ist jetzt ein Baum! |
-| Windrad | An deinem Windrad wurde weitergebaut! | Dein Windrad ist fertig! |
 
 - **Hilfe-Seite** „Deine Farm“ bekommt einen Satz dazu: „Manche Pflanzen auf deiner Farm wachsen, wenn du dazulernst. Sie werden nie kleiner.“
 - Die wachsende Deko bleibt **nicht antippbar** (wie in Teilaufgabe 2 festgelegt).
@@ -233,7 +232,7 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | W5 Beerenbusch | 3 Stufen: je bis 16 × 16 | vorhanden, dunkelgrün umgefärbt | Sorry Pack `Plant update 2/Trees, stumps and bushes v2.png` |
 | W7 Eiche | 5 Stufen: 9 × 9, 10 × 11, 10 × 10, 12 × 15, 14 × 29 | vorhanden, gelbgrün umgefärbt | Sorry Pack `Plant update 2/Trees, stumps and bushes v2.png` |
 | **W6 Vogelhaus** | 5 Stufen: 6 × 18, 13 × 22, 13 × 29, 13 × 29, 13 × 32 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/vogelhaus_1.png` bis `_5.png` |
-| **W8 Windrad** | 4 Stufen: 5 × 17, 9 × 28, 9 × 32, 13 × 31 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/windrad_1.png` bis `_4.png` |
+| W8 Sonnenblume | wie W3 | vorhanden | wie W3 (Jazz: Windrad gestrichen) |
 | **Glitzern beim Wachsen** | 3 Bilder je 16 × 10 | **neu von Jazz** (Gemini), aufbereitet | `assets/neu/glitzern_1.png` bis `_3.png` |
 
 ### 6.2 Übrige Grafiken aus Teilaufgabe 2 bis 4
@@ -247,7 +246,7 @@ Größen in Original-Pixeln (16 px = 1 Kachel). „Vorhanden“ heißt: im gekau
 | Kaufbare Deko (etwa 40 Gegenstände) | meist 16 × 16, groß bis 32 × 32 | vorhanden | `layout-leer.md` Abschnitt 8 |
 | Farbvarianten der heutigen Deko | 17 Bilder je 16 × 16 (Abschnitt 5.2a) | aus den heutigen Bildern umgefärbt | `src/grafik/deko_*.png` mit `farben.js` |
 
-**Neu zu zeichnen waren 15 Bilder:** Vogelhaus 5, Windrad 4, Glitzern 3, Napf 2, Buch 1, dazu der kleine Lavendel 2. Am 2026-11-17 hat Jazz alle außer dem kleinen Buch mit Gemini erzeugt. Claude hat sie mit `docs/farm/pixeln.cjs` aufbereitet: Magenta entfernt, alle Stufen eines Blatts gleich stark verkleinert, jede Farbe auf die Palette gesetzt. Die Bilder liegen in `assets/neu/` (nicht im Repo) und erscheinen in den Mockups. **Offen:** das kleine Buch. Wählt Jazz eine Ersatz-Idee, kommen deren neue Bilder dazu (Zaun: 1 Ranke, Vogelnest: 2).
+**Neu zu zeichnen waren 15 Bilder:** Vogelhaus 5, Windrad 4 (später gestrichen), Glitzern 3, Napf 2, Buch 1, dazu der kleine Lavendel 2. Am 2026-11-17 hat Jazz alle außer dem kleinen Buch mit Gemini erzeugt. Claude hat sie mit `docs/farm/pixeln.cjs` aufbereitet: Magenta entfernt, alle Stufen eines Blatts gleich stark verkleinert, jede Farbe auf die Palette gesetzt. Die Bilder liegen in `assets/neu/` (nicht im Repo) und erscheinen in den Mockups. **Offen:** das kleine Buch. Wählt Jazz eine Ersatz-Idee, kommen deren neue Bilder dazu (Zaun: 1 Ranke, Vogelnest: 2).
 Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini** dazu stehen in `docs/farm/gemini-prompts.md`.
 
 ## 7. Enge Stellen aus Teilaufgabe 3 (V3) gelöst
@@ -270,7 +269,7 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini**
 | D6 | Wachsende Motive (Sonnenblume, Seerosen, Beerenbusch) nicht im Shop verkaufen? | ja, sie bleiben besonders |
 | D7 | Kaufbare Deko: Kategorien, Platzarten, Mehrfachkauf kleiner Deko, Preisstufen A bis D | ja; genaue Preise in Teilaufgabe 5 |
 | D8 | Aufstellen nach dem Kauf mit der Frage „Möchtest du es gleich aufstellen?“ | ja |
-| D9 | Ein Vogel auf dem Vogelhaus und das Windrad bewegen sich nicht dauernd, nur das Glitzern beim Wachsen. | ja (Bewegungs-Budget) |
+| D9 | Ein Vogel auf dem Vogelhaus und das Windrad (später gestrichen) bewegen sich nicht dauernd, nur das Glitzern beim Wachsen. | ja (Bewegungs-Budget) |
 
 ## 9. Geprüft und nicht geprüft
 
@@ -287,5 +286,5 @@ Die Erzeugung der Bilder ist nicht Teil dieses Auftrags. **Prompts für Gemini**
 - dunkler Modus der neuen Bilder;
 - ob die Sterne aus dem UI Pack als Glitzern passen;
 - ob es den Trog schon leer gibt;
-- wie die aufbereiteten Gemini-Bilder am iPad wirken (Umrisse werden beim Verkleinern teils dünn, Windrad und Vogelhaus sind schmal);
+- wie die aufbereiteten Gemini-Bilder am iPad wirken (Umrisse werden beim Verkleinern teils dünn, das Vogelhaus ist schmal);
 - wie KI-Bilder in `LIZENZ.md` und in der Namensnennung stehen sollen.

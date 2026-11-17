@@ -14,6 +14,10 @@ const GRAS_WIE_LAVENDEL = rampe('tuerkisgruen', 'gruen')
 const NEU = (n, w, h) => [{ u: '../../assets/neu/' + n + '.png', w, h }, 0, 0, w, h]
 const BLUMEN = { u: PAKET + 'Sprout Lands - Sprites - premium pack/Objects/Mushrooms, Flowers, Stones.png', w: 192, h: 80 }
 
+const SONNENBLUME = [
+  ['Grashalm', [BLUMEN, 33, 37, 14, 10]], ['kleine Blüte', [BLUMEN, 18, 54, 11, 9]], ['Knospe', [BLUMEN, 35, 51, 11, 12]],
+  ['Sonnenblume', [BLUMEN, 49, 49, 14, 29]]]
+
 const WACHS = [
   { n: 'W1', name: 'Kirschbaum', x: 13, y: 4, b: 2, h: 2, stufen: [
     ['Keimling', [KIRSCHE, 34, 37, 10, 10]], ['Zweig mit Blättern', [KIRSCHE, 48, 2, 16, 13], [rampe('gruen', 'rosa')]], ['Busch', [KIRSCHE, 80, 64, 16, 16]],
@@ -22,9 +26,7 @@ const WACHS = [
   { n: 'W2', name: 'Wildblumen', x: 11, y: 5, b: 1, h: 1, stufen: [
     ['Grashalme', [BLUMEN, 33, 37, 14, 10], [GRAS_WIE_LAVENDEL]], ['Grasbüschel', [BLUMEN, 48, 34, 16, 13], [GRAS_WIE_LAVENDEL]],
     ['Knospe', NEU('lavendel_1', 9, 10)], ['Lavendel', NEU('lavendel_2', 9, 15)]] },
-  { n: 'W3', name: 'Sonnenblume', x: 17, y: 7, b: 1, h: 2, stufen: [
-    ['Grashalm', [BLUMEN, 33, 37, 14, 10]], ['kleine Blüte', [BLUMEN, 18, 54, 11, 9]], ['Knospe', [BLUMEN, 35, 51, 11, 12]],
-    ['Sonnenblume', [BLUMEN, 49, 49, 14, 29]]] },
+  { n: 'W3', name: 'Sonnenblume', x: 17, y: 7, b: 1, h: 2, stufen: SONNENBLUME },
   { n: 'W4', name: 'Seerosen', x: 10, y: 12, b: 2, h: 1, wasser: true, stufen: [
     ['kleines Blatt', [SEEROSE, 0, 5, 13, 9]], ['großes Blatt', [SEEROSE, 32, 4, 14, 11]], ['Blatt mit Knospe', [SEEROSE, 1, 19, 13, 9]],
     ['Seerose blüht', [SEEROSE, 49, 17, 14, 12]]] },
@@ -37,9 +39,8 @@ const WACHS = [
   { n: 'W7', name: 'Eiche', x: 0, y: 5, b: 1, h: 2, stufen: [
     ['Eichel', [BAEUME2, 3, 4, 9, 9], [EICHE_GRUEN]], ['Eichel keimt', [BAEUME2, 2, 20, 10, 11], [EICHE_GRUEN]], ['Sprössling', [BAEUME2, 2, 37, 10, 10], [EICHE_GRUEN]],
     ['kleiner Baum', [BAEUME2, 18, 16, 12, 15], [EICHE_GRUEN]], ['junge Eiche', [BAEUME2, 49, 17, 14, 29], [EICHE_GRUEN]]] },
-  { n: 'W8', name: 'Windrad', x: 8, y: 8, b: 1, h: 2, stufen: [
-    ['Pfahl', NEU('windrad_1', 5, 17)], ['Gestell', NEU('windrad_2', 9, 28)], ['Windrad mit zwei Flügeln', NEU('windrad_3', 9, 32)],
-    ['Windrad mit vier Flügeln und Fähnchen', NEU('windrad_4', 13, 31)]] },
+  // Jazz: statt Windrad eine zweite Sonnenblume
+  { n: 'W8', name: 'Sonnenblume', x: 8, y: 8, b: 1, h: 2, stufen: SONNENBLUME },
 ]
 
 // Bild einer Stufe, unten mittig im Platz (b × h Kacheln), Faktor mal; neue Grafik = beschrifteter Platzhalter
