@@ -584,7 +584,7 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Je Kompetenz ein Schritt für „neu“ (erster Lernstand), „besser“, „deutlich“; Schritt an die Deko, die am wenigsten weit ist; Stufen nur höher;
   „Ergebnisse zurücksetzen“ lässt beides stehen. Bilder aus den Mockup-Daten (`scripts/grafik-holen.mjs` liest `docs/farm/wachsende-deko.js`) nach
   `src/grafik/wachs_w1..8.png`, Glitzern `glitzern.png`. Plätze `WACHSENDE_DEKO` in `landschaft.ts` (Hindernisse, Test: Seerosen im Wasser).
-  Meldung einmal beim Öffnen, Gewachsenes glitzert ca. 1 s (aus bei „Bewegung reduzieren“). Hilfe: neuer Abschnitt. Geprüft im Browser mit Dachs-19
+  Meldung einmal beim Öffnen, Gewachsenes glitzert etwa 5 s immer wieder (Jazz) (aus bei „Bewegung reduzieren“). Hilfe: neuer Abschnitt. Geprüft im Browser mit Dachs-19
   (8 Ereignisse → alle Stufe 2, Meldung, Glitzern, „gesehen“ gespeichert). Zahnrad wieder der alte Holzknopf (Jazz).
   Nicht getestet: echtes iPad; Aussehen des Glitzerns (nur im Code geprüft, dass es erscheint und verschwindet).
 - **Nächster Schritt:** Jazz prüft Schritt 2; danach Schritt 3 (kaufbare Deko mit Plätzen und Farben), Teilaufgabe 5 (Münzsystem) später.

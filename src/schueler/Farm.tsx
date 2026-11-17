@@ -95,7 +95,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             : fertig(neu[0]) ? neu[0].fertig : `Du hast dazugelernt. ${neu[0].gewachsen}`,
       )
       setGlitzert(neu.map((w) => w.id))
-      uhr = window.setTimeout(() => setGlitzert([]), 1200)
+      uhr = window.setTimeout(() => setGlitzert([]), 5200) // wie farm-glitzern-weg in bausteine.css
       void supabase.rpc('wachstum_gesehen', { p_token: token }).then() // .then() schickt die Anfrage erst ab
     })
     return () => window.clearTimeout(uhr)
