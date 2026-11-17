@@ -486,3 +486,13 @@
   Paketseite, Zurücksetzen und Schüler-Hilfe angepasst. DB-Test Block 6.7/6.17/6.18/17.13 auf die neue Regel umgestellt: ALLE TESTS BESTANDEN (161).
   **Getestet:** Klassenseite „Test“ im Browser (keine Spalte, keine Fehler). **Nicht getestet:** Schüleransicht eines Pakets mit gemischten Sternen im Browser
   (nur über den DB-Test).
+- **Übungspakete „Grammatik Klasse 7“ nach DS01–DS07** (Jazz 2026-11-17, alle Vorschläge angenommen; ohne Krabat-Inhalte): Inhalte in
+  `inhalte/reihe7-grammatik.ts`, Skript `scripts/reihe7-sql.ts` (prüft jede Runde mit den Parsern des Editors, feste ids, wiederholbar:
+  `node scripts/reihe7-sql.ts <datei.sql>`, dann `npx supabase db query --linked -f <datei.sql>`). Eingespielt: 7 Pakete (Jahrgang 7, Gymnasium,
+  keiner Klasse zugewiesen), je 1 neue Erklärseite, 4 bzw. 5 Übungen ohne Monster mit je 8 Runden (5 pro Durchgang), 1 gemischte Abschlussübung mit
+  Monster (je Format eine Runde, Reihenfolge fest; Rübchen, Schleim grün, Schleim blau, Feuerschleim, Maus, Spinne grün, Gespenst). Alle ★★.
+  Kompetenzen (Gymnasium) wie vorgeschlagen, mehrere je Übung. DS01 enthält Jazz' vorhandene Übung „Satzstellungen bei Sätzen im Plusquamperfekt“;
+  ihr Paket „Das Plusquamperfekt“ bleibt unverändert. Paket DS07: „Wiederholung: Zeitformen, Konjunktionen, Satzreihe, Satzgefüge, Nominalisierung“.
+  **Getestet:** Skript (36 Übungen ohne Prüffehler), Datenbank (Reihenfolge im Paket, Kompetenzen je Übung, Runden), als Dachs-19 bei 820 × 1180
+  (Paket kurz der Klasse „Test“ zugewiesen, danach wieder entfernt): Teilsätze zuordnen richtig, Satzgefüge bauen richtig (Satzanfang groß),
+  Abschluss mit Monster (Maus) und 3 Runden. **Nicht getestet:** alle übrigen Übungen im Browser (nur geprüft durch die Parser), echtes iPad.
