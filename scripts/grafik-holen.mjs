@@ -421,6 +421,9 @@ const STICKER = [
   ['orangenbaum', 'baum_orange', 0], ['pfirsichbaum', 'baum_pfirsich', 0], ['birnenbaum', 'baum_birne', 0],
   ['huhn', 'huhn', 0], ['kuh', 'kuh', 0], ['brunnen', 'brunnen', 0], ['boot', 'deko_boot', 0],
   ...['busch', 'blume_gelb', 'pilz', 'stein', 'blume_lila', 'pilzhaus', 'katze_rosa', 'katze_blau'].map((id) => [id, 'deko_' + id, 0]),
+  // Jazz 2026-11-17: ausgewachsene wachsende Deko (letztes Bild; beide Sonnenblumen teilen sich einen Sticker)
+  ['wachs_kirschbaum', 'wachs_w1', 4], ['wachs_lavendel', 'wachs_w2', 3], ['wachs_sonnenblume', 'wachs_w3', 3], ['wachs_seerose', 'wachs_w4', 3],
+  ['wachs_beerenbusch', 'wachs_w5', 2], ['wachs_vogelhaus', 'wachs_w6', 4], ['wachs_eiche', 'wachs_w7', 4],
   ...['ruebchen', 'schleim_gruen', 'schleim_blau', 'schleim_feuer', 'gespenst', 'spinne_gruen', 'spinne_lila', 'spinne_gold', 'maus', 'fledermaus']
     .map((id) => ['monster_' + id, 'monster_' + id, 0]),
 ]

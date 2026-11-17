@@ -197,6 +197,7 @@ export function Shop({ token, farm, nachKauf }: { token: string; farm: string; n
     <>
       <Buch
         titel="Shop"
+        zurueck={{ href: farm, name: 'Zurück zur Farm' }}
         rot
         kapitel={KAPITEL}
         aktiv={kapitel}

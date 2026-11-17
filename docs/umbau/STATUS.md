@@ -598,4 +598,9 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Das Ausblenden von Deko nur auf dem Gerät (localStorage) entfällt. Belohnungs-Deko (Katzenblumen) kommt in die Truhe.
   Geprüft im Browser mit Pfau-99: Verteilung, in die Truhe, wieder aufstellen, Busch kaufen und gleich aufstellen. DB-Test 167, Tests 156.
   Nicht getestet: iPad; „ganzes Beet“ (kein Testkind hat genug gleiche Blumen in der Truhe); große Plätze und Wasser-Plätze (es gibt noch keine Deko dafür, kommt in 3b).
+- **Nachträge zu 3a (2026-11-17, Jazz):** Laden hat den Haus-Knopf „Zurück zur Farm“ wie das Sammelalbum. Ausgewachsene wachsende Deko
+  bekommt einen Sticker (Migration `album_wachsende_deko`, 7 Sticker, beide Sonnenblumen teilen sich einen; DB-Test 15.10). Pilzhütte im Album
+  ohne Totenkopf (Sticker kommt aus dem umgefärbten Bild). Keine Aufstellplätze mehr am unteren Ufer: D4, D5, D7, D12, D14 und die Beete
+  „an der Hütte“ (jetzt „über der Hütte“) und „am Ufer“ (jetzt „an der Scheune rechts“) ins Innere verschoben; Test: unter jedem Platz an Land ist Gras.
+  Neue kaufbare Deko aus 3b bekommt ihren Sticker automatisch (Test: jedes deko_-Bild hat einen Sticker). Mockup-Plätze (docs/farm) nicht nachgezogen.
 - **Nächster Schritt:** Jazz prüft Schritt 3a; danach 3b (etwa 40 neue Deko-Dinge im Laden, vorläufige Preise), Teilaufgabe 5 (Münzsystem) später.

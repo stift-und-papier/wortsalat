@@ -172,10 +172,10 @@ export const GRAFIK = {
   buch_symbol: { url: buch_symbol, breite: 22, hoehe: 26, bildBreite: 22, bildHoehe: 26 },
   reiter: { url: reiter, breite: 80, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   lesezeichen: { url: lesezeichen, breite: 160, hoehe: 20, bildBreite: 40, bildHoehe: 20 },
-  sticker: { url: sticker, breite: 1596, hoehe: 32, bildBreite: 42, bildHoehe: 32 },
+  sticker: { url: sticker, breite: 1890, hoehe: 35, bildBreite: 42, bildHoehe: 35 },
   ranke: { url: ranke, breite: 80, hoehe: 24, bildBreite: 20, bildHoehe: 24 },
   ranke_topf: { url: ranke_topf, breite: 19, hoehe: 15, bildBreite: 19, bildHoehe: 15 },
 } as const
 
 /** Nummer des Stickers im Blatt GRAFIK.sticker (Schlüssel: Shop-Artikel bzw. monster_<Name>) */
-export const STICKER_NUMMER: Record<string, number> = { karotte: 0, blumenkohl: 1, tomate: 2, aubergine: 3, tulpe: 4, salat: 5, weizen: 6, kuerbis: 7, rettich: 8, rose: 9, rote_bete: 10, sternfrucht: 11, gurke: 12, orangenbaum: 13, pfirsichbaum: 14, birnenbaum: 15, huhn: 16, kuh: 17, brunnen: 18, boot: 19, busch: 20, blume_gelb: 21, pilz: 22, stein: 23, blume_lila: 24, pilzhaus: 25, katze_rosa: 26, katze_blau: 27, monster_ruebchen: 28, monster_schleim_gruen: 29, monster_schleim_blau: 30, monster_schleim_feuer: 31, monster_gespenst: 32, monster_spinne_gruen: 33, monster_spinne_lila: 34, monster_spinne_gold: 35, monster_maus: 36, monster_fledermaus: 37 }
+export const STICKER_NUMMER: Record<string, number> = { karotte: 0, blumenkohl: 1, tomate: 2, aubergine: 3, tulpe: 4, salat: 5, weizen: 6, kuerbis: 7, rettich: 8, rose: 9, rote_bete: 10, sternfrucht: 11, gurke: 12, orangenbaum: 13, pfirsichbaum: 14, birnenbaum: 15, huhn: 16, kuh: 17, brunnen: 18, boot: 19, busch: 20, blume_gelb: 21, pilz: 22, stein: 23, blume_lila: 24, pilzhaus: 25, katze_rosa: 26, katze_blau: 27, wachs_kirschbaum: 28, wachs_lavendel: 29, wachs_sonnenblume: 30, wachs_seerose: 31, wachs_beerenbusch: 32, wachs_vogelhaus: 33, wachs_eiche: 34, monster_ruebchen: 35, monster_schleim_gruen: 36, monster_schleim_blau: 37, monster_schleim_feuer: 38, monster_gespenst: 39, monster_spinne_gruen: 40, monster_spinne_lila: 41, monster_spinne_gold: 42, monster_maus: 43, monster_fledermaus: 44 }

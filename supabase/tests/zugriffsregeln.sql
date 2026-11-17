@@ -1245,7 +1245,15 @@ begin
       raise exception 'Block 15.9: Stufen geändert oder wieder neu: %', public.wachstum_holen(t_igel);
     end if;
     reset role;
-    n := n + 4;
+    -- 15.10 Sammelalbum: ausgewachsene Deko hat einen Sticker, wachsende noch nicht
+    update public.wachstum_stufen set stufe = 5 where schueler_id = v_igel and deko = 'W1';
+    update public.wachstum_stufen set stufe = 1 where schueler_id = v_igel and deko in ('W3', 'W8');
+    set local role anon;
+    if not (public.schueler_album(t_igel) @> '[{"id":"wachs_kirschbaum","gesammelt":true,"name":"Kirschbaum"},{"id":"wachs_sonnenblume","gesammelt":false,"name":null}]') then
+      raise exception 'Block 15.10: Album zeigt ausgewachsene Deko falsch';
+    end if;
+    reset role;
+    n := n + 5;
     n := n + 5;
   end;
 

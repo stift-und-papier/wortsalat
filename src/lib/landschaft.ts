@@ -60,10 +60,11 @@ export const BRUNNEN: Ort = kern(13, 7) // 2 × 2
 export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: kern(3, 2), pfirsichbaum: kern(6, 2), birnenbaum: kern(9, 2) }
 // Boot (3 × 2 Kacheln) in der Bucht oben; kein Hindernis (Wasser ist es schon)
 export const BOOT: Ort = kern(12, 1)
-// 20 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel
+// 20 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel.
+// Jazz 2026-11-17: keine Plätze am unteren Ufer (D4, D5, D7, D12, D14 und zwei Beete ins Innere verschoben)
 export const DEKO_PLAETZE: Ort[] = [
-  [1, 4], [1, 7], [1, 9], [2, 11], [8, 13], [11, 9], [11, 11], [16, 3], [24, 3], [25, 5],
-  [15, 10], [13, 12], [15, 12], [24, 12], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
+  [1, 4], [1, 7], [1, 9], [17, 6], [19, 8], [11, 9], [17, 1], [16, 3], [24, 3], [25, 5],
+  [15, 10], [6, 7], [15, 12], [11, 4], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
 ].map(([x, y]) => kern(x, y))
 // Plätze für gekaufte Deko (Jazz 2026-11-17, dekorationen.md 5.1; Lage wie im Mockup docs/farm/farm-mockup.js). Namen wie in der Datenbank
 // (deko_platzart): D1–D20 klein, B1–B16 Beet (Blumen stehen dicht, darum ohne freie Kachel dazwischen), G1–G2 groß (2 × 2), S1–S4 im Wasser.
@@ -71,9 +72,9 @@ export type PlatzArt = 'beet' | 'klein' | 'gross' | 'wasser'
 export const BEETE: { name: string; kacheln: Ort[] }[] = [
   { name: 'am Acker', kacheln: [[7, 4], [7, 5], [7, 6]] },
   { name: 'am Brunnen', kacheln: [[12, 8], [13, 9], [14, 9]] },
-  { name: 'an der Hütte', kacheln: [[3, 11], [3, 12]] },
+  { name: 'über der Hütte', kacheln: [[3, 7], [4, 7]] },
   { name: 'an der Scheune', kacheln: [[18, 7], [19, 7], [22, 7], [23, 7]] },
-  { name: 'am Ufer', kacheln: [[16, 13], [17, 13]] },
+  { name: 'an der Scheune rechts', kacheln: [[24, 4], [25, 4]] },
   { name: 'am Obstgarten', kacheln: [[2, 5], [2, 6]] },
 ].map((b) => ({ name: b.name, kacheln: b.kacheln.map(([x, y]) => kern(x, y)) }))
 export const DEKO_PLATZ: Record<string, Ort & { art: PlatzArt; groesse: number }> = Object.fromEntries([

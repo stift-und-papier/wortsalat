@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ablagePlaetze, BAUM_PLAETZE, belegung, BOOT, blobTeil, DEKO_PLAETZE, FELD_PLAETZE, FIGUR_START, GRAS_DEKO, grundKacheln, HEU, hindernisse, HUHN_PLAETZE, istGras, KUH_PLAETZE,
-  DEKO_PLATZ, MONSTER_PLATZ, nebenan, SCHEUNE, SPALTEN, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
+  DEKO_PLATZ, MONSTER_PLATZ, nebenan, platzKacheln, SCHEUNE, SPALTEN, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
 } from './landschaft'
 
 describe('Landschaft', () => {
@@ -92,6 +92,12 @@ describe('ablagePlaetze', () => {
       expect(istGras(o.x, o.y), id).toBe(false)
       expect([[0, 1], [0, -1], [1, 0], [-1, 0]].some(([dx, dy]) => istGras(o.x + dx, o.y + dy)), id).toBe(true)
       expect(o.x >= BOOT.x && o.x < BOOT.x + 3 && o.y >= BOOT.y && o.y < BOOT.y + 2, id).toBe(false)
+    }
+  })
+  it('keine Deko-Plätze am unteren Ufer (Jazz 2026-11-17): unter jedem Platz an Land ist Gras', () => {
+    for (const [id, p] of Object.entries(DEKO_PLATZ)) {
+      if (p.art === 'wasser') continue
+      for (const k of platzKacheln(id)) expect(istGras(k.x, k.y + 1), id).toBe(true)
     }
   })
   it('Boot liegt ganz im Wasser, Obstbäume sind mit allem anderen zusammen erreichbar', () => {
