@@ -28,7 +28,7 @@ Die Karte und die Plätze stammen aus Teilaufgabe 2 (`layout-leer.md`). Hier ist
 | Obstgarten | 3 Obstbäume mit Früchten |
 | Scheune | 2 Kühe, davon eine hungrig (Trog leer), daneben 1 Flasche Milch zum Einsammeln |
 | Hühnerstall | 4 Hühner, 2 davon hungrig (Napf leer), 1 Ei zum Einsammeln |
-| Monster | Maus (kleines Monster) mit kleiner Hütte (im Mockup die heutige Hütte halb so groß), Monster vor der Tür, sein Geschenk (Samentüte) liegt daneben |
+| Monster | Maus (kleines Monster) mit kleiner Hütte (kleiner Hühnerstall mit lila Dach), Monster vor der Tür, sein Geschenk (Samentüte) liegt daneben |
 | Brunnen, Boot | beide gekauft |
 | Blumenbeete (6 Beete, 16 Plätze) | alle bepflanzt, gemischt aus heutigen Blumen-Bildern und neuen Blumen (Platzhalter) |
 | Deko klein (20) | 14 mit heutigen Bildern, 6 mit neuen Bildern aus den Paketen (im Mockup als Platzhalter) |

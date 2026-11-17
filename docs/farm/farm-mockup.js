@@ -39,9 +39,10 @@ const KUEHE = [{ x: 19, y: 3 }, { x: 21, y: 3 }] // je 2 × 2, höchstens 2 (Jaz
 const STALL = { x: 19, y: 9 } // 3 × 3
 const HUEHNER = [{ x: 17, y: 10 }, { x: 23, y: 10 }, { x: 18, y: 12 }, { x: 22, y: 12 }]
 // Jazz 2026-11-17: Hütte weiter oben, der Eingang zeigt nicht mehr aufs Wasser. Platz 4 × 4 für die große Hütte (heutiges Bild);
-// kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte 2 × 2 unten mittig auf diesem Platz (neue Grafik)
+// kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte 2 × 3 unten mittig auf diesem Platz:
+// Jazz 2026-11-17: der kleine Hühnerstall mit einem Fenster aus dem Premium-Paket (Chikcen_Houses.png, 6 Dachfarben)
 const HUETTE = { x: 4, y: 8 }
-const HUETTE_KLEIN = { x: 5, y: 10 }
+const HUETTE_KLEIN = { x: 5, y: 9 }
 // Jazz 2026-11-17: Monster läuft nie ins Wasser. Laufweg vor der Tür; links, rechts und darunter ist Gras (Prüfung unten)
 const MONSTER = { x: 5, y: 12 }
 const BRUNNEN = { x: 13, y: 7 } // 2 × 2
@@ -199,7 +200,7 @@ async function zeichnen() {
     zone('Acker: 12 Felder, 4 zu Beginn', 3, 4, 4, 3)
     zone('Scheune: 2 Kühe', SCHEUNE.x, SCHEUNE.y, SCHEUNE.b, SCHEUNE.h)
     zone('Hühnerstall + 4 Hühner', 17, 9, 7, 4)
-    zone('Monster-Hütte (groß 4 × 4, klein 2 × 2)', HUETTE.x, HUETTE.y, 4, 4)
+    zone('Monster-Hütte (groß 4 × 4, klein 2 × 3)', HUETTE.x, HUETTE.y, 4, 4)
     zone('Monster', MONSTER.x, MONSTER.y, 2, 1)
     zone('Boot', BOOT.x, BOOT.y, 3, 2)
     zone('Brunnen', BRUNNEN.x, BRUNNEN.y, 2, 2)
@@ -249,8 +250,10 @@ function volleFarm(p, setze, platzhalter) {
   platzhalter('Napf leer', 23, 9, 1, 1)
   platzhalter('Trog leer', 21, 2, 2, 1)
   // Monster (Maus) vor seiner Hütte (Dach Nr. 3), läuft hin und her; sein Geschenk liegt daneben und hüpft
-  // Die Maus ist ein kleines Monster: kleine Hütte (im Mockup das heutige Bild halb so groß, im Spiel eine neue Grafik 32 × 32)
-  ding(sprite('huette', 64, 64, 192, 192, 3, m / 2), HUETTE_KLEIN.x, HUETTE_KLEIN.y, 2, 2)
+  // Die Maus ist ein kleines Monster: kleiner Hühnerstall (32 × 48, lila Dach) als Hütte.
+  // shortcut: liest das Bild direkt aus dem Paketordner assets/ (nicht im Repo, nur auf dem Rechner der Lehrkraft); im Spiel käme es nach src/grafik/
+  const KLEIN = '../../assets/entpackt/Sprout Lands - Sprites - premium pack/Tilesets/Building parts/Animal Structures/Chikcen_Houses.png'
+  ding(`<div class="sprite" style="width:${32 * m}px;height:${48 * m}px;background:url('${KLEIN}') -${224 * m}px -${128 * m}px/${384 * m}px ${176 * m}px"></div>`, HUETTE_KLEIN.x, HUETTE_KLEIN.y, 2, 3)
   ding(sprite('monster_maus', 16, 16, 208, 16, 0, m, 'laufen'), MONSTER.x, MONSTER.y, 1, 1, true)
   // Liegendes hüpft: Ei, Milch, Monster-Geschenk (Samentüte)
   ding(sprite('ei', 16, 16, 16, 16, 0, m, 'huepfen'), 18, 11, 1, 1, true)

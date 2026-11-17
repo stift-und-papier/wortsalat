@@ -558,5 +558,6 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   6 Blumenbeete mit 16 Plätzen (Blumen eines Beets dicht, Auswahl je Beet), Blumen-Vorschläge aus den Paketen in `layout-leer.md` Abschnitt 8.
   Selbstprüfung in allen Größen ok.
 - **Nachtrag Jazz:** Monster-Hütte weiter oben (Platz 4 × 4 bei x 4, y 8; Eingang nicht mehr am Wasser, Laufweg vor der Tür auf Gras);
-  kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte 2 × 2 (neue Grafik, das Paket hat nur eine Größe).
+  kleine Monster (Gespenst, Spinnen, Maus) bekommen eine kleine Hütte: den kleinen Hühnerstall mit einem Fenster
+  (Premium `Chikcen_Houses.png`, 32 × 48, 2 × 3 Kacheln, 6 Dachfarben; Jazz), keine neue Grafik.
 - **Nächster Schritt:** Teilaufgabe 4 (Dekorationskonzept).
