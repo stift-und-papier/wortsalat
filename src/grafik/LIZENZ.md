@@ -85,7 +85,6 @@ Das frühere `album_seite.png` (Humble Gift – Paper UI System) wird seit dem 2
 - `trog.png`: jetzt alle 3 Bilder aus Sprout Lands Premium, Animal Structures/Water tray.png (voll, halb, leer).
 - `huette_klein.png`: Sprout Lands Premium, Animal Structures/Chikcen_Houses.png, kleiner Hühnerstall mit einem Fenster in 6 Dachfarben (Hütte für kleine Monster).
 - `napf.png`: eigenes Bild der Lehrkraft, mit KI-Hilfe (Gemini) als Vorlage erstellt und von Claude im Stil von Sprout Lands nachgezeichnet (`docs/farm/handgezeichnet.cjs`). Keine Namensnennung nötig.
-- `knopf_zahnrad.png`: Sprout Lands UI Pack Premium, UI Sprites/buttons/Icon Buttons/Icon Buttons Spritesheet.png (Zahnrad-Knopf, normal).
 
 ## TastenHeld
 

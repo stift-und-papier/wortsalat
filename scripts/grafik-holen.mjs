@@ -141,8 +141,6 @@ const BILDER = [
   { name: 'huette_klein', datei: SPRITES + 'Tilesets/Building parts/Animal Structures/Chikcen_Houses.png', x: 160, y: 80, breite: 96, hoehe: 96, bildBreite: 32, bildHoehe: 48 },
   // Jazz 2026-11-17 (E4): Napf leer und voll, eigenes Bild (nach Gemini-Vorlage der Lehrkraft von Claude gezeichnet, docs/farm/handgezeichnet.cjs)
   { name: 'napf', datei: 'assets/neu/napf.png', x: 0, y: 0, breite: 28, hoehe: 8, bildBreite: 14, bildHoehe: 8 },
-  // Jazz 2026-11-17: Zahnrad-Knopf „Farm einrichten“ aus dem UI Pack Premium (Icon Buttons, normaler Knopf ohne Druck)
-  { name: 'knopf_zahnrad', datei: 'assets/entpackt/Sprout Lands - UI Pack - Premium pack/UI Sprites/buttons/Icon Buttons/Icon Buttons Spritesheet.png', x: 5, y: 132, breite: 22, hoehe: 24 },
   { name: 'truhe', datei: 'assets/entpackt/Sprout Lands - Sprites - Basic pack/Objects/Chest.png', x: 16, y: 18, breite: 16, hoehe: 14 },
 ]
 

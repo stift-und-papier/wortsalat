@@ -392,9 +392,9 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
               <Symbol name="shop" />
               Laden
             </a>
-            {/* Jazz 2026-11-17: Zahnrad-Knopf aus dem UI Pack */}
-            <button type="button" className="farm-zahnrad" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
-              <Sprite grafik={GRAFIK.knopf_zahnrad} mal={2.5} />
+            {/* Jazz 2026-11-17: doch wieder der alte Holzknopf mit Zahnrad */}
+            <button type="button" className="holzknopf" aria-label="Farm einrichten" onClick={() => setEinrichten(true)}>
+              <Symbol name="einstellungen" />
             </button>
           </>,
           kopf.rechts,

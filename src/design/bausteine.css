@@ -967,9 +967,6 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .kopf-mitte .farm-meldung .leise { color: var(--color-tinte); }
 .farm-laden { display: inline-flex; align-items: center; gap: var(--space-xs); min-height: 48px; text-decoration: none; white-space: nowrap; }
 .farm-laden .symbol { width: 28px; height: 28px; }
-.farm-zahnrad { display: grid; place-items: center; min-width: 48px; min-height: 48px; padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; }
-.farm-zahnrad:active { transform: translateY(2px); }
-.farm-zahnrad:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
 /* Kopfzeile der Farm über die ganze Breite wie das Spielfenster: auf der Farm-Seite keine schmale Textspalte */
 .garten-seite--farm .garten-seite__inhalt { max-width: none; }
 .farm-rahmen { overflow: hidden; }
