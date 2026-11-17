@@ -28,7 +28,7 @@ aus den Migrationen `lernstand`, `belohnungen` und `uebungen_runden` (nur gelese
 | W4 (Wasser am Südufer, x 10, y 12) | **Seerosen** | 2 × 1 Wasser | 1. ein kleines Blatt · 2. ein großes Blatt · 3. ein Blatt mit rosa Knospe · 4. eine blühende Seerose | vorhanden |
 | W5 (x 11, y 7) | **Beerenbusch** | 1 × 1 | 1. ein kleiner Busch · 2. ein voller Busch · 3. ein Busch mit roten Beeren (nur Deko, nicht zum Ernten); dunkles Grün | vorhanden, umgefärbt |
 | W6 (rechter Rand beim Baum, x 25, y 6) | **Vogelhaus** | 1 × 2 | 1. ein Pfahl · 2. ein Pfahl mit Brett · 3. ein Vogelhaus · 4. Futter liegt im Vogelhaus · 5. ein Vogel sitzt auf dem Dach (Standbild, bewegt sich nicht) | **neu** |
-| W7 (linker Rand am Obstgarten, x 0, y 5) | **Eiche** | 1 × 2 | 1. eine Eichel · 2. die Eichel keimt · 3. ein Sprössling · 4. ein kleiner Baum · 5. eine junge Eiche; helles Gelbgrün | vorhanden, umgefärbt |
+| W7 (linker Rand am Obstgarten, x 0, y 5) | **Eiche** (Jazz: Herbst-Eiche, letzte Stufe kleiner Herbstbaum aus halloween/fall_trees.png) | 1 × 2 | 1. eine Eichel · 2. die Eichel keimt · 3. ein Sprössling · 4. ein kleiner Baum · 5. eine junge Eiche; helles Gelbgrün | vorhanden, umgefärbt |
 | W8 (zwischen Acker und Hütte, x 8, y 8) | **zweite Sonnenblume** (Jazz, statt Windrad) | 1 × 2 | wie W3 | vorhanden |
 
 **Farben (Jazz, 2026-11-17):** Die Obstbäume sind türkisgrün. Damit sich die wachsenden Pflanzen davon abheben, ist die Eiche hell gelbgrün und der Beerenbusch dunkelgrün; die 2. Kirschbaum-Stufe ist rosa wie die übrigen. Umgefärbt wird nur mit Farben der Sprout-Lands-Palette (`docs/farm/farben.js`, Reihe gegen Reihe gleicher Helligkeit).

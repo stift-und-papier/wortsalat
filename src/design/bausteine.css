@@ -955,13 +955,16 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 /* Meldung oben in der Mitte der Kopfzeile: Papier-Schild, nimmt den freien Platz, darf zweizeilig werden */
 .garten-seite--farm .muenzen-stand { flex-wrap: nowrap; }
 .kopf-mitte { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; }
+/* Jazz 2026-11-17: wie Einsteins Sprechblase (Rahmen --rahmen-blase, Tinte), ohne Spitze; Rahmen 2-fach, damit die Kopfzeile flach bleibt */
 .kopf-mitte .farm-meldung {
-  max-width: 100%; box-sizing: border-box; padding: 2px var(--space-xs); border: solid transparent; border-width: 10px;
-  border-image: url('../grafik/tafel.png') 5 fill / 10px; image-rendering: pixelated;
-  color: var(--color-album-tinte); text-align: center; font-size: 17px; line-height: 1.25;
+  --px: 2px;
+  max-width: 100%; box-sizing: border-box; padding: 0 var(--space-xs);
+  border-style: solid; border-width: calc(4 * var(--px)) calc(4 * var(--px)) calc(6 * var(--px));
+  border-image: var(--rahmen-blase) 4 4 6 fill;
+  color: var(--color-tinte); text-align: center; font-size: 17px; line-height: 1.25;
 }
 .kopf-mitte .farm-meldung p { margin: 0; }
-.kopf-mitte .farm-meldung .leise { color: var(--color-album-tinte); }
+.kopf-mitte .farm-meldung .leise { color: var(--color-tinte); }
 .farm-bildknopf--laden {
   width: auto; display: inline-flex; gap: var(--space-xs); padding: 0 var(--space-xs); align-items: center;
   color: var(--color-album-tinte); font-weight: 800; font-size: 17px; line-height: 1; text-decoration: none;
