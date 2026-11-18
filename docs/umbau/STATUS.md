@@ -638,5 +638,9 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - **Teilaufgabe 6 – Zusammenfassung** (2026-11-18): `docs/farm/zusammenfassung.md`: alle freigegebenen Entscheidungen, was schon im Spiel ist
   (Schritte 1–3), Reihenfolge der weiteren Umsetzung, gesamte Asset-Liste. Dabei geprüft: „Ergebnisse zurücksetzen“ löscht noch Münzen und Farm
   (Antwort 8 nicht gebaut), Erklärseiten zeigen noch alle des Jahrgangs (Antwort 9 nicht gebaut).
-- **Nächster Schritt:** Jazz entscheidet, was umgesetzt wird. Vorschlag: Schritt 4 Zurücksetzen behält Münzen und Farm, 5 Münzsystem Modell A,
-  6 Erklärseiten nur aus zugewiesenen Paketen, 7 kleines Buch, 8 iPad-Test und Merge (je mit Rückfrage vor Migration, Push und Merge).
+- **Umsetzung Schritt 4** (2026-11-18, Jazz: Schritt 4 zuerst, Schritt 7 kleines Buch gestrichen): „Ergebnisse zurücksetzen“ löscht nur noch
+  Antworten, Durchgänge, „Lösung angesehen“ und Sterne-Stufen; Münzen, Besitz, Pflanzen, Vorrat, Belohnungen, wachsende Deko und Farm-Monster bleiben
+  (Migration `zuruecksetzen_farm_bleibt`, eingespielt). Keine doppelten Münzen danach (Münz-Ereignisse bleiben). DB-Test 8.12, 9.7, 10.8 prüfen jetzt
+  „bleibt“; Texte in der Klassenansicht und in `SPEC.md`/`SPEC-muenzen.md` angepasst. **Getestet:** DB-Test 168, Tests 157. **Nicht getestet:** Knopf im Browser
+  (würde Testkonten verändern).
+- **Nächster Schritt:** Schritt 5 Münzsystem Modell A (Migration, vorher Rückfrage), danach 6 Erklärseiten nur aus zugewiesenen Paketen, 8 iPad-Test und Merge.

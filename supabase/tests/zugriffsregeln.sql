@@ -703,12 +703,22 @@ begin
     end if;
     reset role;
     n := n + 1;
-    -- Zurücksetzen löscht die Münzen
-    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
-    set local role authenticated;
-    perform public.ergebnisse_zuruecksetzen(array[v_fuchs]);
-    reset role;
-    if public.kontostand(v_fuchs) <> 0 then raise exception 'Block 8.12: Münzen nach Zurücksetzen noch da'; end if;
+    -- Jazz 2026-11-17 (Antwort 8): Zurücksetzen behält die Münzen
+    declare
+      v_vorher integer := public.kontostand(v_fuchs);
+    begin
+      perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+      set local role authenticated;
+      perform public.ergebnisse_zuruecksetzen(array[v_fuchs]);
+      reset role;
+      if v_vorher = 0 or public.kontostand(v_fuchs) <> v_vorher then raise exception 'Block 8.12: Münzen nach Zurücksetzen verändert'; end if;
+    end;
+    -- Aufräumen nur für die folgenden Tests (wie das alte Zurücksetzen)
+    delete from public.pflanzungen where schueler_id = v_fuchs;
+    delete from public.vorrat where schueler_id = v_fuchs;
+    delete from public.belohnungen where schueler_id = v_fuchs;
+    delete from public.besitz where schueler_id = v_fuchs;
+    delete from public.muenz_ereignisse where schueler_id = v_fuchs;
     n := n + 2;
   end;
 
@@ -856,7 +866,13 @@ begin
     set local role authenticated;
     perform public.ergebnisse_zuruecksetzen(array[v_eule]);
     reset role;
-    if exists (select 1 from public.besitz where schueler_id = v_eule) then raise exception 'Block 9.7: Besitz nach Zurücksetzen noch da'; end if;
+    if not exists (select 1 from public.besitz where schueler_id = v_eule) then raise exception 'Block 9.7: Besitz nach Zurücksetzen weg'; end if;
+    -- Aufräumen nur für die folgenden Tests (wie das alte Zurücksetzen)
+    delete from public.pflanzungen where schueler_id = v_eule;
+    delete from public.vorrat where schueler_id = v_eule;
+    delete from public.belohnungen where schueler_id = v_eule;
+    delete from public.besitz where schueler_id = v_eule;
+    delete from public.muenz_ereignisse where schueler_id = v_eule;
     n := n + 1;
   end;
 
@@ -935,9 +951,15 @@ begin
     set local role authenticated;
     perform public.ergebnisse_zuruecksetzen(array[v_eule]);
     reset role;
-    if exists (select 1 from public.vorrat where schueler_id = v_eule) or exists (select 1 from public.pflanzungen where schueler_id = v_eule) then
-      raise exception 'Block 10.8: Farm nach Zurücksetzen noch da';
+    if not exists (select 1 from public.vorrat where schueler_id = v_eule) then
+      raise exception 'Block 10.8: Vorrat nach Zurücksetzen weg';
     end if;
+    -- Aufräumen nur für die folgenden Tests (wie das alte Zurücksetzen)
+    delete from public.pflanzungen where schueler_id = v_eule;
+    delete from public.vorrat where schueler_id = v_eule;
+    delete from public.belohnungen where schueler_id = v_eule;
+    delete from public.besitz where schueler_id = v_eule;
+    delete from public.muenz_ereignisse where schueler_id = v_eule;
     n := n + 1;
   end;
 

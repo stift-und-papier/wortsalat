@@ -87,7 +87,7 @@ muenzen → shop → felder → tiere, spielfigur → uebernahme
 - Aufgaben in allen 8 Formaten anlegen, mit Schwierigkeit (1–3 Sterne), Kompetenzen und Live-Vorschau.
 - Aufgaben filtern und sortieren; Pakete anlegen, ordnen, taggen, zuweisen.
 - Lernstand der Klasse (Heatmap) und je Schüler:in ansehen und drucken.
-- Ergebnisse zurücksetzen (setzt auch Münzen und Farm zurück), Schüler:innen und Klassen löschen.
+- Ergebnisse zurücksetzen (Münzen und Farm bleiben, Jazz 2026-11-17), Schüler:innen und Klassen löschen.
 
 ### Diktat (neu)
 - Die Lehrkraft **fügt einen Text ein**.

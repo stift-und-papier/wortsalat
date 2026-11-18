@@ -23,7 +23,7 @@ der Lehrkraft zwischen erstem und zweitem Vorschlag angesetzt (freigegeben 2026-
   Doppelte Abgabe (z. B. offline nachgereicht) bringt keine doppelten Münzen. Nur **eine** Datenbankfunktion vergibt
   Münzen; der Kontostand ist die Summe der Ereignisse minus Käufe.
 - Schüler:innen sehen den Kontostand und nach der Abgabe „+15 Münzen“. Keine Ranglisten, kein Vergleich mit anderen.
-- „Ergebnisse zurücksetzen“ setzt Münzen, Besitz und Farm mit zurück.
+- „Ergebnisse zurücksetzen“ löscht nur Antworten und Lernstand; Münzen, Besitz und Farm bleiben (Jazz 2026-11-17, Antwort 8).
 
 ## Shop
 

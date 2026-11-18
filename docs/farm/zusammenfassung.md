@@ -138,7 +138,7 @@ Schritte mit Datenbank-Änderung frage ich vorher an.
 | 4 | **„Ergebnisse zurücksetzen“ behält Münzen und Farm** (Antwort 8). Heute löscht es noch Münzen, Gekauftes, Pflanzen und Vorrat. | Es widerspricht der Regel „Münzen nie streichen“. Bevor echte Klassen spielen, muss es weg. | ja (`ergebnisse_zuruecksetzen` neu) |
 | 5 | **Münzsystem Modell A** (M1 bis M9), siehe die Liste unter der Tabelle | Kern von Teilaufgabe 5 | ja |
 | 6 | **Erklärseiten nur aus zugewiesenen Paketen** (Antwort 9). Heute sieht ein Kind alle Erklärseiten seines Jahrgangs. | schließt Schlupfloch 5 (Münzen fürs bloße Antippen) | ja (`erklaerungen_liste` neu) |
-| 7 | **kleines Buch** für den Sammelalbum-Knopf | die einzige noch fehlende Grafik | nein |
+| ~~7~~ | ~~kleines Buch für den Sammelalbum-Knopf~~ | gestrichen (Jazz 2026-11-18), der Knopf behält das heutige Buch | – |
 | 8 | **Test am echten iPad** (Hoch- und Querformat, Tastatur-Hülle, dunkler Modus, Bewegung reduzieren), danach Merge nach `main` | Vieles ist nur im Browser geprüft | nein (Push und Merge nur nach Rückfrage) |
 
 **Was Schritt 5 umfasst:**
@@ -164,7 +164,7 @@ Schritte mit Datenbank-Änderung frage ich vorher an.
 | Kaufbare Deko | 22 Bilder `deko_*` (mit Farbstreifen) | Sprout Lands Premium und Sorry Pack, umgefärbt mit `docs/farm/farben.js` | im Spiel |
 | Bedienung | `laden` (Einkaufswagen), `truhe`, `buch`, `menue_*`, `knopf_x`, `dialog_blase`, `muenze`, `schalter_*`, `symbol_rahmen`, `tafel` | Sprout Lands UI Pack Premium/Basic, Humble Gift | im Spiel |
 | Sammelalbum | `sticker` (58 Sticker), `buch_rot`, `lesezeichen` | aus den Bildern oben zusammengesetzt, Humble Gift | im Spiel |
-| **Buch klein** (Sammelalbum-Knopf) | 16 × 16 | neu zu zeichnen (wie das heutige eigene Buch-Bild) | **offen** |
+| **Buch klein** (Sammelalbum-Knopf) | 16 × 16 | neu zu zeichnen | gestrichen (Jazz 2026-11-18) |
 | Weihnachtsbaum | 48 × 64 | in einem Paket vorhanden | passt auf keinen großen Platz, nicht verwendet |
 | Bank mit Tisch, Laterne | – | in keinem Paket | nicht verwendet |
 

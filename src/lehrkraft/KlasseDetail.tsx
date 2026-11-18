@@ -81,7 +81,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
 
   function einzelnZuruecksetzen(s: Schueler) {
     const ok = window.confirm(
-      `Ergebnisse von ${s.pseudonym} zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht. Pseudonym und Link bleiben.`,
+      `Ergebnisse von ${s.pseudonym} zurücksetzen?\n\nAlle Antworten und der Lernstand werden endgültig gelöscht. Münzen und Farm bleiben, Pseudonym und Link auch.`,
     )
     if (ok) zuruecksetzen([s], `Ergebnisse von ${s.pseudonym} zurückgesetzt.`)
   }
@@ -89,7 +89,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
   function klasseZuruecksetzen() {
     if (!klasse) return
     const eingabe = window.prompt(
-      `Die Ergebnisse aller ${schueler.length} Schüler:innen der Klasse „${klasse.name}“ zurücksetzen?\n\nAlle Antworten und Münzen werden endgültig gelöscht. Pseudonyme und Links bleiben. Zur Bestätigung den Klassennamen eintippen:`,
+      `Die Ergebnisse aller ${schueler.length} Schüler:innen der Klasse „${klasse.name}“ zurücksetzen?\n\nAlle Antworten und der Lernstand werden endgültig gelöscht. Münzen und Farm bleiben, Pseudonyme und Links auch. Zur Bestätigung den Klassennamen eintippen:`,
     )
     if (eingabe?.trim() === klasse.name) zuruecksetzen(schueler, `Ergebnisse der Klasse „${klasse.name}“ zurückgesetzt.`)
   }
@@ -359,7 +359,7 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
       <section className="lk-abschnitt">
         <h2>Ergebnisse zurücksetzen</h2>
         <p className="lk-leise">
-          Zum Beispiel am Schuljahresende: Löscht alle Antworten und Münzen der Klasse endgültig. Pseudonyme und Links bleiben.
+          Zum Beispiel am Schuljahresende: Löscht alle Antworten und den Lernstand der Klasse endgültig. Münzen und Farm der Kinder bleiben, Pseudonyme und Links auch.
         </p>
         <div>
           <button type="button" className="lk-knopf" disabled={schueler.length === 0} onClick={klasseZuruecksetzen}>
