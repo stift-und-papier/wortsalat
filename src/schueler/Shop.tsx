@@ -163,7 +163,7 @@ export function Shop({ token, farm, nachKauf }: { token: string; farm: string; n
     )
   } else if (wahl) {
     // Usability-Test 2026-11-13: sagen, wie weit es noch ist (verdiente Münzen, Ausgeben zählt nicht)
-    rechts = <span>Kommt, wenn du noch {wahl.fehlt} Münzen verdienst.</span>
+    rechts = <span>Kommt, wenn du beim Üben noch {wahl.fehlt} Münzen verdienst.</span>
   }
 
   // Jazz 2026-11-17 (Schritt 3a): nach dem Kauf von Deko rechts die Frage „gleich aufstellen?“

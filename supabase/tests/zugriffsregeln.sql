@@ -751,8 +751,8 @@ begin
     end;
     n := n + 1;
     if (public.kaufen(t_eule, 'karotte') ->> 'kontostand')::int <> 95 then raise exception 'Block 9.3: Kauf zieht falsch ab'; end if;
-    perform public.kaufen(t_eule, 'feld');
-    if (public.kaufen(t_eule, 'feld') ->> 'kontostand')::int <> 15 then raise exception 'Block 9.3: Felder falsch abgezogen'; end if;
+    -- Feld kostet seit Modell A 80 (Jazz 2026-11-18, M2)
+    if (public.kaufen(t_eule, 'feld') ->> 'kontostand')::int <> 15 then raise exception 'Block 9.3: Feld falsch abgezogen'; end if;
     begin
       perform public.kaufen(t_eule, 'feld');
       raise exception 'Block 9.4: Kauf ohne genug Münzen';
@@ -769,7 +769,7 @@ begin
     end;
     reset role;
     -- Höchstens 8 gekaufte Felder
-    insert into public.besitz (schueler_id, artikel_id, preis) select v_eule, 'feld', 0 from generate_series(1, 6);
+    insert into public.besitz (schueler_id, artikel_id, preis) select v_eule, 'feld', 0 from generate_series(1, 7);
     insert into public.muenz_ereignisse (schueler_id, grund, schluessel, muenzen) values (v_eule, 'lehrkraft', 'test-viel', 1000);
     set local role anon;
     begin
@@ -1037,8 +1037,13 @@ begin
       v := public.einsammeln(t_eule, (v -> 'liegen' -> 0 ->> 'id')::uuid);
       if not (v -> 'vorrat' @> '[{"sorte":"ei_blau","anzahl":1}]') then raise exception 'Block 11.7: Güte falsch: %', v; end if;
       v := public.verkaufen(t_eule, 'ei_blau');
-      if (v ->> 'kontostand')::int <> 125 then raise exception 'Block 11.7: blaues Ei falsch bezahlt: %', v; end if;
+      if (v ->> 'kontostand')::int <> 95 then raise exception 'Block 11.7: blaues Ei falsch bezahlt (50): %', v; end if;
       reset role;
+      -- Modell A (M1): Verkäufe zählen nicht fürs Freischalten
+      if public.verdient(v_eule) <> (select sum(muenzen) from public.muenz_ereignisse where schueler_id = v_eule and grund <> 'verkauf')
+         or not exists (select 1 from public.muenz_ereignisse where schueler_id = v_eule and grund = 'verkauf') then
+        raise exception 'Block 11.7b: Verkauf zählt fürs Freischalten';
+      end if; n := n + 1;
     end;
     n := n + 1;
     -- Verkaufs-Münzen gießen nicht
@@ -1143,10 +1148,10 @@ begin
       raise exception 'Block 14.2: Farm ohne Baum oder Boot: %', v;
     end if;
     n := n + 2;
-    -- Ernten: drei Orangen gleich im Vorrat (nichts liegt auf der Karte), dann eine Woche Pause
+    -- Ernten: drei Orangen gleich im Vorrat (nichts liegt auf der Karte), dann 14 Tage Pause (Modell A)
     v := public.baum_ernten(t_eule, v_baum);
     if not (v -> 'vorrat' @> '[{"sorte":"orange","anzahl":3}]') or v::text ~ '"bei": "baum:'
-       or (v -> 'baeume' -> 0 ->> 'tage')::int <> 7 then
+       or (v -> 'baeume' -> 0 ->> 'tage')::int <> 14 then
       raise exception 'Block 14.3: Ernte falsch: %', v;
     end if;
     begin
@@ -1159,8 +1164,8 @@ begin
       raise exception 'Block 14.5: fremden Baum geerntet';
     exception when raise_exception then if sqlerrm !~ 'gibt es nicht' then raise; end if;
     end;
-    -- Verkaufen (Orange 30)
-    if not (public.schueler_verkauf(t_eule) -> 'vorrat' @> '[{"sorte":"orange","anzahl":3,"preis":30}]') then
+    -- Verkaufen (Orange 15 seit Modell A)
+    if not (public.schueler_verkauf(t_eule) -> 'vorrat' @> '[{"sorte":"orange","anzahl":3,"preis":15}]') then
       raise exception 'Block 14.6: Orange nicht verkaufbar: %', public.schueler_verkauf(t_eule);
     end if;
     if not (public.schueler_album(t_eule) @> '[{"id":"orangenbaum","gesammelt":true},{"id":"boot","gesammelt":true}]') then
@@ -1168,13 +1173,18 @@ begin
     end if;
     reset role;
     n := n + 5;
-    -- Nach 6 Tagen noch 1 Tag, nach 7 Tagen wieder reif
-    update public.besitz set geerntet_am = now() - interval '6 days' where id = v_baum;
+    -- Modell A (M6): nach 13 Tagen noch 1 Tag, nach 14 Tagen wieder reif
+    update public.besitz set geerntet_am = now() - interval '13 days' where id = v_baum;
     select public.baum_tage(b) into k from public.besitz b where id = v_baum;
-    if k <> 1 then raise exception 'Block 14.8: nach 6 Tagen % statt 1', k; end if;
-    update public.besitz set geerntet_am = now() - interval '7 days' where id = v_baum;
+    if k <> 1 then raise exception 'Block 14.8: nach 13 Tagen % statt 1', k; end if;
+    update public.besitz set geerntet_am = now() - interval '14 days' where id = v_baum;
     select public.baum_tage(b) into k from public.besitz b where id = v_baum;
-    if k <> 0 then raise exception 'Block 14.8: nach 7 Tagen nicht reif (%)', k; end if;
+    if k <> 0 then raise exception 'Block 14.8: nach 14 Tagen nicht reif (%)', k; end if;
+    -- Modell A (M2, M5): Dauerhaftes doppelt, Samen wie bisher
+    if (select preis from public.shop_artikel where id = 'huhn') <> 440 or (select preis from public.shop_artikel where id = 'karotte') <> 15
+       or (select verkauf from public.shop_artikel where id = 'aubergine') <> 45 then
+      raise exception 'Block 14.9: Preise nach Modell A falsch';
+    end if; n := n + 1;
     n := n + 1;
   end;
 

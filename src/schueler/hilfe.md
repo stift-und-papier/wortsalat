@@ -53,7 +53,7 @@ Für jede Aufgabe, die du richtig löst, bekommst du Münzen. Beim ersten Versuc
 
 ## Wofür sind die Münzen?
 
-Im **Shop** kaufst du damit Samen, Tiere, Obstbäume, Deko und neue Felder für deine Farm. Am Anfang gibt es nur wenige Dinge. Je mehr Münzen du insgesamt verdienst, desto mehr kommt dazu. Beim Fragezeichen steht, wie viele Münzen dir dafür noch fehlen. Was du ausgibst, zählt trotzdem mit.
+Im **Shop** kaufst du damit Samen, Tiere, Obstbäume, Deko und neue Felder für deine Farm. Am Anfang gibt es nur wenige Dinge. Je mehr Münzen du beim Üben verdienst, desto mehr kommt dazu. Beim Fragezeichen steht, wie viele Münzen dir dafür noch fehlen. Was du ausgibst, zählt trotzdem mit. Münzen vom Verkaufen zählen dafür nicht.
 
 ## Wie pflanze ich etwas?
 
@@ -77,7 +77,7 @@ Hühner und Kühe gibt es im Shop, sobald du genug Münzen verdient hast. Tippe 
 
 ## Was mache ich mit Ernte, Eiern und Milch?
 
-Du kannst damit Tiere füttern oder alles im **Shop** verkaufen. Dann bekommst du wieder Münzen.
+Du kannst damit Tiere füttern oder alles im **Shop** verkaufen. Dann bekommst du etwas mehr Münzen zurück, als der Samen gekostet hat. Die meisten Münzen gibt es fürs Üben.
 
 ## Warum wachsen auf meiner Farm Bäume und Blumen, die ich nicht gepflanzt habe?
 

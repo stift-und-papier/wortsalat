@@ -643,4 +643,10 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (Migration `zuruecksetzen_farm_bleibt`, eingespielt). Keine doppelten Münzen danach (Münz-Ereignisse bleiben). DB-Test 8.12, 9.7, 10.8 prüfen jetzt
   „bleibt“; Texte in der Klassenansicht und in `SPEC.md`/`SPEC-muenzen.md` angepasst. **Getestet:** DB-Test 168, Tests 157. **Nicht getestet:** Knopf im Browser
   (würde Testkonten verändern).
-- **Nächster Schritt:** Schritt 5 Münzsystem Modell A (Migration, vorher Rückfrage), danach 6 Erklärseiten nur aus zugewiesenen Paketen, 8 iPad-Test und Merge.
+- **Umsetzung Schritt 5** (2026-11-18, Jazz: eingespielt): Münzsystem Modell A (Migration `muenzen_lernen_zaehlt`). `verdient` zählt Verkäufe ab
+  2026-11-18 18 Uhr nicht mehr (früher Verdientes und Lehrkraft-Geschenke zählen weiter). Ernte = Samenpreis + 5; Ei 25/40/50, Milch 30/45/55
+  (teuerster Futtersamen der Güte + 5/+10, da nur die Güte gespeichert ist); Obst 15/18/20, Bäume alle 14 Tage; Felder, Tiere, Bäume, Deko × 2, Samen gleich.
+  Texte: Laden „beim Üben verdienst“, Hilfe (Verkaufen bringt wenig, zählt nicht), Obstbaum „alle zwei Wochen“; Hinweis oben in `SPEC-felder.md`/`SPEC-muenzen.md`.
+  **Getestet:** DB-Test 170 (neu 11.7b Verkauf zählt nicht, 14.9 Preise, 14.8 vierzehn Tage), Tests 157, Laden im Browser (Huhn 440).
+  **Nicht getestet:** Verkaufen und Ernten im Browser (würde Testkonten verändern), echtes iPad.
+- **Nächster Schritt:** Schritt 6 Erklärseiten nur aus zugewiesenen Paketen (Migration, vorher Rückfrage), danach 8 iPad-Test und Merge.

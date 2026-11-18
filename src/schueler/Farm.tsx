@@ -317,7 +317,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
         aria-label={reif ? `${info.name}: reif, antippen zum Ernten` : `${info.name}: trägt ${wann} wieder Früchte`}
         onClick={() =>
           gehe(nebenan(tierFlaeche(o, 2)), () => {
-            if (!reif) return setMeldung(`Der ${info.name} trägt ${wann} wieder Früchte. Du kannst Obstbäume einmal pro Woche ernten.`)
+            if (!reif) return setMeldung(`Der ${info.name} trägt ${wann} wieder Früchte. Du kannst Obstbäume alle zwei Wochen ernten.`)
             void baumErnten(b.id, info.name, info.fruechte)
           })
         }

@@ -1,5 +1,8 @@
 # Spec: Felder und Tiere (`felder`, `tiere`)
 
+> **Stand 2026-11-18 (Münzsystem Modell A):** Preise, Verkaufspreise und Obstbäume (alle 14 Tage) gelten jetzt nach
+> `docs/farm/muenzen-vorschlag.md` und Migration `20261118150000_muenzen_lernen_zaehlt.sql`; Zahlen unten sind der alte Stand.
+
 Antworten der Lehrkraft vom 2026-11-12 auf die offenen Fragen 8, 9 und 12. Zahlen von Claude, freigegeben
 2026-11-12. Alles rechnet der Server; Schüler:innen sehen keine Wachstumszahlen, nur die Pflanze.
 
