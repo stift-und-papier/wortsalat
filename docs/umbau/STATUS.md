@@ -657,3 +657,13 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   GitHub-Lauf „Veröffentlichen“ erfolgreich; live geprüft: neue Dateien geladen, Farm von Pfau-99 mit Kopfzeilen-Knöpfen, keine Fehler in der Konsole.
   Vorher: Bau, Lint, Tests 157, DB-Test 171.
 - **Nächster Schritt:** Jazz testet am echten iPad (Hoch- und Querformat, Tastatur-Hülle, dunkler Modus, Bewegung reduzieren).
+
+## Klassen-Aufgaben und Hausaufgaben (Auftrag Jazz 2026-11-18, Branch `klassen-aufgaben`)
+- **Teilaufgabe 1 erledigt (nur gelesen):** Konzept `docs/umbau/konzept-klassen-aufgaben.md` (Bestand, Datenmodell, Skizzen,
+  11 Rückfragen). Ergebnis: Frist ist serverseitig prüfbar (Start, Runden und Ende laufen über DB-Funktionen mit `now()`).
+  Vorschlag: `zuweisungen` um `entfernt_am`, `hausaufgabe_ab`, `frist`, `versuche_erlaubt`, `freigegeben_am` erweitern,
+  dazu Tabelle `hausaufgabe_neustart` für den Reset je Kind. Noch **keine** Schema-Änderung.
+- Branch vom Hauptstand `main` (c6f21be); alle früheren Branches sind darin enthalten.
+- Geänderte Dateien: `docs/umbau/konzept-klassen-aufgaben.md` (neu), `docs/umbau/STATUS.md`.
+- Offene Fragen: Abschnitt 4 im Konzept.
+- Nächster Schritt: Antworten von Jazz, dann Teilaufgabe 2 (Reiter „Aufgaben“, Zuteilen, Herausnehmen).
