@@ -33,6 +33,7 @@ Monster für die Übungen aus dem Sorry Pack (Ordner „Early Access“, hallowe
 Village pack, houses/small hut, alle 9 Dachfarben). Truhe für den Vorrat (`truhe.png`, Sprout Lands Basic, Objects/Chest.png, erstes Bild).
 
 Fliegendes Herz im Spiel (`herz_flug.png`): ein volles Herz aus `Hearts.png` (UI Pack Premium, Icons/special icons).
+Einkaufswagen auf dem Laden-Knopf (`laden.png`): weiße Fassung aus `All Icons.png` (UI Pack Premium, Icons).
 Spielfenster-Rahmen (`rahmen_spiel.png`, Holzrahmen mit Pfosten) und helle Tafel (`tafel.png`, Settings-Menü ohne Schrift) aus dem
 UI Pack Premium. `spiel_wiese.png` (craftpix, siehe unten) ist auf die Sprout-Lands-Palette umgefärbt.
 

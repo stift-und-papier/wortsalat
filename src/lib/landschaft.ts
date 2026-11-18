@@ -39,9 +39,9 @@ const kern = (x: number, y: number): Ort => ({ x: x + RAND, y })
 // Felder dicht wie heute (Jazz, E3), 4 × 3 links
 export const FELD_PLAETZE: Ort[] = Array.from({ length: 12 }, (_, i) => kern(3 + (i % 4), 4 + Math.floor(i / 4)))
 export const STALL: Ort = kern(19, 9) // 3 × 3 Kacheln
-export const HUHN_PLAETZE: Ort[] = [kern(17, 10), kern(23, 10), kern(18, 12), kern(21, 12)] // Jazz 2026-11-17: Huhn 4 nicht am Ufer
-// Napf (Jazz, E4): links vom Stall für Huhn 1 und 3, rechts für Huhn 2 und 4; leer, solange eines davon hungrig ist
-export const NAPF_PLAETZE: Ort[] = [kern(17, 9), kern(23, 9)]
+export const HUHN_PLAETZE: Ort[] = [kern(17, 10), kern(23, 11), kern(18, 12), kern(21, 12)] // Jazz 2026-11-17: Huhn 4 nicht am Ufer; 2026-11-18: Huhn 2 eine Kachel tiefer (Platz D21 darüber)
+// Napf (Jazz, E4) links vom Stall für alle Hühner; leer, solange eines hungrig ist (Jazz 2026-11-18: ein Napf reicht, rechts ist jetzt D21)
+export const NAPF: Ort = kern(17, 9)
 // Scheune von oben mit offenem Dach; unten in der Mitte ein Durchgang ohne Tür (2 Kacheln).
 // Heu und Trog stehen hinten an der Wand, die zwei Kühe davor (Jazz 2026-11-17: höchstens 2 Kühe).
 export const SCHEUNE: Rechteck = { x0: RAND + 18, y0: 1, x1: RAND + 23, y1: 6 }
@@ -60,14 +60,15 @@ export const BRUNNEN: Ort = kern(13, 7) // 2 × 2
 export const BAUM_PLAETZE: Record<string, Ort> = { orangenbaum: kern(3, 2), pfirsichbaum: kern(6, 2), birnenbaum: kern(9, 2) }
 // Boot (3 × 2 Kacheln) in der Bucht oben; kein Hindernis (Wasser ist es schon)
 export const BOOT: Ort = kern(12, 1)
-// 20 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel.
+// 21 kleine Deko-Plätze, bewusst nicht in Reihen (Jazz, E9); zwischen zwei antippbaren kleinen Dingen liegt eine freie Kachel.
 // Jazz 2026-11-17: keine Plätze am unteren Ufer (D4, D5, D7, D12, D14 und zwei Beete ins Innere verschoben)
 export const DEKO_PLAETZE: Ort[] = [
   [1, 4], [1, 7], [1, 9], [17, 6], [19, 8], [11, 9], [17, 1], [16, 3], [24, 3], [25, 5],
   [15, 10], [6, 7], [15, 12], [11, 4], [25, 8], [25, 10], [3, 9], [15, 7], [9, 7], [9, 10],
+  [23, 9], // D21: früher der rechte Napf
 ].map(([x, y]) => kern(x, y))
 // Plätze für gekaufte Deko (Jazz 2026-11-17, dekorationen.md 5.1; Lage wie im Mockup docs/farm/farm-mockup.js). Namen wie in der Datenbank
-// (deko_platzart): D1–D20 klein, B1–B16 Beet (Blumen stehen dicht, darum ohne freie Kachel dazwischen), G1–G2 groß (2 × 2), S1–S4 im Wasser.
+// (deko_platzart): D1–D21 klein, B1–B16 Beet (Blumen stehen dicht, darum ohne freie Kachel dazwischen), G1–G2 groß (2 × 2), S1–S4 im Wasser.
 export type PlatzArt = 'beet' | 'klein' | 'gross' | 'wasser'
 export const BEETE: { name: string; kacheln: Ort[] }[] = [
   { name: 'am Acker', kacheln: [[7, 4], [7, 5], [7, 6]] },
@@ -181,7 +182,7 @@ export function belegung(): Map<string, string> {
   setze('Stall', STALL, 3, 3)
   HUHN_PLAETZE.forEach((o, i) => setze(`Huhn ${i}`, o))
   setze('Scheune', { x: SCHEUNE.x0, y: SCHEUNE.y0 }, SCHEUNE.x1 - SCHEUNE.x0 + 1, SCHEUNE.y1 - SCHEUNE.y0 + 1)
-  NAPF_PLAETZE.forEach((o, i) => setze(`Napf ${i}`, o))
+  setze('Napf', NAPF)
   BAEUME.forEach((b) => setze(b.grafik, b, b.grafik === 'baum' ? 2 : 1, 2))
   setze('Brunnen', BRUNNEN, 2, 2)
   Object.entries(BAUM_PLAETZE).forEach(([name, o]) => setze(name, o, 2, 2))
@@ -209,7 +210,7 @@ export function hindernisse(s: Stand): Set<string> {
   if (s.monster) liste.push(MONSTER_PLATZ, ...huettenKacheln())
   for (const b of s.obstbaeume ?? []) if (BAUM_PLAETZE[b]) liste.push(...flaeche(BAUM_PLAETZE[b], 2, 2))
   // Stall und Scheune stehen von Anfang an (Jazz, E2)
-  liste.push(...flaeche(STALL, 3, 3), ...NAPF_PLAETZE, ...scheunenKacheln().filter((k) => k.nummer !== 4), ...flaeche(HEU, 2, 1), ...flaeche(TROG, 2, 1))
+  liste.push(...flaeche(STALL, 3, 3), NAPF, ...scheunenKacheln().filter((k) => k.nummer !== 4), ...flaeche(HEU, 2, 1), ...flaeche(TROG, 2, 1))
   if (s.huehner) liste.push(...HUHN_PLAETZE.slice(0, s.huehner))
   if (s.kuehe) {
     // eine Kuh allein läuft in der ganzen Scheune hin und her (FarmTier): dann auch den zweiten Platz drinnen sperren

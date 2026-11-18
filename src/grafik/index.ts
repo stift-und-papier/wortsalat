@@ -1,5 +1,6 @@
 // Automatisch erzeugt von scripts/grafik-holen.mjs – nicht von Hand ändern.
 import muenze from './muenze.png'
+import laden from './laden.png'
 import einstein from './einstein.png'
 import saatgut from './saatgut.png'
 import pflanzen from './pflanzen.png'
@@ -104,6 +105,7 @@ import ranke_topf from './ranke_topf.png'
 
 export const GRAFIK = {
   muenze: { url: muenze, breite: 24, hoehe: 24, bildBreite: 24, bildHoehe: 24 },
+  laden: { url: laden, breite: 11, hoehe: 10, bildBreite: 11, bildHoehe: 10 },
   einstein: { url: einstein, breite: 416, hoehe: 47, bildBreite: 52, bildHoehe: 47 },
   saatgut: { url: saatgut, breite: 32, hoehe: 208, bildBreite: 16, bildHoehe: 16 },
   pflanzen: { url: pflanzen, breite: 64, hoehe: 208, bildBreite: 16, bildHoehe: 16 },

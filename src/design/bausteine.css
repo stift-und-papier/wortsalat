@@ -716,7 +716,9 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
   }
 }
 .farm-vorrat { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-sm); }
-.farm-vorrat li { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 6rem; text-align: center; font-weight: 700; }
+.farm-vorrat li { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-weight: 700; }
+/* nur für Vorlesehilfen (Jazz 2026-11-18: im Vorrat ohne sichtbare Namen) */
+.nur-vorlesen { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* im Vorrat steht die Anzahl klein oben rechts im Kästchen */
 .farm-vorrat .farm-menue__anzahl, .farm-menue__bild--oben .farm-menue__anzahl { top: 6px; bottom: auto; }
 
@@ -981,7 +983,6 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-platz:focus-visible { outline: 3px solid var(--color-aktion); outline-offset: 2px; }
 .kopf-mitte .farm-meldung--knopf { display: flex; align-items: center; justify-content: center; gap: var(--space-sm); }
 .farm-laden { display: inline-flex; align-items: center; gap: var(--space-xs); min-height: 48px; text-decoration: none; white-space: nowrap; }
-.farm-laden .symbol { width: 28px; height: 28px; }
 /* Kopfzeile der Farm über die ganze Breite wie das Spielfenster: auf der Farm-Seite keine schmale Textspalte */
 .garten-seite--farm .garten-seite__inhalt { max-width: none; }
 .farm-rahmen { overflow: hidden; }

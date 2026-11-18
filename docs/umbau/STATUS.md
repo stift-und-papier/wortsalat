@@ -619,4 +619,8 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (16 Bilder). Bewegte Dinge jetzt höchstens 3 (Bienenstock, Frosch, Feuer). Sticker „Lagerfeuer“ statt „Lavendel“. Album geprüft
   (alle Sticker vorgetäuscht gesammelt): nur Brunnen und Boot stießen aneinander, darum steht das Boot jetzt weiter hinten (Migration
   `album_boot_reihenfolge`, auch im Shop). Mockup `wachsende-deko.js` nachgezogen (Lagerfeuer).
+- **Nachträge (2026-11-18, Jazz):** Ein Napf für alle Hühner (links); wo der rechte stand, ist jetzt der kleine Platz **D21**
+  (Migration `deko_platz_d21`: `deko_platzart`, `deko_plaetze` 21; Huhn 2 eine Kachel tiefer). Vorrat ohne sichtbare Namen (nur für
+  Vorlesehilfen), weil Blaubeermilch und Erdbeermilch ineinanderliefen; Laden geprüft (alle Artikel bei 1024 und 768 Breite): nichts überlappt.
+  Laden-Knopf mit Einkaufswagen aus Sprout Lands (UI Pack Premium, `laden.png`).
 - **Nächster Schritt:** Jazz prüft Schritt 3; danach Teilaufgabe 5 (Münzsystem) später.

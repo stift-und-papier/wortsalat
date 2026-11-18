@@ -41,6 +41,8 @@ const EMOJI = 'assets/entpackt/Sprout Lands - UI Pack - Basic pack/emojis-free/E
 // bildBreite/bildHoehe: Größe eines Einzelbilds, wenn der Ausschnitt mehrere Bilder (Spritesheet) enthält.
 const BILDER = [
   { name: 'muenze', datei: UI + 'Icons/special icons/coins.png', x: 36, y: 20, breite: 24, hoehe: 24 },
+  // Laden-Knopf (Jazz 2026-11-18): Einkaufswagen, weiße Fassung ohne Rand (steht auf dem dunklen Holz des Hauptknopfs)
+  { name: 'laden', datei: UI + 'Icons/All Icons.png', x: 35, y: 99, breite: 11, hoehe: 10 },
   // Einstein: eigene Zeichnung der Lehrkraft (assets/1794384222202.jpg), am 2026-11-11 auf ihr Pixelraster
   // (6,715 Bildpunkte je Pixel) verkleinert, Hintergrund entfernt. Bilder: freundlich, blinzelt, lob, freut sich, huch, erklärt,
   // erklärt mit Augen zu, lob mit geneigtem Arm (Winken).

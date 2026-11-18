@@ -809,6 +809,14 @@ begin
       if not (public.schueler_farm(t_eule) -> 'deko') @> jsonb_build_array(jsonb_build_object('id', b2, 'platz', 'D1')) then
         raise exception 'Block 9.6b: Farm-Daten ohne Platz und Farbe';
       end if;
+      -- Jazz 2026-11-18: D21 (früher der rechte Napf) ist ein kleiner Platz, D22 gibt es nicht
+      perform public.deko_aufstellen(t_eule, b2, 'D21');
+      begin
+        perform public.deko_aufstellen(t_eule, b2, 'D22');
+        raise exception 'Block 9.6b: Platz D22 angenommen';
+      exception when raise_exception then
+        if sqlerrm !~ 'passt dort nicht' then raise; end if;
+      end;
       perform public.deko_aufstellen(t_eule, b2, null);
       reset role;
       if (select platz from public.besitz where id = b2) is not null then raise exception 'Block 9.6b: in die Truhe geht nicht'; end if;

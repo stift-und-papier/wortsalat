@@ -11,7 +11,7 @@ import { fehlerText } from '../lib/fehler'
 import { figur as figurAus } from '../lib/figur'
 import {
   ablagePlaetze, BAEUME, BAUM_PLAETZE, BEETE, BOOT, BRUNNEN, DEKO_PLATZ, FELD_PLAETZE, FIGUR_START, GRAS_KERN, grundKacheln, HEU, HUETTE, HUETTE_KLEIN, hindernisse,
-  HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF_PLAETZE, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
+  HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
   type Ort,
 } from '../lib/landschaft'
 import { AUFSTELLEN, BEWEGT, DEKO_NAME, dekoBild, PLATZ_WORT, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type DekoStueck, type Farm as FarmDaten } from '../lib/shop'
@@ -420,7 +420,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             {/* Jazz 2026-11-17 (E5): Der Laden-Knopf ersetzt den Menüpunkt „Shop“ unten, breiter und mit dem Wort */}
             {/* Jazz 2026-11-17: Holz gefüllt wie der Hauptknopf, damit man den Laden schnell findet */}
             <a className="knopf knopf--haupt farm-laden" href={shop}>
-              <Symbol name="shop" />
+              {/* Jazz 2026-11-18: Einkaufswagen aus Sprout Lands statt des Strich-Symbols */}
+              <Sprite grafik={GRAFIK.laden} mal={3} />
               Laden
             </a>
             {/* Jazz 2026-11-17: doch wieder der alte Holzknopf mit Zahnrad */}
@@ -572,12 +573,9 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
               <FarmTier art="monster" grafik={farmMonster.grafik} mal={monsterMal} wegMal={mal} von={0} bis={2 * KACHEL} />
             </button>
           )}
-          {/* Jazz 2026-11-17 (E4): Napf links für Huhn 1 und 3, rechts für Huhn 2 und 4; leer, solange eines davon hungrig ist */}
-          {NAPF_PLAETZE.map((o, n) => {
-            const seine = huehner.filter((_, i) => i % 2 === n)
-            if (!seine.length) return null
-            return futterKnopf(`napf${n}`, 'Napf', seine, GRAFIK.napf, seine.every((t) => t.satt) ? 1 : 0, o, 1, { x: px(o.x) + mal, y: px(o.y) + 8 * mal })
-          })}
+          {/* Jazz 2026-11-17 (E4), 2026-11-18: ein Napf für alle Hühner; leer, solange eines hungrig ist */}
+          {huehner.length > 0 &&
+            futterKnopf('napf', 'Napf', huehner, GRAFIK.napf, huehner.every((t) => t.satt) ? 1 : 0, NAPF, 1, { x: px(NAPF.x) + mal, y: px(NAPF.y) + 8 * mal })}
           {futterKnopf('trog', 'Trog', kuehe, GRAFIK.trog, trogVoll ? 0 : 2, TROG, 2, { x: px(TROG.x), y: px(TROG.y) })}
           {huehner.map((t, i) => tierKnopf(t, HUHN_PLAETZE[i], 1, i))}
           {kuehe.map((t, i) => tierKnopf(t, KUH_PLAETZE[i], 2, i))}
@@ -816,6 +814,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
                     nummer={b.nummer}
                     name={DEKO_NAME[g[0].artikel] ?? g[0].artikel}
                     anzahl={g.length}
+                    ohneName
                     waehlen={() => {
                       setVorratOffen(false)
                       setMeldung(null)
@@ -840,7 +839,7 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
                     <Sprite grafik={d.grafik} nummer={d.nummer} mal={3} />
                     <span className="farm-menue__anzahl">{v.anzahl}</span>
                   </span>
-                  {d.name}
+                  <span className="nur-vorlesen">{d.name}</span>
                 </li>
               )
             })}
@@ -877,7 +876,7 @@ function FarmMenue({ titel, schliessen, children }: { titel: string; schliessen:
 
 const MenueListe = ({ children }: { children: ReactNode }) => <ul className="farm-menue__liste">{children}</ul>
 
-function MenuePlatz(props: { grafik: Grafik; nummer: number; name: string; anzahl: number; waehlen: () => void }) {
+function MenuePlatz(props: { grafik: Grafik; nummer: number; name: string; anzahl: number; waehlen: () => void; ohneName?: boolean }) {
   return (
     <li>
       <button type="button" className="farm-menue__platz" onClick={props.waehlen}>
@@ -885,7 +884,7 @@ function MenuePlatz(props: { grafik: Grafik; nummer: number; name: string; anzah
           <Sprite grafik={props.grafik} nummer={props.nummer} mal={3} />
           <span className="farm-menue__anzahl">{props.anzahl}</span>
         </span>
-        {props.name}
+        {props.ohneName ? <span className="nur-vorlesen">{props.name}</span> : props.name}
       </button>
     </li>
   )
