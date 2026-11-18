@@ -635,4 +635,8 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (geprüft im Browser mit Touch-Emulation 744 × 1024 und quer 1024 × 700; nicht am echten iPad).
 - **Entscheidung Jazz (2026-11-18):** alle übrigen Vorschläge angenommen: Modell A „Lernen zählt“, keine Faktoren pro Klasse, Samen wie heute,
   Obstbäume alle 14 Tage, Bestand Variante 1 (neue Regeln nur für die Zukunft), Hausaufgaben-Bonus später, Freischalt-Grenzen bleiben (nur Lernmünzen).
-- **Nächster Schritt:** Teilaufgabe 6 (Zusammenfassung `docs/farm/zusammenfassung.md`); die Umsetzung des Münzsystems im Spiel braucht danach eine Migration (Rückfrage).
+- **Teilaufgabe 6 – Zusammenfassung** (2026-11-18): `docs/farm/zusammenfassung.md`: alle freigegebenen Entscheidungen, was schon im Spiel ist
+  (Schritte 1–3), Reihenfolge der weiteren Umsetzung, gesamte Asset-Liste. Dabei geprüft: „Ergebnisse zurücksetzen“ löscht noch Münzen und Farm
+  (Antwort 8 nicht gebaut), Erklärseiten zeigen noch alle des Jahrgangs (Antwort 9 nicht gebaut).
+- **Nächster Schritt:** Jazz entscheidet, was umgesetzt wird. Vorschlag: Schritt 4 Zurücksetzen behält Münzen und Farm, 5 Münzsystem Modell A,
+  6 Erklärseiten nur aus zugewiesenen Paketen, 7 kleines Buch, 8 iPad-Test und Merge (je mit Rückfrage vor Migration, Push und Merge).
