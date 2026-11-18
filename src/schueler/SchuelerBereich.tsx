@@ -1,6 +1,6 @@
 // alt (Übungswiese), im Pixel-Look: alles, was Schüler:innen sehen. Zugriff nur über die Datenbank-Funktionen
 // mit dem Link-Token (#/s/<token>/…). Antworten ohne Internet warten im Speicher des iPads (speicher.ts).
-import { Fragment, useCallback, useEffect, useState, type ReactNode } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AufgabeBearbeiten, type PruefAntwort } from '../gemeinsam/AufgabeBearbeiten'
 import { EinsteinSagt } from '../gemeinsam/Einstein'
 import { Sprite } from '../gemeinsam/Sprite'
@@ -8,6 +8,8 @@ import { Sterne } from '../gemeinsam/Sterne'
 import { Symbol, type SymbolName } from '../gemeinsam/Symbol'
 import { einsteinTexte, formatKennung } from '../lib/einstein'
 import { fehlerText, istNetzwerkfehler } from '../lib/fehler'
+import { fristLang } from '../lib/frist'
+import { versucheSatz } from '../lib/hausaufgaben'
 import { GRAFIK } from '../grafik'
 import { gehe } from '../lib/router'
 import { artikelBild } from '../lib/shop'
@@ -38,6 +40,8 @@ export function SchuelerBereich({ token, pfad }: Props) {
   const [geschenke, setGeschenke] = useState<Geschenk[]>([])
   const [belohnungen, setBelohnungen] = useState<Belohnung[]>([])
   const [farmStand, setFarmStand] = useState(0) // neu laden, wenn Geschenke dazukamen
+  // zuletzt gezeigtes Paket (siehe unten: Hausaufgabe nach der Frist)
+  const zuletzt = useRef<SchuelerPaket | null>(null)
 
   const laden = useCallback(async () => {
     const [start, konto, belohnt] = await Promise.all([
@@ -151,7 +155,11 @@ export function SchuelerBereich({ token, pfad }: Props) {
     )
   }
 
-  const paket = bereich === 'p' ? daten.pakete.find((p) => p.id === paketId) : undefined
+  // Hausaufgabe nach der Frist: Wer die letzte angefangene Übung beendet, findet das Paket in den neuen Daten nicht mehr.
+  // Die Übungsseite bleibt dann mit dem gemerkten Paket stehen, damit der Abschluss (Münzen) noch zu sehen ist.
+  const gefunden = bereich === 'p' ? daten.pakete.find((p) => p.id === paketId) : undefined
+  const paket = gefunden ?? (aufgabeId && zuletzt.current?.id === paketId ? zuletzt.current : undefined)
+  zuletzt.current = paket ?? null
   const wartendHinweis = wartend > 0 && (
     <p className="karte" role="status">
       {wartend === 1 ? '1 Antwort wartet' : `${wartend} Antworten warten`} auf Internet und {wartend === 1 ? 'wird' : 'werden'} von selbst gesendet.
@@ -183,6 +191,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
             figur={daten.figur ?? 'gruen'}
             naechste={paket.aufgaben[index + 1] ? `#${basis}/p/${paket.id}/a/${paket.aufgaben[index + 1].id}` : null}
             zumPaket={`#${basis}/p/${paket.id}`}
+            hausaufgabe={paket.hausaufgabe ?? null}
           />
         ) : aufgabe ? (
           <AufgabeSeite
@@ -222,7 +231,8 @@ export function SchuelerBereich({ token, pfad }: Props) {
         <ol className="paket-liste">
           {paket.aufgaben.map((a, i) => (
             <li key={a.id}>
-              <a className="karte paket-liste__eintrag" href={`#${basis}/p/${paket.id}/a/${a.id}`}>
+              {/* Hausaufgabe gesperrt (Jazz 2026-11-18): bleibt sichtbar, ist aber kein Link */}
+              <a className={`karte paket-liste__eintrag${a.gesperrt ? ' paket-liste__eintrag--gesperrt' : ''}`} href={a.gesperrt ? undefined : `#${basis}/p/${paket.id}/a/${a.id}`}>
                 {a.uebung && a.monster !== 'kein' ? (
                   <span className="paket-liste__monster">
                     <Sprite grafik={monster(a.monster).grafik} mal={monster(a.monster).grafik.bildHoehe <= 16 ? 2 : 1} />
@@ -240,7 +250,7 @@ export function SchuelerBereich({ token, pfad }: Props) {
                 <span>
                   <strong>{a.titel}</strong>
                   <br />
-                  <span className="leise">{aufgabeStand(a)}</span>
+                  <span className="leise">{aufgabeStand(a, paket.hausaufgabe)}</span>
                 </span>
                 {a.typ !== 'erklaerung' && (
                   <span className="paket-liste__stufe">
@@ -330,7 +340,14 @@ export function SchuelerBereich({ token, pfad }: Props) {
   }
 
   // Startseite (Jazz 2026-11-14): der Lernweg. Ganz oben begrüßt Einstein; gibt es eine offene Übung, führt ein Knopf in seiner Sprechblase dorthin.
-  const offen = (a: SchuelerAufgabe) => !a.geloest && !a.morgen
+  const offen = (a: SchuelerAufgabe) => !a.geloest && !a.morgen && !a.gesperrt
+  // Hausaufgaben (Jazz 2026-11-18): über dem üblichen Gruß, früheste Frist zuerst (sortiert der Server).
+  // Weg, wenn die Frist vorbei ist oder alle Versuche verbraucht sind.
+  const hausaufgaben = daten.pakete.flatMap((p) => {
+    if (!p.hausaufgabe || p.hausaufgabe.vorbei) return []
+    const satz = versucheSatz(p.hausaufgabe.versuche, p.aufgaben.filter((a) => a.uebung).map((a) => a.versuche_uebrig))
+    return satz ? [{ p, satz, ...fristLang(p.hausaufgabe.frist) }] : []
+  })
   // Jazz 2026-11-15: zuerst eine Übung, die man verbessern kann (schon gespielt, wieder frei), sonst die nächste offene
   const verbessern = (a: SchuelerAufgabe) => offen(a) && a.versuche > 0
   const naechstesPaket = daten.pakete.find((p) => p.aufgaben.some(verbessern)) ?? daten.pakete.find((p) => p.aufgaben.some(offen))
@@ -350,6 +367,25 @@ export function SchuelerBereich({ token, pfad }: Props) {
     <Rahmen basis={basis} aktiv="start" muenzen={muenzen} fenster={fenster} titel="Mein Lernweg">
       {wartendHinweis}
       <EinsteinSagt pose="freundlich">
+        {hausaufgaben.map(({ p, satz, tag, uhr }) => (
+          <p key={p.id}>
+            {(EINSTEIN.hausaufgabe ?? '')
+              .replace('{tag}', tag)
+              .replace('{uhr}', uhr)
+              .split('{paket}')
+              .map((stueck, i) => (
+                <Fragment key={i}>
+                  {i > 0 && (
+                    <a className="einstein-link" href={`#${basis}/p/${p.id}`}>
+                      {p.titel}
+                    </a>
+                  )}
+                  {stueck}
+                </Fragment>
+              ))}{' '}
+            {(EINSTEIN[satz.kennung] ?? '').replace('{zahl}', String(satz.zahl))}
+          </p>
+        ))}
         {/* Jazz 2026-11-15: der Übungsname im Satz ist der Link (statt eigenem Knopf) */}
         <p>
           {(EINSTEIN[gruss] ?? '')
@@ -379,7 +415,13 @@ export function SchuelerBereich({ token, pfad }: Props) {
   )
 }
 
-function aufgabeStand(a: SchuelerAufgabe): string {
+function aufgabeStand(a: SchuelerAufgabe, ha?: SchuelerPaket['hausaufgabe']): string {
+  // Hausaufgabe (Jazz 2026-11-18): gesperrte Übung bleibt sichtbar; sonst die übrigen Versuche statt „Morgen wieder“
+  if (a.uebung && ha && !a.angefangen) {
+    if (a.gesperrt) return ha.vorbei ? 'Die Zeit für diese Hausaufgabe ist um.' : 'Du hast alle Versuche gemacht.'
+    if (ha.versuche === null) return 'Du kannst es beliebig oft versuchen.'
+    if (typeof a.versuche_uebrig === 'number') return a.versuche_uebrig === 1 ? 'Noch ein Versuch' : `Noch ${a.versuche_uebrig} Versuche`
+  }
   if (a.uebung) return a.morgen ? 'Morgen wieder' : a.angefangen ? 'Angefangen' : a.befreundet ? 'Ihr seid Freunde. Du kannst wieder üben.' : a.versuche > 0 ? 'Du kannst es nochmal versuchen.' : 'Neu'
   if (a.typ === 'erklaerung') return a.geloest ? 'Erklärung gelesen. Du kannst sie jederzeit noch einmal lesen.' : 'Erklärung: Lies sie dir in Ruhe durch.'
   return a.geloest ? 'Geschafft! Du kannst sie noch einmal üben.' : a.versuche > 0 ? 'Angefangen' : 'Neu'
@@ -403,6 +445,12 @@ function PaketListe({ pakete, basis }: { pakete: SchuelerPaket[]; basis: string 
                   <>
                     <br />
                     {p.beschreibung}
+                  </>
+                )}
+                {p.hausaufgabe && (
+                  <>
+                    <br />
+                    {p.hausaufgabe.vorbei ? 'Die Zeit für diese Hausaufgabe ist um. Angefangenes kannst du noch beenden.' : `Hausaufgabe bis ${fristLang(p.hausaufgabe.frist).tag}, ${fristLang(p.hausaufgabe.frist).uhr} Uhr`}
                   </>
                 )}
                 <br />

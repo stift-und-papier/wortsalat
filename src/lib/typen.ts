@@ -170,13 +170,16 @@ export type SchuelerAufgabe = {
   monster?: string
   befreundet?: boolean
   angefangen?: boolean
+  /** Hausaufgabe (Klassen-Aufgaben TA4): übrige Versuche (null = beliebig oder keine Hausaufgabe); gesperrt = Frist vorbei oder alles verbraucht */
+  versuche_uebrig?: number | null
+  gesperrt?: boolean
   /** heute schon gespielt, wieder frei ab morgen */
   morgen?: boolean
 }
 
 /** Antwort von uebung_starten */
 export type Durchgang =
-  | { status: 'morgen'; monster: string; befreundet: boolean }
+  | { status: 'morgen' | 'vorbei' | 'verbraucht'; monster: string; befreundet: boolean }
   | {
       status: 'offen'
       durchgang: string
@@ -227,6 +230,8 @@ export type SchuelerPaket = {
   id: string
   titel: string
   beschreibung: string | null
+  /** laufende oder abgelaufene Hausaufgabe (null = keine) */
+  hausaufgabe?: { frist: string; versuche: number | null; vorbei: boolean } | null
   aufgaben: SchuelerAufgabe[]
 }
 

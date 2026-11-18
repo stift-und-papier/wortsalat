@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { kindStand, versucheDerUebung, type Durchgang, type HaZeile } from './hausaufgaben'
+import { kindStand, versucheDerUebung, versucheSatz, type Durchgang, type HaZeile } from './hausaufgaben'
 
 const zeile: HaZeile = {
   id: 'z',
@@ -33,5 +33,14 @@ describe('Hausaufgabe je Kind', () => {
     expect(v.liste).toHaveLength(2) // der Durchgang vor dem Beginn zählt nicht
     expect(v.zaehlen).toBe(1) // nur der nach dem Neustart
     expect(v.bester).toBe(0.8)
+  })
+  it('Einsteins Satz zu den Versuchen', () => {
+    expect(versucheSatz(1, [1, 1])).toEqual({ kennung: 'hausaufgabe-versuch', zahl: 1 })
+    expect(versucheSatz(3, [3, 3])).toEqual({ kennung: 'hausaufgabe-versuche', zahl: 3 })
+    expect(versucheSatz(3, [2, 3])).toEqual({ kennung: 'hausaufgabe-noch-versuche', zahl: 2 })
+    expect(versucheSatz(3, [0, 1])).toEqual({ kennung: 'hausaufgabe-noch-versuch', zahl: 1 })
+    expect(versucheSatz(2, [0, 0])).toBeNull() // alles verbraucht: keine Nachricht
+    expect(versucheSatz(null, [null])?.kennung).toBe('hausaufgabe-beliebig')
+    expect(versucheSatz(null, [])).toBeNull() // nur Erklärseiten
   })
 })

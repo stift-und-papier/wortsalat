@@ -500,6 +500,8 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
   color: var(--color-tinte); text-decoration: none;
 }
 /* Lehrkraft 2026-11-12: Sterne oben rechts im Kasten, mit dem Wort „Schwierigkeit“ */
+/* Hausaufgabe gesperrt (Frist vorbei, Versuche verbraucht): blasser, Bild leicht grau; der Satz sagt warum */
+.paket-liste__eintrag--gesperrt .paket-liste__monster, .paket-liste__eintrag--gesperrt .paket-liste__nr { filter: grayscale(1); opacity: 0.6; }
 .paket-liste__stufe { align-self: start; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .kopf-zeile { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); }
 .paket-liste__nr {

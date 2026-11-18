@@ -719,4 +719,34 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - Geänderte Dateien TA 3: Migration (neu), `supabase/tests/zugriffsregeln.sql`, `src/lehrkraft/Hausaufgaben.tsx` (neu),
   `src/lib/frist.ts` + Test (neu), `src/lib/hausaufgaben.ts` + Test (neu), `src/lehrkraft/KlassenAufgaben.tsx`, `src/design/lehrkraft.css`.
 - Offene Fragen: keine.
-- Nächster Schritt: Teilaufgabe 4 (Schülerseite: Einstein-Nachricht, Sperre nach Frist, Versuche zählen, Tagesregel in der Frist aus).
+- 2026-11-18 (Jazz, Rückfragen TA 4): Übung mit verbrauchten Versuchen **bleibt im Paket sichtbar**, ist aber nicht antippbar
+  („Du hast alle Versuche gemacht.“); je Übung steht „Noch 2 Versuche“ / „Noch ein Versuch“ / „Du kannst es beliebig oft versuchen.“;
+  unter „Meine Übungen“ stehen laufende Hausaufgaben **oben** (früheste Frist zuerst) mit „Hausaufgabe bis Freitag, 21.11., 08:00 Uhr“.
+- **Teilaufgabe 4 erledigt (2026-11-18):** Migration `20261118190000_hausaufgaben_schueler` (eingespielt, nur Funktionen):
+  `hausaufgabe_stand(kind, paket)` (wirksame Frist, Zählbeginn, Versuche; keine Zeile = keine Hausaufgabe, z. B. freigegeben oder später
+  gekommenes Kind ohne eigene Frist), `hausaufgabe_versuche` (fertige Durchgänge seit Beginn bzw. Neustart). `uebung_starten_um`:
+  angefangener Durchgang läuft immer weiter; neue Durchgänge in einer Hausaufgabe nur vor der Frist (`vorbei`) und solange Versuche übrig
+  sind (`verbraucht`), Tagesregel dann aus; ohne Hausaufgabe wie bisher. `schueler_start`: je Paket `hausaufgabe` (Frist, Versuche, vorbei),
+  je Übung `versuche_uebrig` und `gesperrt`; Pakete nach der Frist fehlen, außer eine Übung darin ist angefangen; laufende oben.
+- Oberfläche (Schüler:innen): Einstein nennt jede laufende Hausaufgabe über dem üblichen Gruß (Texte `hausaufgabe…` in
+  `src/schueler/einstein.md`, Satz zu den Versuchen `versucheSatz` in `src/lib/hausaufgaben.ts`: kleinste übrige Zahl der noch nicht
+  verbrauchten Übungen). Paketliste mit Fristzeile bzw. „Die Zeit für diese Hausaufgabe ist um. Angefangenes kannst du noch beenden.“
+  Abschluss einer Übung sagt statt „Morgen …“ „Du hast noch einen Versuch.“ / „Das war dein letzter Versuch für diese Übung.“ /
+  „Die Zeit für diese Hausaufgabe ist um.“ (dann ohne „Versuche dich zu verbessern!“). Direkter Aufruf einer gesperrten Übung zeigt
+  „Du hast alle Versuche für diese Übung gemacht.“ bzw. „Die Zeit … ist um.“
+- Getestet: DB-Tests Block 25 (laufend oben mit 2 Versuchen, zweimal am selben Tag dann verbraucht, Neustart, nach der Frist: angefangener
+  Durchgang weiter, neuer gesperrt, Paket nur mit Angefangenem sichtbar, Freigabe → Tagesregel, neues Kind ohne Frist) → ALLE TESTS
+  BESTANDEN (191); `npm test` 163/163; Lint; Build. Browser (Lehrkraft legt in Klasse „Test“ „Testpaket Formate“ mit 2 Versuchen an,
+  Schülersicht Pfau-99, 671 px breit, dunkler Modus): Einstein-Nachricht wörtlich mit Link, Fristzeile oben in „Meine Übungen“,
+  „Noch 2 Versuche“ je Übung, Übung zweimal am selben Tag gespielt („Du hast noch einen Versuch.“, dann „Das war dein letzter Versuch …“),
+  gesperrte Übung nicht antippbar, Einstein danach „Du hast noch 2 Versuche.“; Frist per Datenbank auf gestern gestellt: Nachricht und
+  Paket weg; mit angefangener Übung: Paket mit Hinweis sichtbar, übrige gesperrt, Übung fertig gespielt mit Abschluss.
+  Dabei behoben: nach dem Beenden der letzten angefangenen Übung nach der Frist sprang die Seite ohne Abschluss zur Startseite
+  (Übungsseite merkt sich jetzt das Paket). Testdaten danach gelöscht (4 Durchgänge, 4 Versuche, 40 Münzen von Pfau-99), Hausaufgabe
+  wieder normale Aufgabe. Nicht getestet: am iPad, heller Modus, Diktat und Fallende Wörter als Hausaufgabe, Erklärseiten in einer
+  Hausaufgabe, „beliebig oft“ im Browser (nur Einheitentest), Lehrkraft-Klassenliste mit Versuchen aus der Schülerseite.
+- Geänderte Dateien TA 4: Migration (neu), `supabase/tests/zugriffsregeln.sql`, `src/lib/typen.ts`, `src/lib/frist.ts` + Test,
+  `src/lib/hausaufgaben.ts` + Test, `src/schueler/SchuelerBereich.tsx`, `src/schueler/UebungSpiel.tsx`, `src/schueler/einstein.md`,
+  `src/design/bausteine.css`.
+- Offene Fragen: keine.
+- Nächster Schritt: Teilaufgabe 5 (Gesamttest mit Testklassen und Protokoll).

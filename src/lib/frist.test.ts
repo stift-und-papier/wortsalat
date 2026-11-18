@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { berlinFelder, berlinIso, fristText, naechsterSchultag } from './frist'
+import { berlinFelder, berlinIso, fristLang, fristText, naechsterSchultag } from './frist'
 
 describe('Fristen in Europe/Berlin', () => {
   it('rechnet Winter- und Sommerzeit um', () => {
@@ -14,5 +14,6 @@ describe('Fristen in Europe/Berlin', () => {
   })
   it('zeigt die Frist kurz an', () => {
     expect(fristText('2026-11-21T07:00:00.000Z')).toBe('Sa, 21.11., 08:00 Uhr')
+    expect(fristLang('2026-11-20T07:00:00.000Z')).toEqual({ tag: 'Freitag, 20.11.', uhr: '08:00' })
   })
 })

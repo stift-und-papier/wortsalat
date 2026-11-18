@@ -2171,6 +2171,108 @@ begin
     n := n + 1;
   end;
 
+  -- ---------- Block 25: Hausaufgaben auf der Schülerseite (Jazz 2026-11-18) ----------
+  declare
+    v_p uuid;
+    v_a uuid;
+    v_b uuid;
+    v_z uuid;
+    v_s public.schueler;
+    v_neu public.schueler;
+    t_eule text := (select token from public.schueler where pseudonym = 'Eule-02');
+    v jsonb;
+    v_pk jsonb;
+    k integer;
+  begin
+    select * into v_s from public.schueler where pseudonym = 'Eule-02';
+    insert into public.aufgaben (owner, typ, titel, stufe, loesung)
+    values (c_lk_a, 'lueckentext', 'Z25a', 1, '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]}]}') returning id into v_a;
+    insert into public.aufgaben (owner, typ, titel, stufe, loesung)
+    values (c_lk_a, 'lueckentext', 'Z25b', 1, '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]}]}') returning id into v_b;
+    insert into public.pakete (owner, titel) values (c_lk_a, 'P-25') returning id into v_p;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position) values (v_p, v_a, 1), (v_p, v_b, 2);
+    insert into public.zuweisungen (owner, paket_id, klasse_id, hausaufgabe_ab, frist, versuche_erlaubt)
+    values (c_lk_a, v_p, c_kl_a, now(), now() + interval '12 hours', 2) returning id into v_z; -- früher als P-24: steht oben
+
+    -- 25.1 laufend: Paket oben, mit Frist und 2 übrigen Versuchen je Übung
+    set local role anon;
+    v := public.schueler_start(t_eule);
+    reset role;
+    v_pk := v -> 'pakete' -> 0;
+    if v_pk ->> 'id' <> v_p::text or (v_pk -> 'hausaufgabe' ->> 'versuche')::int <> 2 or (v_pk -> 'hausaufgabe' ->> 'vorbei')::boolean
+       or (v_pk -> 'aufgaben' -> 0 ->> 'versuche_uebrig')::int <> 2 or (v_pk -> 'aufgaben' -> 0 ->> 'gesperrt')::boolean then
+      raise exception 'Block 25.1: laufende Hausaufgabe falsch: %', v_pk;
+    end if;
+    n := n + 1;
+
+    -- 25.2 Tagesregel aus: zweimal am selben Tag, dann verbraucht; die andere Übung hat noch beide Versuche
+    for k in 1..2 loop
+      v := public.uebung_starten_um(v_s, v_p, v_a, now() + make_interval(mins => k));
+      if v ->> 'status' <> 'offen' then raise exception 'Block 25.2: Versuch % nicht gestartet: %', k, v ->> 'status'; end if;
+      perform public.runde_pruefen_um(v_s, (v ->> 'durchgang')::uuid, 0, '{"0":"a"}', now() + make_interval(mins => k, secs => 30));
+    end loop;
+    if public.uebung_starten_um(v_s, v_p, v_a, now() + interval '3 minutes') ->> 'status' <> 'verbraucht' then
+      raise exception 'Block 25.2: dritter Versuch erlaubt';
+    end if;
+    set local role anon;
+    v_pk := public.schueler_start(t_eule) -> 'pakete' -> 0;
+    reset role;
+    if (v_pk -> 'aufgaben' -> 0 ->> 'versuche_uebrig')::int <> 0 or not (v_pk -> 'aufgaben' -> 0 ->> 'gesperrt')::boolean
+       or (v_pk -> 'aufgaben' -> 1 ->> 'versuche_uebrig')::int <> 2 or (v_pk -> 'aufgaben' -> 0 ->> 'morgen')::boolean then
+      raise exception 'Block 25.2: Stand nach zwei Versuchen falsch: %', v_pk -> 'aufgaben';
+    end if;
+    n := n + 1;
+
+    -- 25.3 „Versuche neu geben“: ältere Versuche zählen nicht mehr
+    insert into public.zuweisung_einzeln (zuweisung_id, schueler_id, owner, neustart_ab) values (v_z, v_s.id, c_lk_a, now() + interval '150 seconds');
+    if public.uebung_starten_um(v_s, v_p, v_a, now() + interval '4 minutes') ->> 'status' <> 'offen' then
+      raise exception 'Block 25.3: nach Neustart kein Versuch';
+    end if;
+    n := n + 1;
+
+    -- 25.4 nach der Frist: angefangene Übung läuft weiter, neue nicht; Paket nur sichtbar, solange etwas angefangen ist
+    update public.zuweisungen set frist = now() - interval '1 second' where id = v_z;
+    if public.uebung_starten_um(v_s, v_p, v_a, now() + interval '5 minutes') ->> 'status' <> 'offen'
+       or public.uebung_starten_um(v_s, v_p, v_b, now() + interval '5 minutes') ->> 'status' <> 'vorbei' then
+      raise exception 'Block 25.4: Sperre nach der Frist falsch';
+    end if;
+    set local role anon;
+    v_pk := (select x from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text);
+    reset role;
+    if v_pk is null or not (v_pk -> 'hausaufgabe' ->> 'vorbei')::boolean or (v_pk -> 'aufgaben' -> 0 ->> 'gesperrt')::boolean
+       or not (v_pk -> 'aufgaben' -> 1 ->> 'gesperrt')::boolean then
+      raise exception 'Block 25.4: Paket mit angefangener Übung falsch: %', v_pk;
+    end if;
+    delete from public.durchgaenge where schueler_id = v_s.id and aufgabe_id = v_a and fertig_am is null;
+    set local role anon;
+    if exists (select 1 from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text) then
+      raise exception 'Block 25.4: Paket nach der Frist noch sichtbar';
+    end if;
+    reset role;
+    n := n + 1;
+
+    -- 25.5 freigegeben: wieder sichtbar, Tagesregel gilt wieder
+    update public.zuweisungen set freigegeben_am = now() where id = v_z;
+    if public.uebung_starten_um(v_s, v_p, v_a, now() + interval '6 minutes') ->> 'status' <> 'morgen' then
+      raise exception 'Block 25.5: Tagesregel nach Freigabe fehlt';
+    end if;
+    set local role anon;
+    v_pk := (select x from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text);
+    reset role;
+    if v_pk is null or v_pk -> 'hausaufgabe' <> 'null'::jsonb or not (v_pk -> 'aufgaben' -> 0 ->> 'morgen')::boolean then
+      raise exception 'Block 25.5: freigegebenes Paket falsch: %', v_pk;
+    end if;
+    n := n + 1;
+
+    -- 25.6 neues Kind ohne eigene Frist: keine Hausaufgabe (normale Aufgabe)
+    update public.zuweisungen set freigegeben_am = null, frist = now() + interval '1 day' where id = v_z;
+    insert into public.schueler (klasse_id, pseudonym, erstellt_am) values (c_kl_a, 'Neu-25', now() + interval '1 second') returning * into v_neu;
+    if exists (select 1 from public.hausaufgabe_stand(v_neu, v_p)) or not exists (select 1 from public.hausaufgabe_stand(v_s, v_p)) then
+      raise exception 'Block 25.6: neues Kind hat eine Frist';
+    end if;
+    n := n + 1;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;

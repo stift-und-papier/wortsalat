@@ -49,3 +49,15 @@ export function versucheDerUebung(alle: Durchgang[], kindId: string, aufgabeId: 
   const bester = liste.reduce<number | null>((m, d) => (d.anteil === null ? m : Math.max(m ?? 0, d.anteil)), null)
   return { liste, zaehlen, bester }
 }
+
+/** Einstein (Schülerseite): Satz zu den Versuchen einer laufenden Hausaufgabe. `uebrig` = versuche_uebrig der Übungen im Paket.
+    Genannt wird die kleinste übrige Zahl unter den Übungen, die noch nicht verbraucht sind (Konzept, Frage 1). null = keine Nachricht. */
+export function versucheSatz(versuche: number | null, uebrig: (number | null | undefined)[]): { kennung: string; zahl: number } | null {
+  if (!uebrig.length) return null
+  if (versuche === null) return { kennung: 'hausaufgabe-beliebig', zahl: 0 }
+  const offen = uebrig.filter((x): x is number => typeof x === 'number' && x > 0)
+  if (!offen.length) return null
+  const zahl = Math.min(...offen)
+  const noch = uebrig.some((x) => typeof x === 'number' && x < versuche)
+  return { kennung: `hausaufgabe-${noch ? 'noch-' : ''}${zahl === 1 ? 'versuch' : 'versuche'}`, zahl }
+}

@@ -40,3 +40,11 @@ export function fristText(iso: string): string {
   const p = teile(d)
   return `${wt}, ${p.day}.${p.month}., ${p.hour}:${p.minute} Uhr`
 }
+
+/** Für Einstein: { tag: „Freitag, 21.11.“, uhr: „08:00“ } */
+export function fristLang(iso: string): { tag: string; uhr: string } {
+  const d = new Date(iso)
+  const wt = new Intl.DateTimeFormat('de-DE', { timeZone: ZONE, weekday: 'long' }).format(d)
+  const p = teile(d)
+  return { tag: `${wt}, ${p.day}.${p.month}.`, uhr: `${p.hour}:${p.minute}` }
+}

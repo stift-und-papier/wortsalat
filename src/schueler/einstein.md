@@ -3,6 +3,7 @@ Was Einstein in der Schüleransicht sagt. Diese Datei dürfen Sie direkt ändern
   ## kennung   → ein Text; darunter der Text (eine Leerzeile beginnt einen neuen Absatz)
   {name}      → wird durch den Fantasienamen ersetzt
   {uebung}    → Name der Übung, zu der der Knopf führt
+  Hausaufgabe: {paket} = Name der Aufgabe als Link, {tag} = „Freitag, 21.11.“, {uhr} = „08:00“, {zahl} = Anzahl Versuche
 Die Kennungen (Wörter nach ##) bitte nicht ändern. Regeln: Einstein sagt nie „falsch“ und verrät nie eine Lösung.
 -->
 
@@ -53,3 +54,21 @@ Lies den Satz und merk ihn dir gut. Tippe auf „Gemerkt“, dann verschwindet e
 
 ## fallende_woerter
 Von oben fallen Wörter. Tippe das unterste Wort ab, bevor es unten ankommt. Schau genau hin: Das Wort wartet, bis du den passenden Buchstaben tippst.
+
+## hausaufgabe
+Du hast eine wichtige Aufgabe zugeteilt bekommen! {paket} Du hast bis {tag} um {uhr} Uhr Zeit, diese Aufgabe zu erledigen.
+
+## hausaufgabe-versuch
+Du hast einen Versuch.
+
+## hausaufgabe-versuche
+Du hast {zahl} Versuche.
+
+## hausaufgabe-beliebig
+Du kannst es beliebig oft versuchen.
+
+## hausaufgabe-noch-versuch
+Du hast noch einen Versuch.
+
+## hausaufgabe-noch-versuche
+Du hast noch {zahl} Versuche.

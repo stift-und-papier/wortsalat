@@ -14,7 +14,7 @@ import { LueckentextAnzeige } from '../gemeinsam/LueckentextAnzeige'
 import { MuenzenPlus } from '../gemeinsam/MuenzenPlus'
 import { fehlerText, istNetzwerkfehler } from '../lib/fehler'
 import { supabase } from '../lib/supabase'
-import type { Antwort, Antworten, Durchgang, Loesung, Pruefergebnis, RundeErgebnis, SchuelerAufgabe } from '../lib/typen'
+import type { Antwort, Antworten, Durchgang, Loesung, Pruefergebnis, RundeErgebnis, SchuelerAufgabe, SchuelerPaket } from '../lib/typen'
 import { Spielszene, type Schuss } from './Spielszene'
 
 // Formate, die als Spiel laufen
@@ -38,13 +38,27 @@ type Props = {
   /** gewählte Spielfigur (Einstellungen) */
   figur: string
   zumPaket: string
+  /** Hausaufgabe des Pakets (null = keine): ersetzt „Morgen …“ durch den Satz zu den Versuchen */
+  hausaufgabe: SchuelerPaket['hausaufgabe']
+}
+
+/** Hausaufgabe (Jazz 2026-11-18): Satz nach einem Versuch. `uebrig` = übrige Versuche vor diesem Versuch. */
+function hausaufgabeSatz(ha: Props['hausaufgabe'], uebrig: number | null | undefined): string | null {
+  if (!ha) return null
+  if (ha.vorbei) return 'Die Zeit für diese Hausaufgabe ist um.'
+  if (ha.versuche === null || typeof uebrig !== 'number') return 'Du kannst es gleich noch einmal versuchen!'
+  const noch = uebrig - 1
+  return noch <= 0 ? 'Das war dein letzter Versuch für diese Übung.' : noch === 1 ? 'Du hast noch einen Versuch.' : `Du hast noch ${noch} Versuche.`
 }
 
 type Gespielt = { richtig: boolean; ergebnis: Pruefergebnis; loesung: Loesung; antworten?: Antworten }
 
 const loesungenAus = (l: Loesung) => Object.fromEntries(l.luecken.map((x) => [x.id, x.loesungen]))
 
-export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, zumPaket, figur }: Props) {
+export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, zumPaket, figur, hausaufgabe }: Props) {
+  // beim Öffnen festhalten: nach dem Abschluss lädt die Seite neu und die Zahl ist dann schon kleiner
+  const [haSatz] = useState(() => hausaufgabeSatz(hausaufgabe, aufgabe.versuche_uebrig))
+  const ohneMorgen = (text: string) => (haSatz ? text.replace(/Morgen kannst du[^.!]*[.!]$/, haSatz) : text)
   const [daten, setDaten] = useState<Durchgang | null>(null)
   const [ladeFehler, setLadeFehler] = useState<string | null>(null)
   const [index, setIndex] = useState(0)
@@ -110,12 +124,12 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
   if (ladeFehler) return <p className="karte" role="alert">{ladeFehler}</p>
   if (!daten) return <p className="karte" role="status">Einen Moment …</p>
 
-  if (daten.status === 'morgen') {
+  if (daten.status !== 'offen') {
     return (
       <>
         {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={daten.befreundet} ende="morgen" />}
         <div className="karte aufgabe">
-          <p>{daten.monster === 'kein' ? (daten.befreundet ? OHNE.schon : 'Heute hast du diese Übung schon gemacht. ' + OHNE.morgen) : daten.befreundet ? TEXT_SCHON_FREUND : 'Heute hast du mit diesem Monster schon geübt. Morgen kannst du es noch einmal versuchen!'}</p>
+          <p>{daten.status === 'vorbei' ? 'Die Zeit für diese Hausaufgabe ist um.' : daten.status === 'verbraucht' ? 'Du hast alle Versuche für diese Übung gemacht.' : daten.monster === 'kein' ? (daten.befreundet ? OHNE.schon : 'Heute hast du diese Übung schon gemacht. ' + OHNE.morgen) : daten.befreundet ? TEXT_SCHON_FREUND : 'Heute hast du mit diesem Monster schon geübt. Morgen kannst du es noch einmal versuchen!'}</p>
           <div className="knopf-reihe">
             <a className="knopf knopf--haupt" href={zumPaket}>Zurück zum Paket</a>
           </div>
@@ -134,7 +148,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
     // Diktat: Freundschaft ab 95 % rechnet nur der Server
     const allesRichtig = aufgabe.typ === 'diktat' ? abschluss.neu_befreundet : gespielt.every((g) => g.richtig)
     const ohne = daten.monster === 'kein'
-    const text = allesRichtig ? (ohne ? OHNE.freund : TEXT_FREUND) : abschluss.befreundet ? (ohne ? OHNE.schon : TEXT_SCHON_FREUND) : ohne ? OHNE.morgen : TEXT_MORGEN
+    const text = ohneMorgen(allesRichtig ? (ohne ? OHNE.freund : TEXT_FREUND) : abschluss.befreundet ? (ohne ? OHNE.schon : TEXT_SCHON_FREUND) : ohne ? OHNE.morgen : TEXT_MORGEN)
     return (
       <>
         {daten.monster !== 'kein' && <Spielszene figurName={figur} monsterName={daten.monster} schuss={null} befreundet={abschluss.befreundet} ende={allesRichtig ? 'freund' : 'morgen'} />}
@@ -145,7 +159,7 @@ export function UebungSpiel({ token, paketId, aufgabe, nachAbschluss, naechste, 
           {abschluss.muenzen > 0 ? (
             <MuenzenPlus anzahl={abschluss.muenzen} />
           ) : (
-            <p>Diesmal gibt es keine neuen Münzen. Versuche dich zu verbessern!</p>
+            <p>Diesmal gibt es keine neuen Münzen.{haSatz && /letzter|ist um/.test(haSatz) ? '' : ' Versuche dich zu verbessern!'}</p>
           )}
           <div className="knopf-reihe">
             {naechste && (
