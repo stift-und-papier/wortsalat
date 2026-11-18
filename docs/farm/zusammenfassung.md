@@ -137,7 +137,7 @@ Schritte mit Datenbank-Änderung frage ich vorher an.
 |---|---|---|---|
 | 4 ✓ | **„Ergebnisse zurücksetzen“ behält Münzen und Farm** (erledigt 2026-11-18) (Antwort 8). Heute löscht es noch Münzen, Gekauftes, Pflanzen und Vorrat. | Es widerspricht der Regel „Münzen nie streichen“. Bevor echte Klassen spielen, muss es weg. | ja (`ergebnisse_zuruecksetzen` neu) |
 | 5 ✓ | **Münzsystem Modell A** (erledigt 2026-11-18) (M1 bis M9), siehe die Liste unter der Tabelle | Kern von Teilaufgabe 5 | ja |
-| 6 | **Erklärseiten nur aus zugewiesenen Paketen** (Antwort 9). Heute sieht ein Kind alle Erklärseiten seines Jahrgangs. | schließt Schlupfloch 5 (Münzen fürs bloße Antippen) | ja (`erklaerungen_liste` neu) |
+| 6 ✓ | **Erklärseiten nur aus zugewiesenen Paketen** (erledigt 2026-11-18) (Antwort 9). Heute sieht ein Kind alle Erklärseiten seines Jahrgangs. | schließt Schlupfloch 5 (Münzen fürs bloße Antippen) | ja (`erklaerungen_liste` neu) |
 | ~~7~~ | ~~kleines Buch für den Sammelalbum-Knopf~~ | gestrichen (Jazz 2026-11-18), der Knopf behält das heutige Buch | – |
 | 8 | **Test am echten iPad** (Hoch- und Querformat, Tastatur-Hülle, dunkler Modus, Bewegung reduzieren), danach Merge nach `main` | Vieles ist nur im Browser geprüft | nein (Push und Merge nur nach Rückfrage) |
 

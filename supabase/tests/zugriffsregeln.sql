@@ -1364,10 +1364,20 @@ begin
     if not exists (select 1 from public.zuweisungen where paket_id = v_paket) then raise exception 'Block 16.2: Zuweisung verschwunden'; end if;
     n := n + 1;
 
-    -- 16.3 Erklärseite bleibt über „Erklärungen“ erreichbar (auch wenn ihr Paket archiviert ist), ohne Lösung, Münzen einmalig
+    -- 16.3 Jazz 2026-11-17 (Antwort 9): Erklärseiten nur aus zugewiesenen Paketen. Ihr Paket ist archiviert (16.2): nicht in der Liste, nicht abgebbar
+    set local role anon;
+    if public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite aus archiviertem Paket sichtbar'; end if;
+    begin
+      perform public.antwort_abgeben(t_fuchs, null, v_er, '{}', gen_random_uuid());
+      raise exception 'Block 16.3: Erklärseite aus archiviertem Paket abgebbar';
+    exception when sqlstate 'P0002' then null;
+    end;
+    reset role;
+    -- Paket wieder aktiv (zugewiesen): sichtbar, ohne Lösung, lesbar
+    update public.pakete set archiviert = false where id = v_paket;
     set local role anon;
     v := public.erklaerungen_liste(t_fuchs);
-    if not v::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite fehlt in der Liste: %', v; end if;
+    if not v::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite aus zugewiesenem Paket fehlt: %', v; end if;
     if v::text like '%loesung"%' or v::text like '%"loesung":%' then raise exception 'Block 16.3: Liste enthält Lösungen'; end if;
     if (select x -> 'jahrgaenge' from jsonb_array_elements(v) x where x ->> 'id' = v_er::text) <> '[7]'::jsonb then
       raise exception 'Block 16.3: Doppeljahrgang fehlt: %', v;
@@ -1375,13 +1385,12 @@ begin
     v := public.antwort_abgeben(t_fuchs, null, v_er, '{}', gen_random_uuid());
     if not (v -> 'ergebnis' ->> 'richtig')::boolean then raise exception 'Block 16.3: Erklärseite nicht lesbar: %', v; end if;
     reset role;
-    -- Jahrgang der Klasse (Migration klasse_jahrgang): die Erklärseite steckt in einem Paket für Jahrgang 7
-    update public.klassen set jahrgang = 9 where id = (select klasse_id from public.schueler where id = v_fuchs);
-    if public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite für Jahrgang 7 in Klasse 9 sichtbar'; end if;
-    update public.klassen set jahrgang = 7 where id = (select klasse_id from public.schueler where id = v_fuchs);
-    if not public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite fehlt im eigenen Jahrgang'; end if;
-    update public.klassen set jahrgang = null where id = (select klasse_id from public.schueler where id = v_fuchs);
-    n := n + 1;
+    -- Ohne Zuweisung verschwindet sie wieder
+    delete from public.zuweisungen where paket_id = v_paket;
+    set local role anon;
+    if public.erklaerungen_liste(t_fuchs)::text like '%' || v_er || '%' then raise exception 'Block 16.3: Erklärseite ohne Zuweisung sichtbar'; end if;
+    reset role;
+    n := n + 2;
 
     -- 16.4 Erklärseiten anderer Lehrkräfte: weder in der Liste noch abgebbar
     set local role anon;

@@ -649,4 +649,8 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Texte: Laden „beim Üben verdienst“, Hilfe (Verkaufen bringt wenig, zählt nicht), Obstbaum „alle zwei Wochen“; Hinweis oben in `SPEC-felder.md`/`SPEC-muenzen.md`.
   **Getestet:** DB-Test 170 (neu 11.7b Verkauf zählt nicht, 14.9 Preise, 14.8 vierzehn Tage), Tests 157, Laden im Browser (Huhn 440).
   **Nicht getestet:** Verkaufen und Ernten im Browser (würde Testkonten verändern), echtes iPad.
-- **Nächster Schritt:** Schritt 6 Erklärseiten nur aus zugewiesenen Paketen (Migration, vorher Rückfrage), danach 8 iPad-Test und Merge.
+- **Umsetzung Schritt 6** (2026-11-18, Jazz: eingespielt): Erklärseiten unter „Erklärungen“ nur aus zugewiesenen, nicht archivierten Paketen
+  (statt aller des Jahrgangs); „Verstanden“ nur dort abgebbar (Migration `erklaerungen_nur_zugewiesen`, Funktion `erklaerung_zugewiesen`). Gelesenes
+  aus nicht zugewiesenen Paketen verschwindet aus der Liste, Münzen bleiben. **Getestet:** DB-Test 171 (16.3 neu: archiviert, zugewiesen, ohne Zuweisung),
+  Erklärungen-Seite von Pfau-99 im Browser (1 Erklärseite aus dem zugewiesenen Paket). **Nicht getestet:** echtes iPad.
+- **Nächster Schritt:** Schritt 8 Test am echten iPad (braucht Push oder Merge, nur nach Rückfrage), danach Merge von `farm-umsetzung` nach `main`.
