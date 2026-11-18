@@ -653,4 +653,7 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (statt aller des Jahrgangs); „Verstanden“ nur dort abgebbar (Migration `erklaerungen_nur_zugewiesen`, Funktion `erklaerung_zugewiesen`). Gelesenes
   aus nicht zugewiesenen Paketen verschwindet aus der Liste, Münzen bleiben. **Getestet:** DB-Test 171 (16.3 neu: archiviert, zugewiesen, ohne Zuweisung),
   Erklärungen-Seite von Pfau-99 im Browser (1 Erklärseite aus dem zugewiesenen Paket). **Nicht getestet:** echtes iPad.
-- **Nächster Schritt:** Schritt 8 Test am echten iPad (braucht Push oder Merge, nur nach Rückfrage), danach Merge von `farm-umsetzung` nach `main`.
+- **Veröffentlicht** (2026-11-18, Jazz: „Jetzt veröffentlichen“): `farm-umsetzung` ohne Zusammenführungs-Commit auf `main` gebracht (758fc78 → 40203f6),
+  GitHub-Lauf „Veröffentlichen“ erfolgreich; live geprüft: neue Dateien geladen, Farm von Pfau-99 mit Kopfzeilen-Knöpfen, keine Fehler in der Konsole.
+  Vorher: Bau, Lint, Tests 157, DB-Test 171.
+- **Nächster Schritt:** Jazz testet am echten iPad (Hoch- und Querformat, Tastatur-Hülle, dunkler Modus, Bewegung reduzieren).
