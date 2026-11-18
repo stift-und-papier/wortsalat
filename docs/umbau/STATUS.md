@@ -633,4 +633,6 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (Simulation und Vorschlag neu gerechnet: regelmäßig 36 Wochen, Vielspieler 33, Schlupflöcher nicht fertig; volle Farm 10.790). **Kein Wochenbonus** (M3).
   Hochformat-Hinweis „Dreh dein iPad“ greift jetzt auch mit Tastatur-Hülle samt Trackpad (`any-pointer: coarse`), die Farm-Meldung oben ist im Hochformat aus
   (geprüft im Browser mit Touch-Emulation 744 × 1024 und quer 1024 × 700; nicht am echten iPad).
-- **Nächster Schritt:** Jazz entscheidet die übrigen Punkte M1, M4–M9 (`muenzen-vorschlag.md` Abschnitt 8); danach Teilaufgabe 6 (Zusammenfassung).
+- **Entscheidung Jazz (2026-11-18):** alle übrigen Vorschläge angenommen: Modell A „Lernen zählt“, keine Faktoren pro Klasse, Samen wie heute,
+  Obstbäume alle 14 Tage, Bestand Variante 1 (neue Regeln nur für die Zukunft), Hausaufgaben-Bonus später, Freischalt-Grenzen bleiben (nur Lernmünzen).
+- **Nächster Schritt:** Teilaufgabe 6 (Zusammenfassung `docs/farm/zusammenfassung.md`); die Umsetzung des Münzsystems im Spiel braucht danach eine Migration (Rückfrage).

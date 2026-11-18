@@ -185,7 +185,9 @@ Es gilt immer: **Münzen werden nie abgezogen, Gekauftes bleibt.**
 - Damit trifft Variante 1 kein echtes Kind.
 - Kommt die Umstellung später, wenn schon echte Kinder spielen, empfehle ich Variante 3.
 
-## 8. Offene Entscheidungen für Sie
+## 8. Entscheidungen
+
+**Jazz 2026-11-18:** M2 und M3 wie unten vermerkt, **alle übrigen Vorschläge angenommen** (M1 Modell A, M4 nein, M5 bis M9 wie vorgeschlagen).
 
 | # | Frage | Mein Vorschlag |
 |---|---|---|
