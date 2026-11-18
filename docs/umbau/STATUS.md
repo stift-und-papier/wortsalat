@@ -667,5 +667,5 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Klasse; neue Kinder bekommen alle Klassen-Zuteilungen, Hausaufgaben für sie offen ohne Frist (Frist einzeln neu setzen).
 - Branch vom Hauptstand `main` (c6f21be); alle früheren Branches sind darin enthalten.
 - Geänderte Dateien: `docs/umbau/konzept-klassen-aufgaben.md` (neu), `docs/umbau/STATUS.md`.
-- Offene Fragen: Abschnitt 4 im Konzept.
+- Offene Fragen: keine (beantwortet 2026-11-18).
 - Nächster Schritt: Teilaufgabe 2 (Reiter „Aufgaben“, Zuteilen, Herausnehmen).
