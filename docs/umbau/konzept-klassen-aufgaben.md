@@ -72,9 +72,18 @@ Grundidee: **keine neue Zuteilungs-Tabelle**, sondern die vorhandene `zuweisunge
 | `versuche_erlaubt smallint` | `null` = beliebig oft, sonst 1 bis 20. |
 | `freigegeben_am timestamptz` | „Unbegrenzt freigeben“: ab da normale Zuteilung, Tagesregel gilt wieder. |
 
-**Neue kleine Tabelle `hausaufgabe_neustart`** (`zuweisung_id`, `schueler_id`, `ab timestamptz`): der Reset-Knopf je Kind.
-Gezählt werden nur Durchgänge, die nach `ab` begonnen wurden. So gibt es wieder die **ursprünglich gewährte Zahl**,
-ohne etwas zu löschen. (Nötig, weil eine Klassen-Zuteilung für alle Kinder gemeinsam gilt.)
+**Neue kleine Tabelle `zuweisung_einzeln`** (`zuweisung_id`, `schueler_id`, `owner`, je Paar eine Zeile): alles, was nur
+für **ein Kind** einer Zuteilung gilt (nach Jazz, Frage 5 und 6):
+- `entfernt_am`: Kind aus einer Klassen-Zuteilung herausgenommen (die Klassen-Zuteilung bleibt bestehen).
+- `neustart_ab`: Reset-Knopf. Gezählt werden nur Durchgänge, die danach begonnen wurden. So gibt es wieder die
+  **ursprünglich gewährte Zahl**, ohne etwas zu löschen.
+- `frist`: eigene Frist für dieses Kind (verlängert, oder neu gesetzt für ein später angelegtes Kind).
+- `freigegeben_am`: nur für dieses Kind unbegrenzt freigegeben.
+Wirksam ist für ein Kind immer: Angabe in `zuweisung_einzeln`, sonst die der Zuteilung.
+
+**Neue Kinder** (Jazz, Frage 6): Ein Kind, das nach dem Zuteilen in die Klasse kommt, bekommt alle Klassen-Zuteilungen.
+War die Zuteilung da schon eine Hausaufgabe (`schueler.erstellt_am` nach `hausaufgabe_ab`), ist sie für dieses Kind
+**offen ohne Frist** (normale Aufgabe, Tagesregel). Die Lehrkraft kann ihm in der Klassenliste eine eigene Frist setzen.
 
 **Status** wird berechnet, nicht gespeichert:
 - *laufend*: `hausaufgabe_ab` gesetzt, nicht freigegeben, `frist` > jetzt
@@ -84,9 +93,8 @@ ohne etwas zu löschen. (Nötig, weil eine Klassen-Zuteilung für alle Kinder ge
 **Regeln im Server:**
 - Ein Kind hat je Paket **höchstens eine wirksame Zuteilung**. Teilt man ein Paket neu zu, ersetzt die neue die alte
   (die alte wird mit `entfernt_am` ausgeblendet). Klassen-Zuteilung und Einzel-Zuteilung desselben Pakets laufen so nie gegeneinander.
-- Herausnehmen **für einzelne Kinder** aus einer Klassen-Zuteilung: die Klassen-Zuteilung wird durch Einzel-Zuteilungen
-  für alle anderen ersetzt (gleiche Frist und Versuchszahl). Folge: später neu angelegte Kinder bekommen das Paket dann
-  nicht automatisch (siehe Frage 6).
+- Herausnehmen **für einzelne Kinder** aus einer Klassen-Zuteilung: `zuweisung_einzeln.entfernt_am` für diese Kinder;
+  die Klassen-Zuteilung bleibt, neue Kinder bekommen sie weiter.
 - `schueler_start` blendet aus: entfernte Zuteilungen, Hausaufgaben nach der Frist (außer mit offenem Durchgang) und
   Übungen ohne übrige Versuche (außer offen). Dazu liefert es je Hausaufgabe `frist`, `versuche_uebrig` für die Einstein-Nachricht.
 - `uebung_starten_um`: Bei laufender Hausaufgabe gilt nur die Versuchszahl (Tagesregel `frei_ab` wird übergangen).
@@ -208,6 +216,14 @@ Du hast bis Freitag, 21.11. um 08:00 Uhr Zeit, diese Aufgabe zu erledigen. Du ha
 10. **Uhrzeit-Vorgabe** beim Anlegen: Vorschlag: nächster Schultag (Mo–Fr), **08:00 Uhr**, änderbar.
 11. **Gleiche Übung in zwei Paketen:** Versuche und Tagesregel hängen heute an der Übung, nicht am Paket. Ein Durchgang in der
     Hausaufgabe sperrt dieselbe Übung in einem anderen, normalen Paket bis morgen. Vorschlag: so lassen (selten, kein Umbau).
+
+### Antworten von Jazz (2026-11-18)
+Alle Vorschläge angenommen, außer:
+- **Frage 5:** Frist verlängern **und** unbegrenzt freigeben geht **für einzelne Kinder oder die ganze Klasse**
+  (Klassenliste: Pseudonyme antippen oder „für alle“).
+- **Frage 6:** Herausnehmen einzelner Kinder lässt die Klassen-Zuteilung bestehen. **Neue Kinder bekommen alle
+  Klassen-Zuteilungen**; Hausaufgaben sind für sie offen ohne Frist, bis die Lehrkraft ihnen eine eigene Frist setzt.
+Umsetzung: Tabelle `zuweisung_einzeln` (Abschnitt 2) statt `hausaufgabe_neustart`.
 
 ## 5. Umfang der nächsten Teilaufgaben (zur Orientierung)
 - **TA 2:** Migration (Spalten + Tabelle + Funktionen fürs Zuteilen/Herausnehmen), Reiter, Paketliste mit Filter und Sortierung,

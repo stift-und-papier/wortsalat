@@ -662,8 +662,10 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - **Teilaufgabe 1 erledigt (nur gelesen):** Konzept `docs/umbau/konzept-klassen-aufgaben.md` (Bestand, Datenmodell, Skizzen,
   11 Rückfragen). Ergebnis: Frist ist serverseitig prüfbar (Start, Runden und Ende laufen über DB-Funktionen mit `now()`).
   Vorschlag: `zuweisungen` um `entfernt_am`, `hausaufgabe_ab`, `frist`, `versuche_erlaubt`, `freigegeben_am` erweitern,
-  dazu Tabelle `hausaufgabe_neustart` für den Reset je Kind. Noch **keine** Schema-Änderung.
+  dazu Tabelle `zuweisung_einzeln` (je Kind: herausgenommen, Reset, eigene Frist, Freigabe). Noch **keine** Schema-Änderung.
+- 2026-11-18 (Jazz): alle 11 Vorschläge angenommen, außer 5 und 6: Verlängern und Freigeben für einzelne Kinder oder die ganze
+  Klasse; neue Kinder bekommen alle Klassen-Zuteilungen, Hausaufgaben für sie offen ohne Frist (Frist einzeln neu setzen).
 - Branch vom Hauptstand `main` (c6f21be); alle früheren Branches sind darin enthalten.
 - Geänderte Dateien: `docs/umbau/konzept-klassen-aufgaben.md` (neu), `docs/umbau/STATUS.md`.
 - Offene Fragen: Abschnitt 4 im Konzept.
-- Nächster Schritt: Antworten von Jazz, dann Teilaufgabe 2 (Reiter „Aufgaben“, Zuteilen, Herausnehmen).
+- Nächster Schritt: Teilaufgabe 2 (Reiter „Aufgaben“, Zuteilen, Herausnehmen).
