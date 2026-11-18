@@ -7,7 +7,7 @@ import { OBSTBAUM, SORTE } from './shop'
 describe('Sammelalbum', () => {
   it('hat für jede Pflanze, jedes Tier, jede Deko und jedes Monster einen Sticker', () => {
     const deko = Object.keys(GRAFIK).filter((n) => n.startsWith('deko_')).map((n) => n.slice(5))
-    const wachsend = ['kirschbaum', 'lavendel', 'sonnenblume', 'seerose', 'beerenbusch', 'vogelhaus', 'eiche'].map((w) => `wachs_${w}`) // wie schueler_album
+    const wachsend = ['kirschbaum', 'lagerfeuer', 'sonnenblume', 'seerose', 'beerenbusch', 'vogelhaus', 'eiche'].map((w) => `wachs_${w}`) // wie schueler_album
     const ids = [...Object.keys(SORTE), ...Object.keys(OBSTBAUM), 'huhn', 'kuh', 'brunnen', ...deko, ...Object.keys(MONSTER).map((m) => `monster_${m}`)]
     ids.push(...wachsend)
     expect(ids.filter((id) => STICKER_NUMMER[id] === undefined)).toEqual([])

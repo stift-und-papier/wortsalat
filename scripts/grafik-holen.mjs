@@ -285,6 +285,7 @@ for (const n of KLEINER) {
 {
   const OBJ = SPRITES + 'Objects/', PU2 = 'assets/entpackt/Sprout Sorry pack/Early Access/Plant update 2/'
   const MFS = OBJ + 'Mushrooms, Flowers, Stones.png', WASSER = OBJ + 'Water Objects.png'
+  const WINTER = 'assets/entpackt/Sprout Sorry pack/Early Access/Sprout winter/', TRUHE = PU2 + 'Furniture/'
   const e = (d, x, y, b = 16, h = 16, zx = 0, zy = 0) => ({ d, x, y, b, h, zx, zy })
   const NEU = [
     ['deko_klee', 16, 16, [[e(MFS, 16, 32)]]],
@@ -296,12 +297,13 @@ for (const n of KLEINER) {
     ['deko_schild', 16, 16, [[48, 32], [16, 32], [80, 16], [16, 48], [0, 0]].map(([x, y]) => [e(OBJ + 'signs.png', x, y)])],
     ['deko_schilf', 16, 16, [[e(WASSER, 96, 0)], [e(WASSER, 112, 0)]]],
     ['deko_wassersteine', 16, 16, [[e(WASSER, 32, 0)], [e(WASSER, 48, 0)]]],
-    // Picknickdecke (48 × 48) auf 32 × 32 verkürzt: die vier Ecken, Korb in die Mitte
-    ['deko_picknick', 32, 32, [[
-      e(OBJ + 'Piknik blanket.png', 0, 0), e(OBJ + 'Piknik blanket.png', 32, 0, 16, 16, 16, 0),
-      e(OBJ + 'Piknik blanket.png', 0, 32, 16, 16, 0, 16), e(OBJ + 'Piknik blanket.png', 32, 32, 16, 16, 16, 16),
-      e(OBJ + 'Piknik basket.png', 0, 0, 16, 16, 8, 6),
-    ]]],
+    // Jazz 2026-11-18: Truhe in Eiche, Silber, Gold (je Kauf die nächste); Kürbis mit 4 Gesichtern (nur im Herbst); Geschenk in 3 Farben (nur im Dezember)
+    ['deko_truhe', 16, 16, ['Oak', 'Silver', 'Golden'].map((t) => [e(TRUHE + t + '_Chest.png', 8, 16)])],
+    ['deko_kuerbisgesicht', 16, 16, [0, 16, 32, 48].map((x) => [e('assets/entpackt/Sprout Sorry pack/Early Access/halloween/carved_halloween_pumpkins.png', x, 0)])],
+    ['deko_geschenk', 16, 16, ['present red.png', 'present green.png', 'present red 2.png'].map((d) => [e(WINTER + d, 0, 0)])],
+    // Feuer über dem Lagerfeuer (wachsende Deko W2, letzte Stufe), 16 Bilder; Sticker-Bild: Holz mit Flamme
+    ['feuer', 16, 16, Array.from({ length: 16 }, (_, i) => [e(WINTER + 'fire animation.png', i * 16, 0)])],
+    ['lagerfeuer_sticker', 16, 22, [[e(WINTER + 'campfire.png', 64, 32, 16, 16, 0, 6), e(WINTER + 'fire animation.png', 0, 0, 16, 16, 0, 3)]]],
     // bewegt (Jazz V2: höchstens 2, je einmal): Bienen fliegen um den Stock (8 Bilder), Frosch atmet auf einem Seerosenblatt (14 Bilder)
     ['deko_bienenstock', 32, 32, Array.from({ length: 8 }, (_, i) => [e(PU2 + 'Bee/beehive.png', 0, 0, 32, 32), e(PU2 + 'Bee/bee_spritesheet.png', i * 16, 0, 16, 16, 16, 0)])],
     ['deko_frosch', 16, 16, Array.from({ length: 14 }, (_, i) => [e(WASSER, 128, 0), e(PU2 + 'frog/frog_spritesheet.png', i * 16, 32, 16, 16, 0, -3)])],
@@ -469,9 +471,10 @@ const STICKER = [
   ['orangenbaum', 'baum_orange', 0], ['pfirsichbaum', 'baum_pfirsich', 0], ['birnenbaum', 'baum_birne', 0],
   ['huhn', 'huhn', 0], ['kuh', 'kuh', 0], ['brunnen', 'brunnen', 0], ['boot', 'deko_boot', 0],
   ...['busch', 'blume_gelb', 'pilz', 'stein', 'blume_lila', 'pilzhaus', 'katze_rosa', 'katze_blau',
-    'klee', 'fels', 'glockenblume', 'baumstumpf', 'briefkasten', 'schild', 'schilf', 'wassersteine', 'picknick', 'bienenstock', 'frosch'].map((id) => [id, 'deko_' + id, 0]),
+    'klee', 'fels', 'glockenblume', 'baumstumpf', 'briefkasten', 'schild', 'schilf', 'wassersteine', 'bienenstock', 'frosch',
+    'truhe', 'kuerbisgesicht', 'geschenk'].map((id) => [id, 'deko_' + id, 0]),
   // Jazz 2026-11-17: ausgewachsene wachsende Deko (letztes Bild; beide Sonnenblumen teilen sich einen Sticker)
-  ['wachs_kirschbaum', 'wachs_w1', 4], ['wachs_lavendel', 'wachs_w2', 3], ['wachs_sonnenblume', 'wachs_w3', 3], ['wachs_seerose', 'wachs_w4', 3],
+  ['wachs_kirschbaum', 'wachs_w1', 4], ['wachs_lagerfeuer', 'lagerfeuer_sticker', 0], ['wachs_sonnenblume', 'wachs_w3', 3], ['wachs_seerose', 'wachs_w4', 3],
   ['wachs_beerenbusch', 'wachs_w5', 2], ['wachs_vogelhaus', 'wachs_w6', 4], ['wachs_eiche', 'wachs_w7', 4],
   ...['ruebchen', 'schleim_gruen', 'schleim_blau', 'schleim_feuer', 'gespenst', 'spinne_gruen', 'spinne_lila', 'spinne_gold', 'maus', 'fledermaus']
     .map((id) => ['monster_' + id, 'monster_' + id, 0]),

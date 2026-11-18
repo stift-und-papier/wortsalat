@@ -23,7 +23,7 @@ aus den Migrationen `lernstand`, `belohnungen` und `uebungen_runden` (nur gelese
 | Platz | Deko | Größe | Stufen (Beschreibung) | Bilder |
 |---|---|---|---|---|
 | W1 (unter der Bucht, x 13, y 4) | **Kirschbaum** | 2 × 2 | 1. ein winziger Keimling · 2. ein Zweig mit rosa Blättern · 3. ein runder rosa Busch · 4. ein schmales Bäumchen · 5. ein Kirschbaum in voller Blüte | vorhanden |
-| W2 (x 11, y 5) | **Wildblumen** | 1 × 1 | 1. ein paar Grashalme · 2. ein dichter Grasbüschel · 3. eine Lavendel-Knospe · 4. ein Lavendel (Jazz: neu gezeichnet in der Größe von Blumen und Pilzen; Gras im Grün seiner Blätter) | vorhanden, umgefärbt |
+| W2 (x 11, y 5) | **Lagerfeuer** (Jazz 2026-11-18, statt Lavendel) | 1 × 1 | 1. ein Ast · 2. zwei Äste · 3. ein Holzstapel · 4. das Feuer brennt (flackert, zählt zu den 3 bewegten Dingen) | vorhanden (Sprout winter/campfire.png, fire animation.png) |
 | W3 (am Hühnerstall, x 17, y 7) | **Sonnenblume** | 1 × 2 | 1. ein Grashalm · 2. eine kleine gelbe Blüte · 3. eine große Knospe · 4. eine hohe Sonnenblume | vorhanden |
 | W4 (Wasser am Südufer, x 10, y 12) | **Seerosen** | 2 × 1 Wasser | 1. ein kleines Blatt · 2. ein großes Blatt · 3. ein Blatt mit rosa Knospe · 4. eine blühende Seerose | vorhanden |
 | W5 (x 11, y 7) | **Beerenbusch** | 1 × 1 | 1. ein kleiner Busch · 2. ein voller Busch · 3. ein Busch mit roten Beeren (nur Deko, nicht zum Ernten); dunkles Grün | vorhanden, umgefärbt |

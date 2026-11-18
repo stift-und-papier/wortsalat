@@ -813,14 +813,32 @@ begin
       reset role;
       if (select platz from public.besitz where id = b2) is not null then raise exception 'Block 9.6b: in die Truhe geht nicht'; end if;
       set local role anon;
-      -- Schritt 3b: große Deko gibt es nur einmal
-      perform public.kaufen(t_eule, 'picknick');
+      -- Schritt 3b: was es nur einmal gibt (hoechstens = 1), kann man nicht zweimal kaufen (hier die Truhe, nur im Test begrenzt)
+      reset role;
+      update public.shop_artikel set hoechstens = 1 where id = 'truhe';
+      set local role anon;
+      perform public.kaufen(t_eule, 'truhe');
       begin
-        perform public.kaufen(t_eule, 'picknick');
-        raise exception 'Block 9.6b: Picknick zweimal gekauft';
+        perform public.kaufen(t_eule, 'truhe');
+        raise exception 'Block 9.6b: Truhe zweimal gekauft';
       exception when raise_exception then
         if sqlerrm !~ 'nur eins' then raise; end if;
       end;
+      -- Jazz 2026-11-18: Jahreszeit-Deko nur in ihren Monaten (Geschenk im Test auf den nächsten Monat gelegt, dann auf diesen)
+      reset role;
+      update public.shop_artikel set monate = array[extract(month from public.heute())::integer % 12 + 1] where id = 'geschenk';
+      set local role anon;
+      if (public.schueler_shop(t_eule) -> 'angebot') @> '[{"id":"geschenk"}]' then raise exception 'Block 9.6b: Geschenk außerhalb der Saison im Shop'; end if;
+      begin
+        perform public.kaufen(t_eule, 'geschenk');
+        raise exception 'Block 9.6b: Geschenk außerhalb der Saison gekauft';
+      exception when raise_exception then
+        if sqlerrm !~ 'noch nicht' then raise; end if;
+      end;
+      reset role;
+      update public.shop_artikel set monate = array[extract(month from public.heute())::integer] where id = 'geschenk';
+      set local role anon;
+      perform public.kaufen(t_eule, 'geschenk');
     end;
     n := n + 1;
     n := n + 1;

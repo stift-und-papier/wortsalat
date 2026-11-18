@@ -611,4 +611,12 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   um den Stock, 8 Bilder; Frosch auf Seerosenblatt, 14 Bilder; still bei „Bewegung reduzieren“). Shop-Karte sagt „Passt auf …“ und „Bewegt sich.“
   Sticker im Album für alle neuen Dinge. Geprüft im Browser mit Pfau-99 (gekauft und aufgestellt). DB-Test 168, Tests 157.
   Nicht umgesetzt: Frosch nur auf S1/S2/S4 (V3), Jahreszeit-Deko (Kürbis, Weihnachten), Truhe, Bank mit Tisch, Lagerfeuer (nicht im Mockup).
+- **Nachträge zu 3b (2026-11-18, Jazz):** Picknick weggelassen (Kauf von Pfau-99 gelöscht, Münzen zurück). Neu: Truhe (Eiche, Silber, Gold),
+  Kürbisgesicht (4 Gesichter, nur September bis November) und Geschenk (3 Farben, nur Dezember), je kleine Plätze, 75 Münzen
+  (`shop_artikel.monate`, Funktion `in_der_saison`, Migration `deko_jahreszeit`; DB-Test mit verschobenem Monat). Weihnachtsbaum (48 × 64)
+  passt auf keinen großen Platz, Bank mit Tisch gibt es in keinem Paket (nur Möbel für drinnen): beide weggelassen.
+  **Lagerfeuer statt Lavendel** als wachsende Deko W2 (ein Ast, zwei Äste, Holzstapel, Feuer brennt); in der letzten Stufe flackert das Feuer
+  (16 Bilder). Bewegte Dinge jetzt höchstens 3 (Bienenstock, Frosch, Feuer). Sticker „Lagerfeuer“ statt „Lavendel“. Album geprüft
+  (alle Sticker vorgetäuscht gesammelt): nur Brunnen und Boot stießen aneinander, darum steht das Boot jetzt weiter hinten (Migration
+  `album_boot_reihenfolge`, auch im Shop). Mockup `wachsende-deko.js` nachgezogen (Lagerfeuer).
 - **Nächster Schritt:** Jazz prüft Schritt 3; danach Teilaufgabe 5 (Münzsystem) später.

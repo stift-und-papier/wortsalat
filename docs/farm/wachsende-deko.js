@@ -12,9 +12,9 @@ const EICHE_GRUEN = rampe('tuerkisgruen', 'gruen')
 const HERBST = { u: PAKET + 'Sprout Sorry pack/Early Access/halloween/fall_trees.png', w: 240, h: 96 }
 const EICHE_HERBST = rampe('tuerkisgruen', 'orange')
 const BUSCH_GRUEN = rampe('tuerkisgruen', 'gruen', -2)
-const GRAS_WIE_LAVENDEL = rampe('tuerkisgruen', 'gruen')
 // Neue Bilder: Vogelhaus, Lavendel, Napf von Claude nach den Gemini-Vorlagen von Jazz gezeichnet (handgezeichnet.cjs); liegen in assets/neu/ (nicht im Repo)
 const NEU = (n, w, h) => [{ u: '../../assets/neu/' + n + '.png', w, h }, 0, 0, w, h]
+const LAGERFEUER = { u: PAKET + 'Sprout Sorry pack/Early Access/Sprout winter/campfire.png', w: 112, h: 48 }
 const BLUMEN = { u: PAKET + 'Sprout Lands - Sprites - premium pack/Objects/Mushrooms, Flowers, Stones.png', w: 192, h: 80 }
 
 const SONNENBLUME = [
@@ -25,10 +25,11 @@ const WACHS = [
   { n: 'W1', name: 'Kirschbaum', x: 13, y: 4, b: 2, h: 2, stufen: [
     ['Keimling', [KIRSCHE, 34, 37, 10, 10]], ['Zweig mit Blättern', [KIRSCHE, 48, 2, 16, 13], [rampe('gruen', 'rosa')]], ['Busch', [KIRSCHE, 80, 64, 16, 16]],
     ['Bäumchen', [KIRSCHE, 65, 18, 14, 29]], ['Kirschbaum in Blüte', [KIRSCHE, 84, 16, 24, 31]]] },
-  // Jazz: Knospe und Lavendel neu gezeichnet in Blumen- und Pilzgröße; Gras davor im Grün seiner Blätter
-  { n: 'W2', name: 'Wildblumen', x: 11, y: 5, b: 1, h: 1, stufen: [
-    ['Grashalme', [BLUMEN, 33, 37, 14, 10], [GRAS_WIE_LAVENDEL]], ['Grasbüschel', [BLUMEN, 48, 34, 16, 13], [GRAS_WIE_LAVENDEL]],
-    ['Knospe', NEU('lavendel_1', 16, 16)], ['Lavendel', NEU('lavendel_2', 16, 16)]] },
+  // Jazz 2026-11-18: Lagerfeuer statt Lavendel (mehr Stufen sichtbar): ein Ast, zwei Äste, ein Holzstapel, das Feuer brennt.
+  // Im Spiel flackert in der letzten Stufe das Feuer (fire animation.png, 16 Bilder) über dem Holz; hier steht es still.
+  { n: 'W2', name: 'Lagerfeuer', x: 11, y: 5, b: 1, h: 1, stufen: [
+    ['ein Ast', [LAGERFEUER, 0, 16, 16, 16]], ['zwei Äste', [LAGERFEUER, 16, 16, 16, 16]], ['Holzstapel', [LAGERFEUER, 64, 16, 16, 16]],
+    ['Feuer brennt', [LAGERFEUER, 64, 32, 16, 16]]] },
   { n: 'W3', name: 'Sonnenblume', x: 17, y: 7, b: 1, h: 2, stufen: SONNENBLUME },
   { n: 'W4', name: 'Seerosen', x: 10, y: 12, b: 2, h: 1, wasser: true, stufen: [
     ['kleines Blatt', [SEEROSE, 0, 5, 13, 9]], ['großes Blatt', [SEEROSE, 32, 4, 14, 11]], ['Blatt mit Knospe', [SEEROSE, 1, 19, 13, 9]],

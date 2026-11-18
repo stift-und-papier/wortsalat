@@ -85,6 +85,10 @@ Das frühere `album_seite.png` (Humble Gift – Paper UI System) wird seit dem 2
 - `trog.png`: jetzt alle 3 Bilder aus Sprout Lands Premium, Animal Structures/Water tray.png (voll, halb, leer).
 - `huette_klein.png`: Sprout Lands Premium, Animal Structures/Chikcen_Houses.png, kleiner Hühnerstall mit einem Fenster in 6 Dachfarben (Hütte für kleine Monster).
 - `napf.png`: eigenes Bild der Lehrkraft, mit KI-Hilfe (Gemini) als Vorlage erstellt und von Claude im Stil von Sprout Lands nachgezeichnet (`docs/farm/handgezeichnet.cjs`). Keine Namensnennung nötig.
+- `wachs_w1.png` bis `wachs_w8.png`: wachsende Deko aus Sprout Lands Premium (Mushrooms, Flowers, Stones) und Sprout Sorry Pack (Plant update 2: Cherry Blossom, Trees v2, water plants; halloween/fall_trees; Sprout winter/campfire), teils auf die Palette umgefärbt; Vogelhaus eigene Zeichnung (wie `napf.png`).
+- `feuer.png`, `lagerfeuer_sticker.png`: Sprout Sorry Pack, Sprout winter/fire animation.png und campfire.png.
+- `glitzern.png`: eigenes Bild der Lehrkraft (Gemini-Vorlage, auf die Palette gebracht).
+- `deko_*.png` (neu ab 2026-11-17): Sprout Lands Premium (Mushrooms, Flowers, Stones; Trees, stumps and bushes; signs; Water Objects; Mailbox) und Sprout Sorry Pack (Plant update 2: Bee, frog, Furniture/*_Chest; halloween/carved_halloween_pumpkins; Sprout winter/present*). Pilzhütte ohne Totenkopf, Farben aus `docs/farm/farben.js`.
 
 ## TastenHeld
 

@@ -86,7 +86,11 @@ import deko_briefkasten from './deko_briefkasten.png'
 import deko_schild from './deko_schild.png'
 import deko_schilf from './deko_schilf.png'
 import deko_wassersteine from './deko_wassersteine.png'
-import deko_picknick from './deko_picknick.png'
+import deko_truhe from './deko_truhe.png'
+import deko_kuerbisgesicht from './deko_kuerbisgesicht.png'
+import deko_geschenk from './deko_geschenk.png'
+import feuer from './feuer.png'
+import lagerfeuer_sticker from './lagerfeuer_sticker.png'
 import deko_bienenstock from './deko_bienenstock.png'
 import deko_frosch from './deko_frosch.png'
 import buch from './buch.png'
@@ -186,7 +190,11 @@ export const GRAFIK = {
   deko_schild: { url: deko_schild, breite: 80, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   deko_schilf: { url: deko_schilf, breite: 32, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   deko_wassersteine: { url: deko_wassersteine, breite: 32, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
-  deko_picknick: { url: deko_picknick, breite: 32, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
+  deko_truhe: { url: deko_truhe, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  deko_kuerbisgesicht: { url: deko_kuerbisgesicht, breite: 64, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  deko_geschenk: { url: deko_geschenk, breite: 48, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  feuer: { url: feuer, breite: 256, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
+  lagerfeuer_sticker: { url: lagerfeuer_sticker, breite: 16, hoehe: 22, bildBreite: 16, bildHoehe: 22 },
   deko_bienenstock: { url: deko_bienenstock, breite: 256, hoehe: 32, bildBreite: 32, bildHoehe: 32 },
   deko_frosch: { url: deko_frosch, breite: 224, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   buch: { url: buch, breite: 2976, hoehe: 216, bildBreite: 248, bildHoehe: 216 },
@@ -194,10 +202,10 @@ export const GRAFIK = {
   buch_symbol: { url: buch_symbol, breite: 22, hoehe: 26, bildBreite: 22, bildHoehe: 26 },
   reiter: { url: reiter, breite: 80, hoehe: 16, bildBreite: 16, bildHoehe: 16 },
   lesezeichen: { url: lesezeichen, breite: 160, hoehe: 20, bildBreite: 40, bildHoehe: 20 },
-  sticker: { url: sticker, breite: 2352, hoehe: 35, bildBreite: 42, bildHoehe: 35 },
+  sticker: { url: sticker, breite: 2436, hoehe: 35, bildBreite: 42, bildHoehe: 35 },
   ranke: { url: ranke, breite: 80, hoehe: 24, bildBreite: 20, bildHoehe: 24 },
   ranke_topf: { url: ranke_topf, breite: 19, hoehe: 15, bildBreite: 19, bildHoehe: 15 },
 } as const
 
 /** Nummer des Stickers im Blatt GRAFIK.sticker (Schlüssel: Shop-Artikel bzw. monster_<Name>) */
-export const STICKER_NUMMER: Record<string, number> = { karotte: 0, blumenkohl: 1, tomate: 2, aubergine: 3, tulpe: 4, salat: 5, weizen: 6, kuerbis: 7, rettich: 8, rose: 9, rote_bete: 10, sternfrucht: 11, gurke: 12, orangenbaum: 13, pfirsichbaum: 14, birnenbaum: 15, huhn: 16, kuh: 17, brunnen: 18, boot: 19, busch: 20, blume_gelb: 21, pilz: 22, stein: 23, blume_lila: 24, pilzhaus: 25, katze_rosa: 26, katze_blau: 27, klee: 28, fels: 29, glockenblume: 30, baumstumpf: 31, briefkasten: 32, schild: 33, schilf: 34, wassersteine: 35, picknick: 36, bienenstock: 37, frosch: 38, wachs_kirschbaum: 39, wachs_lavendel: 40, wachs_sonnenblume: 41, wachs_seerose: 42, wachs_beerenbusch: 43, wachs_vogelhaus: 44, wachs_eiche: 45, monster_ruebchen: 46, monster_schleim_gruen: 47, monster_schleim_blau: 48, monster_schleim_feuer: 49, monster_gespenst: 50, monster_spinne_gruen: 51, monster_spinne_lila: 52, monster_spinne_gold: 53, monster_maus: 54, monster_fledermaus: 55 }
+export const STICKER_NUMMER: Record<string, number> = { karotte: 0, blumenkohl: 1, tomate: 2, aubergine: 3, tulpe: 4, salat: 5, weizen: 6, kuerbis: 7, rettich: 8, rose: 9, rote_bete: 10, sternfrucht: 11, gurke: 12, orangenbaum: 13, pfirsichbaum: 14, birnenbaum: 15, huhn: 16, kuh: 17, brunnen: 18, boot: 19, busch: 20, blume_gelb: 21, pilz: 22, stein: 23, blume_lila: 24, pilzhaus: 25, katze_rosa: 26, katze_blau: 27, klee: 28, fels: 29, glockenblume: 30, baumstumpf: 31, briefkasten: 32, schild: 33, schilf: 34, wassersteine: 35, bienenstock: 36, frosch: 37, truhe: 38, kuerbisgesicht: 39, geschenk: 40, wachs_kirschbaum: 41, wachs_lagerfeuer: 42, wachs_sonnenblume: 43, wachs_seerose: 44, wachs_beerenbusch: 45, wachs_vogelhaus: 46, wachs_eiche: 47, monster_ruebchen: 48, monster_schleim_gruen: 49, monster_schleim_blau: 50, monster_schleim_feuer: 51, monster_gespenst: 52, monster_spinne_gruen: 53, monster_spinne_lila: 54, monster_spinne_gold: 55, monster_maus: 56, monster_fledermaus: 57 }

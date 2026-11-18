@@ -81,7 +81,7 @@ Du kannst damit Tiere füttern oder alles im **Shop** verkaufen. Dann bekommst d
 
 ## Warum wachsen auf meiner Farm Bäume und Blumen, die ich nicht gepflanzt habe?
 
-Manche Pflanzen auf deiner Farm wachsen, wenn du dazulernst. Dazu gehören der Kirschbaum, die Eiche, die Sonnenblumen, der Lavendel, der Beerenbusch, die Seerosen und das Vogelhaus. Sie werden nie kleiner.
+Manche Pflanzen auf deiner Farm wachsen, wenn du dazulernst. Dazu gehören der Kirschbaum, die Eiche, die Sonnenblumen, das Lagerfeuer, der Beerenbusch, die Seerosen und das Vogelhaus. Sie werden nie kleiner.
 
 ## Was bedeuten die Pflanzen in „Mein Lernweg“?
 

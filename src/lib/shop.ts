@@ -42,9 +42,10 @@ export const DEKO_NAME: Record<string, string> = {
   brunnen: 'Brunnen', boot: 'Boot', katze_rosa: 'Katzenblume rosa', katze_blau: 'Katzenblume blau',
   // Jazz 2026-11-17 (Schritt 3b)
   klee: 'Klee', glockenblume: 'Glockenblume', fels: 'Fels', schild: 'Holzschild', baumstumpf: 'Baumstumpf', briefkasten: 'Briefkasten',
-  schilf: 'Schilf', wassersteine: 'Steine im Wasser', picknick: 'Picknick', bienenstock: 'Bienenstock', frosch: 'Frosch',
+  schilf: 'Schilf', wassersteine: 'Steine im Wasser', bienenstock: 'Bienenstock', frosch: 'Frosch',
+  truhe: 'Truhe', kuerbisgesicht: 'Kürbisgesicht', geschenk: 'Geschenk',
 }
-// Bewegte Deko (Jazz V2: höchstens 2, je einmal): die Bilder im Streifen sind die Bewegung, nicht Farben
+// Bewegte Deko (Jazz 2026-11-18: höchstens 3 mit dem Feuer des Lagerfeuers, je einmal): die Bilder im Streifen sind die Bewegung, nicht Farben
 export const BEWEGT = new Set(['bienenstock', 'frosch'])
 // Wohin eine Deko passt (Shop-Karte und Aufstellen)
 export const PLATZ_WORT: Record<string, string> = { beet: 'ein Beet', klein: 'einen kleinen Platz', gross: 'einen großen Platz', wasser: 'einen Platz im Wasser' }

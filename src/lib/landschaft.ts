@@ -90,7 +90,8 @@ export const platzKacheln = (id: string): Ort[] => (DEKO_PLATZ[id] ? flaeche(DEK
 // b × h Kacheln (das Bild ragt ggf. darüber hinaus), stufen = Zahl der Bilder (muss zu wachstum_verteilen in der Datenbank passen).
 export const WACHSENDE_DEKO = [
   { id: 'W1', name: 'Kirschbaum', ...kern(13, 4), b: 2, h: 2, stufen: 5, gewachsen: 'Dein Kirschbaum ist gewachsen!', fertig: 'Dein Kirschbaum blüht jetzt!' },
-  { id: 'W2', name: 'Wildblumen', ...kern(11, 5), b: 1, h: 1, stufen: 4, gewachsen: 'Deine Wildblumen sind gewachsen!', fertig: 'Dein Lavendel blüht jetzt!' },
+  // Jazz 2026-11-18: Lagerfeuer statt Lavendel; in der letzten Stufe flackert das Feuer (zählt zu den bewegten Dingen, höchstens 3)
+  { id: 'W2', name: 'Lagerfeuer', ...kern(11, 5), b: 1, h: 1, stufen: 4, gewachsen: 'An deinem Lagerfeuer liegt mehr Holz!', fertig: 'Dein Lagerfeuer brennt jetzt!' },
   { id: 'W3', name: 'Sonnenblume', ...kern(17, 7), b: 1, h: 2, stufen: 4, gewachsen: 'Deine Sonnenblume ist gewachsen!', fertig: 'Deine Sonnenblume blüht jetzt!' },
   { id: 'W4', name: 'Seerosen', ...kern(10, 12), b: 2, h: 1, stufen: 4, wasser: true, gewachsen: 'Deine Seerosen sind gewachsen!', fertig: 'Deine Seerose blüht jetzt!' },
   { id: 'W5', name: 'Beerenbusch', ...kern(11, 7), b: 1, h: 1, stufen: 3, gewachsen: 'Dein Beerenbusch ist gewachsen!', fertig: 'An deinem Busch hängen jetzt Beeren!' },

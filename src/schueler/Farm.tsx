@@ -530,6 +530,10 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             return (
               <span key={w.id}>
                 <Ding grafik={g} nummer={Math.min(stufen[w.id] ?? 1, w.stufen) - 1} x={links} y={unten - g.bildHoehe * mal} mal={mal} z={(w.y + w.h) * KACHEL} />
+                {/* Jazz 2026-11-18: das fertige Lagerfeuer brennt (Flamme 3 Pixel über dem Holz, 16 Bilder) */}
+                {w.id === 'W2' && (stufen[w.id] ?? 1) >= w.stufen && (
+                  <Ding grafik={GRAFIK.feuer} x={links} y={unten - (g.bildHoehe + 3) * mal} mal={mal} z={(w.y + w.h) * KACHEL + 1} bilder={16} />
+                )}
                 {glitzert.includes(w.id) && (
                   <span
                     className="farm-ding farm-glitzern"
