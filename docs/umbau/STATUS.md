@@ -623,4 +623,10 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   (Migration `deko_platz_d21`: `deko_platzart`, `deko_plaetze` 21; Huhn 2 eine Kachel tiefer). Vorrat ohne sichtbare Namen (nur für
   Vorlesehilfen), weil Blaubeermilch und Erdbeermilch ineinanderliefen; Laden geprüft (alle Artikel bei 1024 und 768 Breite): nichts überlappt.
   Laden-Knopf mit Einkaufswagen aus Sprout Lands (UI Pack Premium, `laden.png`).
-- **Nächster Schritt:** Jazz prüft Schritt 3; danach Teilaufgabe 5 (Münzsystem) später.
+- **Teilaufgabe 5 – Münzsystem** (2026-11-18, nur Vorschlag, nichts am Spiel geändert): `docs/farm/muenzen-vorschlag.md`, Simulation
+  `docs/farm/simulation/simulation.mjs` (ohne Abhängigkeiten, Ergebnis `ergebnis.md`). Heute ist die Farm nach 8 bis 17 Wochen voll (Handel bis 78.000
+  Münzen im Jahr). Empfehlung **Modell A „Lernen zählt“**: Verkauf zählt nicht fürs Freischalten, kleine Gewinnspannen (Ernte und Erzeugnisse = Futter + 5/10),
+  Obstbäume alle 14 Tage, Dauerhaftes ×2,5 (Samen wie heute) → regelmäßig 27 Wochen, Vielspieler 26, Schlupflöcher nicht fertig. Preisfaktor hängt an der Zahl
+  neuer Pakete im Jahr (20 → 1, 76 → 3). Bestand: neue Regeln nur für die Zukunft (nur Testkonten). **Nicht geprüft:** echte Spieldaten, wachsende Deko
+  (braucht Lernstand-Daten), nichts im Spiel ausprobiert.
+- **Nächster Schritt:** Jazz entscheidet M1–M9 (`muenzen-vorschlag.md` Abschnitt 8); Migration `deko_platz_d21` einspielen (wartet auf Freigabe); danach Teilaufgabe 6 (Zusammenfassung).
