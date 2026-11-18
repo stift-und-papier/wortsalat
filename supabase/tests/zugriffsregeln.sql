@@ -2055,6 +2055,122 @@ begin
     n := n + 2;
   end;
 
+  -- ---------- Block 24: Hausaufgaben anlegen, ändern, freigeben, neu geben (Jazz 2026-11-18) ----------
+  declare
+    v_p uuid;
+    v_u uuid;
+    v_z uuid;
+    v_neu uuid;
+    v_fuchs uuid := (select id from public.schueler where pseudonym = 'Fuchs-01');
+    v_eule uuid := (select id from public.schueler where pseudonym = 'Eule-02');
+    t_fuchs text := (select token from public.schueler where pseudonym = 'Fuchs-01');
+    v_kinder integer;
+  begin
+    insert into public.aufgaben (owner, typ, titel, stufe, loesung)
+    values (c_lk_a, 'lueckentext', 'Z24', 1, '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]}]}') returning id into v_u;
+    insert into public.pakete (owner, titel) values (c_lk_a, 'P-24') returning id into v_p;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position) values (v_p, v_u, 1);
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.zuteilen(array[v_p], c_kl_a, null);
+    select id into v_z from public.zuweisungen where paket_id = v_p and entfernt_am is null;
+
+    -- 24.1 anlegen: Frist in der Vergangenheit geht nicht, sonst Frist und Versuche an der Zuteilung
+    begin
+      perform public.hausaufgabe_machen(v_p, c_kl_a, now() - interval '1 hour', 2::smallint);
+      raise exception 'Block 24.1: Frist in der Vergangenheit angenommen';
+    exception when sqlstate '22023' then null;
+    end;
+    v_kinder := public.hausaufgabe_machen(v_p, c_kl_a, now() + interval '1 day', 2::smallint); -- eigene Zeile: OR-Reihenfolge ist nicht fest
+    if v_kinder <> 1
+       or not exists (select 1 from public.zuweisungen where id = v_z and hausaufgabe_ab is not null and versuche_erlaubt = 2) then
+      raise exception 'Block 24.1: Hausaufgabe nicht angelegt';
+    end if;
+    n := n + 1;
+
+    -- 24.2 laufende Hausaufgabe nicht doppelt anlegen
+    begin
+      perform public.hausaufgabe_machen(v_p, c_kl_a, now() + interval '2 days', null);
+      raise exception 'Block 24.2: laufende Hausaufgabe doppelt angelegt';
+    exception when sqlstate '22023' then null;
+    end;
+    n := n + 1;
+
+    -- 24.3 eigene Frist für ein Kind; „für alle“ ändert Frist und Versuche und hebt die eigene Frist auf
+    perform public.hausaufgabe_aendern(v_p, c_kl_a, now() + interval '3 days', null, array[v_fuchs]);
+    if not exists (select 1 from public.zuweisung_einzeln where zuweisung_id = v_z and schueler_id = v_fuchs and frist > now() + interval '2 days') then
+      raise exception 'Block 24.3: eigene Frist fehlt';
+    end if;
+    perform public.hausaufgabe_aendern(v_p, c_kl_a, now() + interval '2 days', 3::smallint, null);
+    if not exists (select 1 from public.zuweisungen where id = v_z and versuche_erlaubt = 3 and frist > now() + interval '1 day')
+       or exists (select 1 from public.zuweisung_einzeln where zuweisung_id = v_z and frist is not null) then
+      raise exception 'Block 24.3: Ändern für alle wirkt falsch';
+    end if;
+    n := n + 1;
+
+    -- 24.4 neues Kind: „für alle“ gibt auch ihm die Frist
+    insert into public.schueler (klasse_id, pseudonym, erstellt_am) values (c_kl_a, 'Neu-24', now() + interval '1 second') returning id into v_neu;
+    perform public.hausaufgabe_aendern(v_p, c_kl_a, now() + interval '4 days', 3::smallint, null);
+    if not exists (select 1 from public.zuweisung_einzeln where zuweisung_id = v_z and schueler_id = v_neu and frist > now() + interval '3 days')
+       or exists (select 1 from public.zuweisung_einzeln where zuweisung_id = v_z and schueler_id <> v_neu and frist is not null) then
+      raise exception 'Block 24.4: Frist für neues Kind falsch';
+    end if;
+    n := n + 1;
+
+    -- 24.5 freigeben für ein Kind, dann für alle; neu geben für alle (löscht nichts)
+    perform public.hausaufgabe_freigeben(v_p, c_kl_a, array[v_eule]);
+    if not exists (select 1 from public.zuweisung_einzeln where zuweisung_id = v_z and schueler_id = v_eule and freigegeben_am is not null)
+       or exists (select 1 from public.zuweisungen where id = v_z and freigegeben_am is not null) then
+      raise exception 'Block 24.5: Freigabe für ein Kind falsch';
+    end if;
+    select count(*) into v_kinder from public.schueler where klasse_id = c_kl_a;
+    if public.hausaufgabe_neustart(v_p, c_kl_a, null) <> v_kinder then
+      raise exception 'Block 24.5: Neustart zählt falsch';
+    end if;
+    if (select count(*) from public.zuweisung_einzeln where zuweisung_id = v_z and neustart_ab is not null) <> v_kinder then
+      raise exception 'Block 24.5: Neustart nicht für alle Kinder';
+    end if;
+    perform public.hausaufgabe_freigeben(v_p, c_kl_a, null);
+    if not exists (select 1 from public.zuweisungen where id = v_z and freigegeben_am is not null) then
+      raise exception 'Block 24.5: Freigabe für alle fehlt';
+    end if;
+    n := n + 1;
+
+    -- 24.6 nach der Freigabe neu anlegen: alte Zuteilung bleibt als Verlauf, herausgenommenes Kind bleibt draußen
+    perform public.herausnehmen(v_p, c_kl_a, array[v_fuchs]);
+    perform public.hausaufgabe_machen(v_p, c_kl_a, now() + interval '1 day', null);
+    if not exists (select 1 from public.zuweisungen where id = v_z and entfernt_am is not null)
+       or (select count(*) from public.zuweisungen where paket_id = v_p and entfernt_am is null and hausaufgabe_ab is not null and versuche_erlaubt is null) <> 1
+       or exists (select 1 from public.hausaufgabe_kinder(v_p, c_kl_a, array[v_fuchs])) then
+      raise exception 'Block 24.6: neue Hausaufgabe nach Freigabe falsch';
+    end if;
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_fuchs) -> 'pakete') x where x ->> 'id' = v_p::text) <> 0 then
+      raise exception 'Block 24.6: herausgenommenes Kind sieht die neue Hausaufgabe';
+    end if;
+    n := n + 1;
+
+    -- 24.7 fremde Lehrkraft und ohne Anmeldung: nichts
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_b, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    begin
+      perform public.hausaufgabe_machen(v_p, c_kl_a, now() + interval '1 day', null);
+      raise exception 'Block 24.7: fremde Lehrkraft legt Hausaufgabe an';
+    exception when sqlstate 'P0002' then null;
+    end;
+    if public.hausaufgabe_neustart(v_p, c_kl_a, null) <> 0 or public.hausaufgabe_freigeben(v_p, c_kl_a, null) <> 0 then
+      raise exception 'Block 24.7: fremde Lehrkraft ändert Hausaufgabe';
+    end if;
+    set local role anon;
+    begin
+      perform public.hausaufgabe_neustart(v_p, c_kl_a, null);
+      raise exception 'Block 24.7: anon darf neu geben';
+    exception when insufficient_privilege then null;
+    end;
+    reset role;
+    n := n + 1;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;

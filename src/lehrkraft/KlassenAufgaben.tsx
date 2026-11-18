@@ -8,6 +8,8 @@ import { supabase } from '../lib/supabase'
 import type { Klasse, Paket } from '../lib/typen'
 import { ListenFilter, useGemerkt, useKompetenzen } from './ListenFilter'
 import { PaketTags } from './PaketTags'
+import { KlassenHausaufgaben } from './Hausaufgaben'
+import { fristText } from '../lib/frist'
 
 type Kind = { id: string; pseudonym: string }
 type PaketZeile = Paket & { paket_aufgaben: { aufgaben: { aufgabe_kompetenzen: { kompetenz_id: string }[] } | null }[] }
@@ -17,6 +19,9 @@ type Zuteilung = {
   klasse_id: string | null
   schueler_id: string | null
   erstellt_am: string
+  hausaufgabe_ab: string | null
+  frist: string | null
+  freigegeben_am: string | null
   zuweisung_einzeln: { schueler_id: string; entfernt_am: string | null }[]
 }
 
@@ -55,7 +60,7 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
         .order('erstellt_am', { ascending: false }),
       supabase
         .from('zuweisungen')
-        .select('id, paket_id, klasse_id, schueler_id, erstellt_am, zuweisung_einzeln(schueler_id, entfernt_am)')
+        .select('id, paket_id, klasse_id, schueler_id, erstellt_am, hausaufgabe_ab, frist, freigegeben_am, zuweisung_einzeln(schueler_id, entfernt_am)')
         .is('entfernt_am', null)
         .or(wer),
     ])
@@ -65,8 +70,9 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
   }, [klasse.id, schluessel])
 
   useEffect(() => {
+    // auch beim Zurückschalten aus „Hausaufgaben“, dort kann sich etwas geändert haben
     void laden()
-  }, [laden])
+  }, [laden, ansicht])
 
   // Je Paket: wer hat es gerade? (Klassen-Zuteilung ohne Herausgenommene, dazu Einzel-Zuteilungen)
   const zugeteilt = (pakete ?? []).flatMap((p) => {
@@ -77,7 +83,9 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
     const einzeln = new Set(eigene.flatMap((z) => (z.schueler_id ? [z.schueler_id] : [])))
     const haben = schueler.filter((s) => (ganz && !raus.has(s.id)) || einzeln.has(s.id)).map((s) => s.id)
     const seit = eigene.map((z) => z.erstellt_am).sort()[0]
-    return [{ paket: p, ganz: !!ganz, haben, seit }]
+    // laufende Hausaufgabe (Einzelheiten in der Ansicht Hausaufgaben)
+    const ha = eigene.find((z) => z.hausaufgabe_ab && !z.freigegeben_am && z.frist && Date.parse(z.frist) > Date.now())
+    return [{ paket: p, ganz: !!ganz, haben, seit, bis: ha?.frist ?? null }]
   })
   const schonZugeteilt = new Set(zugeteilt.map((z) => z.paket.id))
 
@@ -108,10 +116,7 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
       {meldung && <p className="lk-erfolg" role="status">{meldung}</p>}
 
       {ansicht === 'hausaufgaben' ? (
-        <section className="lk-abschnitt">
-          <h2>Hausaufgaben</h2>
-          <p className="lk-leise">Die Hausaufgaben kommen im nächsten Schritt.</p>
-        </section>
+        <KlassenHausaufgaben klasse={klasse} />
       ) : (
         <>
           <section className="lk-abschnitt">
@@ -201,7 +206,7 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
 }
 
 /** Eine zugeteilte Aufgabe mit „Herausnehmen“ (ganze Klasse oder einzelne Pseudonyme antippen) */
-function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; seit: string; schueler: Kind[]; herausnehmen: (kinder: string[] | null) => void }) {
+function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; seit: string; bis: string | null; schueler: Kind[]; herausnehmen: (kinder: string[] | null) => void }) {
   const { paket, ganz, haben, seit, schueler } = props
   const [offen, setOffen] = useState(false)
   const [wahl, setWahl] = useState<Set<string>>(new Set())
@@ -224,6 +229,7 @@ function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; s
         <br />
         <span className="lk-leise">
           {wer} · seit {datum(seit)}
+          {props.bis && ` · Hausaufgabe bis ${fristText(props.bis)}`}
         </span>
       </span>
       <button type="button" className="lk-knopf" aria-expanded={offen} onClick={() => setOffen(!offen)}>

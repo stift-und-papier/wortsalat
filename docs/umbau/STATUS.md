@@ -689,5 +689,34 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   `KlasseDetail.tsx`, `LehrkraftRahmen.tsx`, `PaketDetail.tsx`, `PaketListe.tsx`, `src/design/lehrkraft.css`.
 - Aufgefallen, nicht geändert: `.lk-auswahl` steht in `lehrkraft.css` zweimal; die spätere Regel macht die Pseudonym-Knöpfe in
   „Versuch früher freigeben“ untereinander statt nebeneinander. In Klasse „AES“ heißt ein Kind „Eva“ (sieht aus wie ein Klarname).
+- 2026-11-18 (Jazz, Rückfragen TA 3): Hausaufgaben **nur in der Ansicht „Hausaufgaben“** anlegen (nicht im Zuteilen-Fenster);
+  dasselbe Paket später erneut als Hausaufgabe = neue Hausaufgabe mit neuer Zählung, die alte bleibt unter „Vergangen“;
+  Frist und Versuche einer laufenden Hausaufgabe änderbar (auch verkürzen); „Versuche neu geben“ einzeln und für alle.
+- **Teilaufgabe 3 erledigt (2026-11-18):** Migration `20261118180000_hausaufgaben` (eingespielt, nur Funktionen, keine Schemaänderung):
+  `hausaufgabe_kinder` (je Kind die Hausaufgaben-Zuteilung), `hausaufgabe_machen` (Frist muss in der Zukunft liegen; laufende nicht
+  doppelt; vorbei/freigegeben → neue Zuteilung, alte ausgeblendet, Herausgenommene bleiben draußen), `hausaufgabe_aendern`
+  (für alle: Frist + Versuche, eigene Fristen werden ersetzt, Freigabe für alle aufgehoben, später gekommene Kinder bekommen die Frist mit;
+  für einzelne: eigene Frist), `hausaufgabe_freigeben` und `hausaufgabe_neustart` (alle oder einzelne; Neustart löscht nichts).
+  Alle `security invoker`, nur `authenticated`.
+- Oberfläche: `src/lehrkraft/Hausaufgaben.tsx` (neu) im Umschalter „Hausaufgaben“: „+ Hausaufgabe aus einer Aufgabe machen“ (Liste der
+  zugeteilten Aufgaben ohne laufende Hausaufgabe, Frist Datum + Uhrzeit, Vorgabe nächster Schultag 08:00, Versuche „beliebig oft“ oder
+  1 bis 20 je Übung). „Laufend“ (früheste Frist zuerst) und „Vergangen (n)“ eingeklappt (neueste zuerst, „freigegeben am“/„beendet am“),
+  je Eintrag Frist, Versuche, ganze Klasse oder Anzahl, „n von N fertig“. Klassenliste: je Kind und Übung bester Versuch als
+  Lernstand-Zeichen (Punkte = Anteil × Höchstpunkte der Sterne-Stufe), Anzahl Versuche, „noch k“, „wann?“ klappt die Zeiten auf;
+  Spalte Frist (eigene Frist, „ohne Frist“, „freigegeben“). Für alle: Frist und Versuche ändern, freigeben, Versuche neu geben (mit
+  Nachfrage); für einzelne: Pseudonyme antippen → eigene Frist, freigeben, Versuche neu geben. Reiter „Aufgaben“ zeigt
+  „Hausaufgabe bis …“ und lädt beim Zurückschalten neu. Zeit-Hilfen `src/lib/frist.ts`, Regeln je Kind `src/lib/hausaufgaben.ts` (mit Tests).
+- Getestet: DB-Tests Block 24 (anlegen, Frist in der Vergangenheit, nicht doppelt, eigene Frist, ändern für alle, neues Kind, freigeben
+  einzeln/alle, Neustart, erneut anlegen nach Freigabe, fremde Lehrkraft, anon) → ALLE TESTS BESTANDEN (185); `npm test` 162/162;
+  Lint; Build. Browser (Klasse „Test“, 1180×820 und 1024×768, mit markierten Test-Durchgängen für Pfau-99 und Specht-01, danach gelöscht):
+  anlegen (Vorgabe Do 19.11. 08:00), Klassenliste mit bestem Versuch und „noch k“, Versuche neu geben für Pfau-99, eigene Frist für
+  Specht-01, freigeben für Dachs-19, ändern für alle (3 Versuche, Dachs-19 bleibt freigegeben), für alle freigeben → „Vergangen“,
+  erneut anlegen → neue Hausaufgabe „0 von 5“, alte bleibt unter „Vergangen“; Fehlermeldung bei Frist in der Vergangenheit.
+  Nachfragen (window.confirm) im Test automatisch bestätigt. Klasse „Test“ danach ohne Hausaufgaben, Testdaten gelöscht.
+  Nicht getestet: am iPad, heller Modus, „Versuche für alle neu geben“ im Browser (nur DB-Test), Schülersicht (kommt in TA 4).
+- Abweichung: Versuchszahl nur **für alle** änderbar; für einzelne Kinder gibt es eigene Frist und „Versuche neu geben“
+  (eine eigene Versuchszahl je Kind bräuchte eine neue Spalte, bei Bedarf nachfragen).
+- Geänderte Dateien TA 3: Migration (neu), `supabase/tests/zugriffsregeln.sql`, `src/lehrkraft/Hausaufgaben.tsx` (neu),
+  `src/lib/frist.ts` + Test (neu), `src/lib/hausaufgaben.ts` + Test (neu), `src/lehrkraft/KlassenAufgaben.tsx`, `src/design/lehrkraft.css`.
 - Offene Fragen: keine.
-- Nächster Schritt: Teilaufgabe 3 (Hausaufgaben-Ansicht: anlegen, Frist, Versuche, Klassenliste, verlängern, freigeben, Reset).
+- Nächster Schritt: Teilaufgabe 4 (Schülerseite: Einstein-Nachricht, Sperre nach Frist, Versuche zählen, Tagesregel in der Frist aus).
