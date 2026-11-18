@@ -3,7 +3,7 @@ import { GRAFIK } from '../grafik'
 import type { Grafik } from './sprite'
 
 export type ArtikelArt = 'samen' | 'tier' | 'deko' | 'feld' | 'baum'
-export type Artikel = { id: string; art: ArtikelArt; name: string; preis: number; besitz: number }
+export type Artikel = { id: string; art: ArtikelArt; name: string; preis: number; besitz: number; platzart?: string | null }
 export type Shop = { kontostand: number; angebot: Artikel[]; gesperrt: { art: ArtikelArt; fehlt: number }[] }
 
 // Zeile der Sorte in GRAFIK.pflanzen und GRAFIK.saatgut (ohne Mais); Namen wie in shop_artikel
@@ -40,7 +40,14 @@ export const OBSTBAUM: Record<string, { name: string; grafik: Grafik; fruechte: 
 export const DEKO_NAME: Record<string, string> = {
   busch: 'Busch', blume_gelb: 'Blume', pilz: 'Pilze', stein: 'Stein', blume_lila: 'Traubenblume', pilzhaus: 'Pilzhaus',
   brunnen: 'Brunnen', boot: 'Boot', katze_rosa: 'Katzenblume rosa', katze_blau: 'Katzenblume blau',
+  // Jazz 2026-11-17 (Schritt 3b)
+  klee: 'Klee', glockenblume: 'Glockenblume', fels: 'Fels', schild: 'Holzschild', baumstumpf: 'Baumstumpf', briefkasten: 'Briefkasten',
+  schilf: 'Schilf', wassersteine: 'Steine im Wasser', picknick: 'Picknick', bienenstock: 'Bienenstock', frosch: 'Frosch',
 }
+// Bewegte Deko (Jazz V2: höchstens 2, je einmal): die Bilder im Streifen sind die Bewegung, nicht Farben
+export const BEWEGT = new Set(['bienenstock', 'frosch'])
+// Wohin eine Deko passt (Shop-Karte und Aufstellen)
+export const PLATZ_WORT: Record<string, string> = { beet: 'ein Beet', klein: 'einen kleinen Platz', gross: 'einen großen Platz', wasser: 'einen Platz im Wasser' }
 
 /** Bild und Name für etwas im Vorrat: Geerntetes oder Ei/Milch */
 export function vorratDing(sorte: string): { name: string; grafik: Grafik; nummer: number } {
@@ -90,5 +97,6 @@ export function artikelBild(id: string): { grafik: Grafik; nummer: number } {
 /** Bild einer gekauften Deko in ihrer Farbe (die Bilder je Farbe liegen nebeneinander; danach geht es von vorn los) */
 export function dekoBild(artikel: string, farbe: number): { grafik: Grafik; nummer: number } {
   const b = artikelBild(artikel)
+  if (BEWEGT.has(artikel)) return b
   return { ...b, nummer: farbe % Math.max(1, Math.round(b.grafik.breite / b.grafik.bildBreite)) }
 }

@@ -8,7 +8,7 @@ import { Buch, BuchBild } from '../gemeinsam/Buch'
 import { Sprite } from '../gemeinsam/Sprite'
 import { GRAFIK } from '../grafik'
 import { fehlerText } from '../lib/fehler'
-import { artikelBild, AUFSTELLEN, vorratDing, type Artikel, type ArtikelArt, type Shop as ShopDaten } from '../lib/shop'
+import { artikelBild, AUFSTELLEN, BEWEGT, PLATZ_WORT, vorratDing, type Artikel, type ArtikelArt, type Shop as ShopDaten } from '../lib/shop'
 import type { Grafik } from '../lib/sprite'
 import { supabase } from '../lib/supabase'
 
@@ -122,6 +122,12 @@ export function Shop({ token, farm, nachKauf }: { token: string; farm: string; n
         <span className="muenzen-preis">
           <Sprite grafik={GRAFIK.muenze} mal={1} /> {a.preis}
         </span>
+        {/* Jazz 2026-11-17 (dekorationen.md 5.1): wohin die Deko passt; bewegte Deko sagt es */}
+        {a.platzart && PLATZ_WORT[a.platzart] && (
+          <span>
+            Passt auf {PLATZ_WORT[a.platzart]}.{BEWEGT.has(a.id) ? ' Bewegt sich.' : ''}
+          </span>
+        )}
         {a.besitz > 0 && <span>Du hast {a.besitz}.</span>}
         {frage ? (
           <>

@@ -14,7 +14,7 @@ import {
   HUHN_PLAETZE, istGras, KACHEL, KUH_PLAETZE, MONSTER_PLATZ, NAPF_PLAETZE, nebenan, RAND, scheunenKacheln, SPALTEN, STALL, tierFlaeche, TROG, WACHSENDE_DEKO, weg, ZEILEN,
   type Ort,
 } from '../lib/landschaft'
-import { AUFSTELLEN, DEKO_NAME, dekoBild, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type DekoStueck, type Farm as FarmDaten } from '../lib/shop'
+import { AUFSTELLEN, BEWEGT, DEKO_NAME, dekoBild, PLATZ_WORT, OBSTBAUM, SORTE, SORTE_NAME, vorratDing, type DekoStueck, type Farm as FarmDaten } from '../lib/shop'
 import { einzelbild, type Grafik } from '../lib/sprite'
 import { farmMal, monster as monsterAus } from '../lib/monster'
 import { supabase } from '../lib/supabase'
@@ -34,7 +34,6 @@ const mitte = (o: Ort) => ({ x: o.x * KACHEL + 8, y: o.y * KACHEL + 12 })
 const richtungZu = (dx: number, dy: number) => (Math.round(Math.atan2(dx, -dy) / (Math.PI / 4)) + 8) % 8
 
 type Menue = { art: 'feld'; feld: number } | { art: 'tier'; id: string }
-const PLATZ_WORT: Record<string, string> = { beet: 'ein Beet', klein: 'einen kleinen Platz', gross: 'einen großen Platz', wasser: 'einen Platz im Wasser' }
 
 export function Farm({ token, shop, album, figur: figurName, nachFigur }: { token: string; shop: string; album: string; figur: string; nachFigur: () => void }) {
   const [daten, setDaten] = useState<FarmDaten | null>(null)
@@ -502,7 +501,8 @@ export function Farm({ token, shop, album, figur: figurName, nachFigur }: { toke
             const b = dekoBild(d.artikel, d.farbe)
             const o = DEKO_PLATZ[d.platz!]
             const x = px(o.x) + Math.round((o.groesse * KACHEL - b.grafik.bildBreite) / 2) * mal
-            return <Ding key={d.id} grafik={b.grafik} nummer={b.nummer} x={x} y={px(o.y + o.groesse) - b.grafik.bildHoehe * mal} mal={mal} z={(o.y + o.groesse) * KACHEL} />
+            const bilder = BEWEGT.has(d.artikel) ? Math.round(b.grafik.breite / b.grafik.bildBreite) : 0
+            return <Ding key={d.id} grafik={b.grafik} nummer={b.nummer} x={x} y={px(o.y + o.groesse) - b.grafik.bildHoehe * mal} mal={mal} z={(o.y + o.groesse) * KACHEL} bilder={bilder} />
           })}
           {/* Beim Aufstellen leuchten die passenden Plätze hell (ohne gestrichelte Linie: die heißt „hier schreiben“) */}
           {helle.map((id) => {
@@ -888,9 +888,11 @@ function MenuePlatz(props: { grafik: Grafik; nummer: number; name: string; anzah
 }
 
 // Ein Gegenstand in der Landschaft (Deko); z = untere Kante in Grafik-Pixeln, damit Vorderes vorne liegt
-function Ding(props: { grafik: Grafik; nummer?: number; x: number; y: number; mal: number; z: number }) {
+// bilder > 0: bewegte Deko, die Bilder des Streifens laufen durch (still bei „Bewegung reduzieren“)
+function Ding(props: { grafik: Grafik; nummer?: number; x: number; y: number; mal: number; z: number; bilder?: number }) {
+  const lauf = props.bilder ? { ['--lauf' as string]: `${-props.grafik.breite * props.mal}px`, ['--bilder' as string]: props.bilder } : {}
   return (
-    <span className="farm-ding" style={{ left: props.x, top: props.y, zIndex: props.z }}>
+    <span className={props.bilder ? 'farm-ding farm-bewegt' : 'farm-ding'} style={{ left: props.x, top: props.y, zIndex: props.z, ...lauf }}>
       <Sprite grafik={props.grafik} nummer={props.nummer} mal={props.mal} />
     </span>
   )

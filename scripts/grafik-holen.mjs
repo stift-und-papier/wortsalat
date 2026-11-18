@@ -279,6 +279,54 @@ for (const n of KLEINER) {
   liste.push({ name: 'glitzern', breite: 48, hoehe: 10, bildBreite: 16, bildHoehe: 10 })
 }
 
+// ---------- Neue kaufbare Deko (Jazz 2026-11-17, Schritt 3b): nur, was im Mockup der vollen Farm vorkommt (docs/farm/farm-mockup.js).
+// Je Artikel ein Streifen: mehrere Bilder = Farben bzw. Motive (je Kauf das nächste) oder bei bewegter Deko die Bilder der Bewegung.
+// Ein Bild besteht aus Ebenen { d: Bogen, x, y, b, h, zx, zy } (Ausschnitt und Lage im Bild). Keine Laterne: in den Paketen gibt es keine.
+{
+  const OBJ = SPRITES + 'Objects/', PU2 = 'assets/entpackt/Sprout Sorry pack/Early Access/Plant update 2/'
+  const MFS = OBJ + 'Mushrooms, Flowers, Stones.png', WASSER = OBJ + 'Water Objects.png'
+  const e = (d, x, y, b = 16, h = 16, zx = 0, zy = 0) => ({ d, x, y, b, h, zx, zy })
+  const NEU = [
+    ['deko_klee', 16, 16, [[e(MFS, 16, 32)]]],
+    ['deko_fels', 16, 16, [[e(MFS, 64, 16)]]],
+    ['deko_glockenblume', 16, 16, [[e(MFS, 96, 48)], [e(MFS, 96, 64)]]], // rosa, blau
+    ['deko_baumstumpf', 16, 16, [[e(OBJ + 'Trees, stumps and bushes.png', 16, 96)]]],
+    ['deko_briefkasten', 16, 16, [[e(SPRITES + 'Tilesets/Building parts/Mailbox Animation Frames.png', 4, 25)]]],
+    // Holzschild: je Kauf ein anderes Bild (Herz, Stern, Blume, Pilz, leer)
+    ['deko_schild', 16, 16, [[48, 32], [16, 32], [80, 16], [16, 48], [0, 0]].map(([x, y]) => [e(OBJ + 'signs.png', x, y)])],
+    ['deko_schilf', 16, 16, [[e(WASSER, 96, 0)], [e(WASSER, 112, 0)]]],
+    ['deko_wassersteine', 16, 16, [[e(WASSER, 32, 0)], [e(WASSER, 48, 0)]]],
+    // Picknickdecke (48 × 48) auf 32 × 32 verkürzt: die vier Ecken, Korb in die Mitte
+    ['deko_picknick', 32, 32, [[
+      e(OBJ + 'Piknik blanket.png', 0, 0), e(OBJ + 'Piknik blanket.png', 32, 0, 16, 16, 16, 0),
+      e(OBJ + 'Piknik blanket.png', 0, 32, 16, 16, 0, 16), e(OBJ + 'Piknik blanket.png', 32, 32, 16, 16, 16, 16),
+      e(OBJ + 'Piknik basket.png', 0, 0, 16, 16, 8, 6),
+    ]]],
+    // bewegt (Jazz V2: höchstens 2, je einmal): Bienen fliegen um den Stock (8 Bilder), Frosch atmet auf einem Seerosenblatt (14 Bilder)
+    ['deko_bienenstock', 32, 32, Array.from({ length: 8 }, (_, i) => [e(PU2 + 'Bee/beehive.png', 0, 0, 32, 32), e(PU2 + 'Bee/bee_spritesheet.png', i * 16, 0, 16, 16, 16, 0)])],
+    ['deko_frosch', 16, 16, Array.from({ length: 14 }, (_, i) => [e(WASSER, 128, 0), e(PU2 + 'frog/frog_spritesheet.png', i * 16, 32, 16, 16, 0, -3)])],
+  ]
+  const boegen = new Map()
+  const bogen = (d) => boegen.get(d) ?? boegen.set(d, PNG.sync.read(readFileSync(d))).get(d)
+  for (const [name, B, H, bilder] of NEU) {
+    const ziel = new PNG({ width: B * bilder.length, height: H })
+    ziel.data.fill(0)
+    bilder.forEach((ebenen, i) => {
+      for (const l of ebenen) {
+        const q = bogen(l.d)
+        for (let y = 0; y < l.h; y++) for (let x = 0; x < l.b; x++) {
+          const tx = i * B + l.zx + x, ty = l.zy + y, s = ((l.y + y) * q.width + l.x + x) * 4
+          if (tx < i * B || tx >= (i + 1) * B || ty < 0 || ty >= H || !q.data[s + 3]) continue
+          q.data.copy(ziel.data, (ty * ziel.width + tx) * 4, s, s + 4)
+        }
+      }
+    })
+    writeFileSync(`src/grafik/${name}.png`, PNG.sync.write(ziel))
+    liste.push({ name, breite: ziel.width, hoehe: H, bildBreite: B, bildHoehe: H })
+    console.log(`${name}.png  ${bilder.length} Bild(er)`)
+  }
+}
+
 // ---------- Buch für Sammelalbum und Shop (Jazz 2026-11-14): „Pixel Book Animation“ (gekauft), auf die Sprout-Lands-Palette umgefärbt.
 // Ein Streifen mit 12 Bildern (je 248 × 216): 0 zu, 1–2 klappt auf, 3 offen (flach, letztes Bild der Vorlage; Jazz), 4–6 Seite blättert nach links, 7 offen,
 // 8–10 Seite blättert zurück, 11 offen. Das offene Buch liegt im Bild bei x 2–245, y 49–213 (Maße in src/design/bausteine.css).
@@ -420,7 +468,8 @@ const STICKER = [
   ...SORTEN.map((id, i) => [id, 'saatgut', i * 2 + 1]), // das Geerntete
   ['orangenbaum', 'baum_orange', 0], ['pfirsichbaum', 'baum_pfirsich', 0], ['birnenbaum', 'baum_birne', 0],
   ['huhn', 'huhn', 0], ['kuh', 'kuh', 0], ['brunnen', 'brunnen', 0], ['boot', 'deko_boot', 0],
-  ...['busch', 'blume_gelb', 'pilz', 'stein', 'blume_lila', 'pilzhaus', 'katze_rosa', 'katze_blau'].map((id) => [id, 'deko_' + id, 0]),
+  ...['busch', 'blume_gelb', 'pilz', 'stein', 'blume_lila', 'pilzhaus', 'katze_rosa', 'katze_blau',
+    'klee', 'fels', 'glockenblume', 'baumstumpf', 'briefkasten', 'schild', 'schilf', 'wassersteine', 'picknick', 'bienenstock', 'frosch'].map((id) => [id, 'deko_' + id, 0]),
   // Jazz 2026-11-17: ausgewachsene wachsende Deko (letztes Bild; beide Sonnenblumen teilen sich einen Sticker)
   ['wachs_kirschbaum', 'wachs_w1', 4], ['wachs_lavendel', 'wachs_w2', 3], ['wachs_sonnenblume', 'wachs_w3', 3], ['wachs_seerose', 'wachs_w4', 3],
   ['wachs_beerenbusch', 'wachs_w5', 2], ['wachs_vogelhaus', 'wachs_w6', 4], ['wachs_eiche', 'wachs_w7', 4],

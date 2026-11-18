@@ -603,4 +603,12 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   ohne Totenkopf (Sticker kommt aus dem umgefärbten Bild). Keine Aufstellplätze mehr am unteren Ufer: D4, D5, D7, D12, D14 und die Beete
   „an der Hütte“ (jetzt „über der Hütte“) und „am Ufer“ (jetzt „an der Scheune rechts“) ins Innere verschoben; Test: unter jedem Platz an Land ist Gras.
   Neue kaufbare Deko aus 3b bekommt ihren Sticker automatisch (Test: jedes deko_-Bild hat einen Sticker). Mockup-Plätze (docs/farm) nicht nachgezogen.
-- **Nächster Schritt:** Jazz prüft Schritt 3a; danach 3b (etwa 40 neue Deko-Dinge im Laden, vorläufige Preise), Teilaufgabe 5 (Münzsystem) später.
+- **Schritt 3b (2026-11-18, Jazz: nur Deko, die laut Mockup gut auf die Farm passt):** 11 neue Laden-Artikel (Migrationen `deko_neu`,
+  `shop_platzart`), vorläufige Preise A 30 / B 75 / C 160 / D 250: Klee, Fels, Baumstumpf, Briefkasten, Holzschild (5 Motive je Kauf) für kleine
+  Plätze; Glockenblume (rosa, blau) fürs Beet; Schilf, Steine im Wasser (je 2 Formen) und Frosch (bewegt) im Wasser; Picknick und Bienenstock
+  (bewegt) auf großen Plätzen. Große und bewegte Deko je einmal (`shop_artikel.hoechstens`). Laterne aus dem Mockup gibt es in keinem Paket,
+  darum weggelassen. Bilder aus den Paketen zusammengesetzt in grafik-holen.mjs (Picknickdecke auf 2 × 2 verkürzt, Korb darauf; Bienen fliegen
+  um den Stock, 8 Bilder; Frosch auf Seerosenblatt, 14 Bilder; still bei „Bewegung reduzieren“). Shop-Karte sagt „Passt auf …“ und „Bewegt sich.“
+  Sticker im Album für alle neuen Dinge. Geprüft im Browser mit Pfau-99 (gekauft und aufgestellt). DB-Test 168, Tests 157.
+  Nicht umgesetzt: Frosch nur auf S1/S2/S4 (V3), Jahreszeit-Deko (Kürbis, Weihnachten), Truhe, Bank mit Tisch, Lagerfeuer (nicht im Mockup).
+- **Nächster Schritt:** Jazz prüft Schritt 3; danach Teilaufgabe 5 (Münzsystem) später.

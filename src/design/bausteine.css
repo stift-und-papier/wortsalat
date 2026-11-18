@@ -675,6 +675,8 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 .farm-baum__bild[data-faellt] > .sprite { animation: farm-laufen 1.2s steps(12) 1 forwards; }
 /* Boot schaukelt am Ufer (2 Bilder) */
 .farm-boot > .sprite { animation: farm-laufen 1.6s steps(2) infinite; }
+/* Bewegte Deko (Bienenstock, Frosch; Jazz 2026-11-17): alle Bilder des Streifens nacheinander */
+.farm-bewegt > .sprite { animation: farm-laufen calc(var(--bilder) * 0.15s) steps(var(--bilder)) infinite; }
 /* Sprechblase links neben der Figur (was reif ist), Spitze (gespiegelt) zeigt nach rechts zur Figur.
    Bild „dialog box“ (Sprout Lands UI) doppelt groß, nur in der Breite gedehnt; Spitze 28 px über der Unterkante.
    Papier bleibt hell, darum auch im dunklen Modus dunkle Schrift (--color-album-tinte). */
@@ -709,7 +711,7 @@ p { margin: 0; text-wrap: pretty; max-width: 65ch; }
 @keyframes farm-glitzern-weg { 90% { opacity: 1; } to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .farm-glitzern { display: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .farm-figur, .farm-tier__weg, .farm-tier__bild > .sprite, .farm-liegt > .sprite, .farm-baum__bild > .sprite, .farm-boot > .sprite {
+  .farm-figur, .farm-tier__weg, .farm-tier__bild > .sprite, .farm-liegt > .sprite, .farm-baum__bild > .sprite, .farm-boot > .sprite, .farm-bewegt > .sprite {
     animation: none !important; transition: none !important;
   }
 }

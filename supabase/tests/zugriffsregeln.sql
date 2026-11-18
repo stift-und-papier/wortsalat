@@ -813,6 +813,14 @@ begin
       reset role;
       if (select platz from public.besitz where id = b2) is not null then raise exception 'Block 9.6b: in die Truhe geht nicht'; end if;
       set local role anon;
+      -- Schritt 3b: große Deko gibt es nur einmal
+      perform public.kaufen(t_eule, 'picknick');
+      begin
+        perform public.kaufen(t_eule, 'picknick');
+        raise exception 'Block 9.6b: Picknick zweimal gekauft';
+      exception when raise_exception then
+        if sqlerrm !~ 'nur eins' then raise; end if;
+      end;
     end;
     n := n + 1;
     n := n + 1;
