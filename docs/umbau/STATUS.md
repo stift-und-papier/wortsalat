@@ -629,4 +629,8 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Obstbäume alle 14 Tage, Dauerhaftes ×2,5 (Samen wie heute) → regelmäßig 27 Wochen, Vielspieler 26, Schlupflöcher nicht fertig. Preisfaktor hängt an der Zahl
   neuer Pakete im Jahr (20 → 1, 76 → 3). Bestand: neue Regeln nur für die Zukunft (nur Testkonten). **Nicht geprüft:** echte Spieldaten, wachsende Deko
   (braucht Lernstand-Daten), nichts im Spiel ausprobiert.
-- **Nächster Schritt:** Jazz entscheidet M1–M9 (`muenzen-vorschlag.md` Abschnitt 8); Migration `deko_platz_d21` einspielen (wartet auf Freigabe); danach Teilaufgabe 6 (Zusammenfassung).
+- **Rückmeldung Jazz (2026-11-18):** Migration `deko_platz_d21` eingespielt (DB-Test 168 bestanden). Ein neues Paket pro Woche → Preisfaktor 2
+  (Simulation und Vorschlag neu gerechnet: regelmäßig 36 Wochen, Vielspieler 33, Schlupflöcher nicht fertig; volle Farm 10.790). **Kein Wochenbonus** (M3).
+  Hochformat-Hinweis „Dreh dein iPad“ greift jetzt auch mit Tastatur-Hülle samt Trackpad (`any-pointer: coarse`), die Farm-Meldung oben ist im Hochformat aus
+  (geprüft im Browser mit Touch-Emulation 744 × 1024 und quer 1024 × 700; nicht am echten iPad).
+- **Nächster Schritt:** Jazz entscheidet die übrigen Punkte M1, M4–M9 (`muenzen-vorschlag.md` Abschnitt 8); danach Teilaufgabe 6 (Zusammenfassung).

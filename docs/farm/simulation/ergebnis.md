@@ -8,64 +8,64 @@ Volle Farm kostet 5395 Münzen (61 Käufe).
 
 | Kind | volle Farm nach | gekauft (von 61) | Lernmünzen im Jahr | Gewinn aus Handel | Kontostand Woche 4 / 12 / 24 / 38 |
 |---|---|---|---|---|---|
-| regelmäßig | 11 Wochen | 61 | 15428 | 16000 | 179 / 1047 / 12579 / 26033 |
-| durchschnittlich | 17 Wochen | 61 | 9519 | 11180 | 162 / 156 / 5147 / 15304 |
-| sporadisch | nicht im Schuljahr | 53 | 2660 | 445 | 60 / 65 / 65 / 110 |
-| Vielspieler | 8 Wochen | 61 | 15428 | 66410 | 19 / 9597 / 40449 / 76443 |
-| regelmäßig, nur 20 neue Pakete | 28 Wochen | 61 | 4060 | 7915 | 52 / 52 / 59 / 6580 |
-| Schlupflöcher | 13 Wochen | 61 | 6346 | 78215 | 18 / 34 / 36158 / 79166 |
+| regelmäßig | 19 Wochen | 61 | 7714 | 12020 | 97 / 86 / 3727 / 14339 |
+| durchschnittlich | 27 Wochen | 61 | 4760 | 7065 | 76 / 78 / 216 / 6430 |
+| sporadisch | nicht im Schuljahr | 39 | 1330 | 205 | 40 / 45 / 30 / 35 |
+| Vielspieler | 12 Wochen | 61 | 7714 | 79640 | 22 / 1151 / 38447 / 81959 |
+| regelmäßig, 2 neue Pakete pro Woche | 11 Wochen | 61 | 15428 | 16000 | 179 / 1047 / 12579 / 26033 |
+| Schlupflöcher | 19 Wochen | 61 | 3173 | 58140 | 9 / 22 / 14079 / 55918 |
 
 ## A Lernen zählt
 
-Volle Farm kostet 13570 Münzen (61 Käufe).
+Volle Farm kostet 10790 Münzen (61 Käufe).
 
 | Kind | volle Farm nach | gekauft (von 61) | Lernmünzen im Jahr | Gewinn aus Handel | Kontostand Woche 4 / 12 / 24 / 38 |
 |---|---|---|---|---|---|
-| regelmäßig | 27 Wochen | 61 | 15428 | 6100 | 164 / 172 / 167 / 7958 |
-| durchschnittlich | nicht im Schuljahr | 59 | 9519 | 2705 | 152 / 286 / 157 / 279 |
-| sporadisch | nicht im Schuljahr | 37 | 2660 | 120 | 70 / 60 / 65 / 65 |
-| Vielspieler | 26 Wochen | 61 | 15428 | 8180 | 34 / 2 / 17 / 10038 |
-| regelmäßig, nur 20 neue Pakete | nicht im Schuljahr | 48 | 4060 | 2055 | 52 / 52 / 44 / 55 |
-| Schlupflöcher | nicht im Schuljahr | 58 | 6346 | 4993 | 13 / 14 / 13 / 19 |
+| regelmäßig | 36 Wochen | 61 | 7714 | 4155 | 87 / 86 / 87 / 1079 |
+| durchschnittlich | nicht im Schuljahr | 53 | 4760 | 1320 | 76 / 93 / 86 / 89 |
+| sporadisch | nicht im Schuljahr | 24 | 1330 | 155 | 35 / 35 / 40 / 35 |
+| Vielspieler | 33 Wochen | 61 | 7714 | 6673 | 2 / 31 / 27 / 3597 |
+| regelmäßig, 2 neue Pakete pro Woche | 22 Wochen | 61 | 15428 | 6898 | 174 / 507 / 1809 / 11536 |
+| Schlupflöcher | nicht im Schuljahr | 48 | 3173 | 1635 | 24 / 2 / 14 / 18 |
 
 ## A2 wie A, Gießen nur bei neuen Münzen
 
-Volle Farm kostet 13570 Münzen (61 Käufe).
+Volle Farm kostet 10790 Münzen (61 Käufe).
 
 | Kind | volle Farm nach | gekauft (von 61) | Lernmünzen im Jahr | Gewinn aus Handel | Kontostand Woche 4 / 12 / 24 / 38 |
 |---|---|---|---|---|---|
-| regelmäßig | 27 Wochen | 61 | 15428 | 6100 | 164 / 172 / 167 / 7958 |
-| durchschnittlich | nicht im Schuljahr | 59 | 9519 | 2705 | 152 / 286 / 157 / 279 |
-| sporadisch | nicht im Schuljahr | 37 | 2660 | 120 | 70 / 60 / 65 / 65 |
-| Vielspieler | 26 Wochen | 61 | 15428 | 8180 | 34 / 2 / 17 / 10038 |
-| regelmäßig, nur 20 neue Pakete | nicht im Schuljahr | 48 | 4060 | 2055 | 52 / 52 / 44 / 55 |
-| Schlupflöcher | nicht im Schuljahr | 54 | 6346 | 2668 | 8 / 39 / 28 / 569 |
+| regelmäßig | 36 Wochen | 61 | 7714 | 4155 | 87 / 86 / 87 / 1079 |
+| durchschnittlich | nicht im Schuljahr | 53 | 4760 | 1320 | 76 / 93 / 86 / 89 |
+| sporadisch | nicht im Schuljahr | 24 | 1330 | 155 | 35 / 35 / 40 / 35 |
+| Vielspieler | 35 Wochen | 61 | 7714 | 4250 | 7 / 36 / 82 / 1174 |
+| regelmäßig, 2 neue Pakete pro Woche | 22 Wochen | 61 | 15428 | 6898 | 174 / 507 / 1809 / 11536 |
+| Schlupflöcher | nicht im Schuljahr | 46 | 3173 | 1230 | 9 / 7 / 14 / 3 |
 
 ## B Tagesdeckel
 
-Volle Farm kostet 13570 Münzen (61 Käufe).
+Volle Farm kostet 10790 Münzen (61 Käufe).
 
 | Kind | volle Farm nach | gekauft (von 61) | Lernmünzen im Jahr | Gewinn aus Handel | Kontostand Woche 4 / 12 / 24 / 38 |
 |---|---|---|---|---|---|
-| regelmäßig | 27 Wochen | 61 | 15428 | 7630 | 164 / 392 / 534 / 9488 |
-| durchschnittlich | nicht im Schuljahr | 59 | 9519 | 2905 | 152 / 156 / 237 / 479 |
-| sporadisch | nicht im Schuljahr | 37 | 2660 | 120 | 70 / 60 / 65 / 65 |
-| Vielspieler | 21 Wochen | 61 | 15428 | 17375 | 9 / 22 / 3879 / 19233 |
-| regelmäßig, nur 20 neue Pakete | nicht im Schuljahr | 47 | 4060 | 1750 | 52 / 52 / 44 / 50 |
-| Schlupflöcher | 33 Wochen | 61 | 6346 | 11240 | 13 / 14 / 8 / 4016 |
+| regelmäßig | 35 Wochen | 61 | 7714 | 4980 | 87 / 96 / 92 / 1904 |
+| durchschnittlich | nicht im Schuljahr | 52 | 4760 | 1170 | 76 / 93 / 446 / 90 |
+| sporadisch | nicht im Schuljahr | 24 | 1330 | 155 | 35 / 35 / 40 / 35 |
+| Vielspieler | 25 Wochen | 61 | 7714 | 14835 | 12 / 396 / 447 / 11759 |
+| regelmäßig, 2 neue Pakete pro Woche | 22 Wochen | 61 | 15428 | 9170 | 174 / 172 / 2124 / 13808 |
+| Schlupflöcher | nicht im Schuljahr | 58 | 3173 | 5835 | 24 / 22 / 24 / 18 |
 
 ## C wie A + Wochenbonus
 
-Volle Farm kostet 13570 Münzen (61 Käufe).
+Volle Farm kostet 10790 Münzen (61 Käufe).
 
 | Kind | volle Farm nach | gekauft (von 61) | Lernmünzen im Jahr | Gewinn aus Handel | Kontostand Woche 4 / 12 / 24 / 38 |
 |---|---|---|---|---|---|
-| regelmäßig | 26 Wochen | 61 | 16188 | 6330 | 199 / 187 / 202 / 8948 |
-| durchschnittlich | nicht im Schuljahr | 60 | 10279 | 2948 | 177 / 176 / 182 / 657 |
-| sporadisch | nicht im Schuljahr | 38 | 3040 | 300 | 75 / 60 / 70 / 75 |
-| Vielspieler | 25 Wochen | 61 | 16188 | 8565 | 34 / 32 / 397 / 11183 |
-| regelmäßig, nur 20 neue Pakete | nicht im Schuljahr | 48 | 4480 | 2000 | 57 / 57 / 179 / 420 |
-| Schlupflöcher | nicht im Schuljahr | 59 | 7106 | 4875 | 13 / 4 / 38 / 36 |
+| regelmäßig | 34 Wochen | 61 | 8474 | 4518 | 117 / 106 / 132 / 2202 |
+| durchschnittlich | nicht im Schuljahr | 54 | 5320 | 1605 | 106 / 103 / 96 / 235 |
+| sporadisch | nicht im Schuljahr | 29 | 1530 | 215 | 30 / 45 / 40 / 45 |
+| Vielspieler | 30 Wochen | 61 | 8474 | 8110 | 12 / 26 / 35 / 5794 |
+| regelmäßig, 2 neue Pakete pro Woche | 21 Wochen | 61 | 16188 | 6985 | 194 / 197 / 2377 / 12383 |
+| Schlupflöcher | nicht im Schuljahr | 52 | 3553 | 2325 | 24 / 2 / 14 / 38 |
 
 ## Preisfaktor für Modell A je nach Zahl neuer Pakete
 

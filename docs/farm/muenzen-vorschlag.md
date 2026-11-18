@@ -7,19 +7,19 @@ Die Preise darin sind die heutigen Preise aus der Datenbank (gelesen am 2026-11-
 
 ## 1. Das Wichtigste in Kürze
 
+Grundlage (Jazz 2026-11-18): **Ein Kind bekommt ein neues Paket pro Woche**, dazu wiederholt es ältere Übungen.
+
 - **Das Problem ist der Handel auf der Farm, nicht das Üben.**
-  - Ein Kind, das regelmäßig übt, verdient im Schuljahr etwa 15.000 Münzen durch Lernen.
-  - Durch Verkaufen kommen heute noch einmal 16.000 dazu.
-  - Wer viel spielt, macht durch Handel bis zu 66.000. Wer die Schlupflöcher nutzt, sogar 78.000.
-  - Heute ist die Farm darum schon nach **8 bis 17 Wochen** voll.
+  - Ein Kind, das regelmäßig übt, verdient im Schuljahr etwa 7.700 Münzen durch Lernen.
+  - Durch Verkaufen kommen heute noch einmal 12.000 dazu.
+  - Wer viel spielt, macht durch Handel bis zu 80.000. Wer die Schlupflöcher nutzt, 58.000, obwohl es wenig übt.
+  - Heute ist die Farm darum schon nach **12 bis 27 Wochen** voll.
 - **Empfehlung: Modell A „Lernen zählt“.**
   - Verkaufen bringt nur noch wenig Gewinn und zählt nicht mehr zum Freischalten.
-  - Dauerhafte Dinge kosten mehr. Samen bleiben so billig wie heute.
-  - Dann ist die Farm bei regelmäßigem Üben nach etwa **27 Wochen** voll, also im Schuljahr.
-  - Viel Spielen macht kaum schneller (26 Wochen). Schlupflöcher bringen fast nichts mehr.
-- **Eine Zahl müssen Sie festlegen:** Wie viele **neue** Pakete bekommt ein Kind im Schuljahr?
-  - Danach richtet sich, wie viel teurer der Laden werden muss (Abschnitt 5).
-  - Ein Paket, das ein Kind wiederholt, bringt keine neuen Münzen mehr.
+  - Dauerhafte Dinge kosten **doppelt so viel**. Samen bleiben so billig wie heute.
+  - Dann ist die Farm bei regelmäßigem Üben nach etwa **36 Wochen** voll, also am Ende des Schuljahres.
+  - Viel Spielen macht nur wenig schneller (33 Wochen). Mit Schlupflöchern wird die Farm im Schuljahr nicht voll.
+- **Preisfaktor 2** passt zu einem neuen Paket pro Woche (Abschnitt 5). Ein wiederholtes Paket bringt keine neuen Münzen.
 
 ## 2. Annahmen der Simulation
 
@@ -36,12 +36,12 @@ Die Preise darin sind die heutigen Preise aus der Datenbank (gelesen am 2026-11-
 
 | Kind | neue Pakete pro Woche | richtig im 1. Versuch | Farm-Tage pro Woche | Besonderes |
 |---|---|---|---|---|
-| regelmäßig | 2 (1 + 1 Hausaufgabe, wie mit Ihnen besprochen) | 80 % | 3 | |
-| durchschnittlich | 1,5 | 70 % | 2 | |
-| sporadisch | 0,5 | 60 % | 1 | |
-| Vielspieler | 2 | 80 % | 7 | füttert immer mit dem besten Futter, verkauft alles |
-| regelmäßig, nur 20 neue Pakete | etwa 0,5 neu, dazu Wiederholungen | 80 % | 3 | prüft, was passiert, wenn es nicht genug neue Pakete gibt |
-| Schlupflöcher | 1 | 70 % | 7 | wiederholt täglich 3 Übungen nur zum Gießen, handelt wie der Vielspieler |
+| regelmäßig | 1 (wie von Ihnen festgelegt) | 80 % | 3 | wiederholt an Farm-Tagen 2 Übungen |
+| durchschnittlich | 0,75 | 70 % | 2 | wiederholt 1 Übung |
+| sporadisch | 0,25 | 60 % | 1 | |
+| Vielspieler | 1 | 80 % | 7 | füttert immer mit dem besten Futter, verkauft alles |
+| regelmäßig, 2 neue Pakete pro Woche | 2 | 80 % | 3 | prüft, was passiert, wenn es mehr neue Pakete gibt |
+| Schlupflöcher | 0,5 | 70 % | 7 | wiederholt täglich 3 Übungen nur zum Gießen, handelt wie der Vielspieler |
 
 **Grenzen der Simulation**
 - Gerechnet wird mit Durchschnittswerten, ohne Zufall. Echte Kinder streuen stärker.
@@ -55,50 +55,51 @@ Die Preise darin sind die heutigen Preise aus der Datenbank (gelesen am 2026-11-
 | Gewinn beim Verkauf | klein: Ernte = Samenpreis + 5, Ei = Futter + 5, Milch = Futter + 10 | wie heute | wie A |
 | Grenze pro Tag | keine | höchstens 150 Münzen Verkauf pro Tag | keine |
 | Obstbäume | alle 14 Tage 3 Früchte, je 15 bis 20 Münzen | wie heute | wie A |
-| Felder, Tiere, Bäume, Deko | × 2,5 | × 2,5 | × 2,5 |
+| Felder, Tiere, Bäume, Deko | × 2 | × 2 | × 2 |
 | Samen | wie heute | wie heute | wie heute |
 | Bonus | keiner | keiner | 20 Münzen in jeder Woche mit mindestens einem Paket |
 
 **Variante A2** schließt zusätzlich das Gießen durch Wiederholen: Gießen nur, wenn die Übung neue Münzen bringt.
-- Das bremst Kinder mit Schlupflöchern noch etwas mehr (54 statt 58 von 61 Käufen).
+- Das bremst Kinder mit Schlupflöchern noch etwas mehr (46 statt 48 von 61 Käufen).
 - Es bremst aber auch ehrliche Kinder, die ein Paket noch einmal üben. Darum **empfehle ich A2 nicht**: Auch Wiederholen ist Üben.
 
 ## 4. Ergebnis: Wann ist die Farm voll?
 
 | Kind | heute | A | B | C |
 |---|---|---|---|---|
-| regelmäßig | 11 Wochen | **27 Wochen** | 27 Wochen | 26 Wochen |
-| durchschnittlich | 17 Wochen | 59 von 61 Käufen | 59 von 61 | 60 von 61 |
-| sporadisch | 53 von 61 Käufen | 37 von 61 | 37 von 61 | 38 von 61 |
-| Vielspieler | **8 Wochen** | 26 Wochen | 21 Wochen | 25 Wochen |
-| regelmäßig, nur 20 neue Pakete | 28 Wochen | 48 von 61 | 47 von 61 | 48 von 61 |
-| Schlupflöcher | **13 Wochen** | 58 von 61 | 33 Wochen | 59 von 61 |
+| regelmäßig | 19 Wochen | **36 Wochen** | 35 Wochen | 34 Wochen |
+| durchschnittlich | 27 Wochen | 53 von 61 Käufen | 52 von 61 | 54 von 61 |
+| sporadisch | 39 von 61 Käufen | 24 von 61 | 24 von 61 | 29 von 61 |
+| Vielspieler | **12 Wochen** | 33 Wochen | 25 Wochen | 30 Wochen |
+| regelmäßig, 2 neue Pakete pro Woche | 11 Wochen | 22 Wochen | 22 Wochen | 21 Wochen |
+| Schlupflöcher | **19 Wochen** | 48 von 61 | 58 von 61 | 52 von 61 |
 
-„58 von 61“ heißt: Am Ende des Schuljahres fehlen noch 3 Dinge.
+„48 von 61“ heißt: Am Ende des Schuljahres fehlen noch 13 Dinge.
 
 Gewinn aus Handel im Schuljahr (Verkauf minus Samen):
 
 | Kind | heute | A | B | C |
 |---|---|---|---|---|
-| regelmäßig | 16.000 | 6.100 | 7.630 | 6.330 |
-| Vielspieler | 66.410 | 8.180 | 17.375 | 8.565 |
-| Schlupflöcher | 78.215 | 4.993 | 11.240 | 4.875 |
+| regelmäßig | 12.020 | 4.155 | 4.980 | 4.518 |
+| Vielspieler | 79.640 | 6.673 | 14.835 | 8.110 |
+| Schlupflöcher | 58.140 | 1.635 | 5.835 | 2.325 |
 
 **Was man daraus sieht**
-- **Heute** zieht der Handel davon. Wer viel spielt oder Schlupflöcher nutzt, ist doppelt so schnell fertig wie ein Kind, das regelmäßig übt.
+- **Heute** zieht der Handel davon. Wer viel spielt, ist fast doppelt so schnell fertig wie ein Kind, das regelmäßig übt.
+  Mit Schlupflöchern geht es so schnell wie bei regelmäßigem Üben, obwohl das Kind nur halb so viel Neues übt.
 - **Modell A** bindet die Farm an das Üben:
-  - Vielspieler und regelmäßiges Kind sind gleich schnell.
-  - Schlupflöcher bringen weniger Gewinn als bei einem Kind, das regelmäßig übt.
-- **Modell B** bremst den Handel nur halb. Der Vielspieler ist weiter schneller, und mit Schlupflöchern wird die Farm trotzdem voll.
+  - Vielspieler und regelmäßiges Kind liegen nah beieinander (33 und 36 Wochen).
+  - Schlupflöcher bringen kaum noch Gewinn.
+- **Modell B** bremst den Handel nur halb. Der Vielspieler ist weiter deutlich schneller (25 Wochen).
   Außerdem versteht ein Kind schwer, warum es plötzlich nichts mehr verkaufen kann.
-- **Modell C** wirkt wie A. Der Wochenbonus belohnt regelmäßiges Üben, aber nur ein wenig (1 Woche schneller).
-- Die Zeile „nur 20 neue Pakete“ zeigt: **Gibt es zu wenige neue Pakete, ist auch ein fleißiges Kind in A nicht fertig.**
-  Darum hängt der Preisfaktor an Ihrer Antwort (Abschnitt 5).
+- **Modell C** wirkt wie A. Der Wochenbonus belohnt regelmäßiges Üben (2 Wochen schneller), aber auch den Vielspieler.
+- Die Zeile „2 neue Pakete pro Woche“ zeigt: Bekommen Kinder mehr neue Pakete, ist die Farm früher voll (22 Wochen).
+  Dann sollte der Preisfaktor höher sein (Abschnitt 5).
 
 **Empfehlung: Modell A.**
 - Es ist einfach zu erklären: „Münzen gibt es fürs Lernen. Auf der Farm kannst du tauschen, aber nicht reich werden.“
 - Es schließt die drei großen Schlupflöcher (Futter Güte 3, Obstbäume, Verkauf zählt fürs Freischalten).
-- Den Wochenbonus aus C können Sie dazunehmen (Entscheidung M3). Er ändert wenig, ist aber eine freundliche Geste für Regelmäßigkeit.
+- Den Wochenbonus aus C gibt es nicht (Jazz 2026-11-18, Entscheidung M3).
 
 ## 5. Preistabelle
 
@@ -112,7 +113,7 @@ Gewinn aus Handel im Schuljahr (Verkauf minus Samen):
 | 57 | 2,25 bis 3 |
 | 76 (zwei neue Pakete pro Woche) | 3 bis 3,75 |
 
-Die Tabelle unten zeigt den Faktor 2,5. Bei einer anderen Antwort rechne ich sie neu.
+**Sie haben „ein neues Paket pro Woche“ festgelegt (etwa 38 im Schuljahr), darum Faktor 2.** Die Tabelle unten zeigt diesen Faktor.
 
 **Samen** (Preis wie heute; im Modell A bringt jede Ernte 5 Münzen mehr, als der Samen gekostet hat):
 
@@ -131,26 +132,28 @@ Die Tabelle unten zeigt den Faktor 2,5. Bei einer anderen Antwort rechne ich sie
   - Beispiel: Mit einer Aubergine (40) gefüttert gibt das Huhn ein Blaues Ei für 45 statt heute 80.
 - Obst bringt 15 (Orange), 17 (Pfirsich) oder 20 (Birne). Ein Baum trägt alle 14 Tage 3 Früchte.
 
-**Dauerhafte Dinge** (Faktor 2,5, auf 5 gerundet):
+**Dauerhafte Dinge** (Faktor 2):
 
 | Artikel | heute | neu |
 |---|---|---|
-| Feld | 40 | 100 |
-| Huhn | 220 | 550 |
-| Kuh | 450 | 1.125 |
-| Orangenbaum / Pfirsichbaum / Birnenbaum | 300 / 350 / 400 | 750 / 875 / 1.000 |
-| Busch, Blume | 25 | 65 |
-| Klee, Pilz, Fels, Glockenblume | 30 | 75 |
-| Stein, Traubenblume | 40 | 100 |
-| Truhe, Baumstumpf, Schild, Briefkasten, Kürbisgesicht, Geschenk, Schilf, Wassersteine | 75 | 190 |
-| Pilzhaus | 100 | 250 |
-| Boot | 120 | 300 |
-| Brunnen | 150 | 375 |
-| Frosch, Bienenstock | 250 | 625 |
+| Feld | 40 | 80 |
+| Huhn | 220 | 440 |
+| Kuh | 450 | 900 |
+| Orangenbaum / Pfirsichbaum / Birnenbaum | 300 / 350 / 400 | 600 / 700 / 800 |
+| Busch, Blume | 25 | 50 |
+| Klee, Pilz, Fels, Glockenblume | 30 | 60 |
+| Stein, Traubenblume | 40 | 80 |
+| Truhe, Baumstumpf, Schild, Briefkasten, Kürbisgesicht, Geschenk, Schilf, Wassersteine | 75 | 150 |
+| Pilzhaus | 100 | 200 |
+| Boot | 120 | 240 |
+| Brunnen | 150 | 300 |
+| Frosch, Bienenstock | 250 | 500 |
+
+Die volle Farm kostet damit 10.790 statt heute 5.395 Münzen.
 
 **Freischalten** (ab wie viel verdienten Münzen etwas im Laden steht):
 - Die Grenzen bleiben bei 0 / 200 / 600 / 1.200 / 2.200. Verdient zählt dann aber nur noch Lernen.
-- Ein Kind, das regelmäßig übt, hat damit nach etwa 6 Wochen alles freigeschaltet.
+- Ein Kind, das regelmäßig übt (etwa 200 Münzen pro Woche), hat damit nach etwa 11 Wochen alles freigeschaltet.
 - Die volle Farm braucht danach noch Zeit. Das ist gewollt: Das Ziel bleibt sichtbar.
 
 ## 6. Schlupflöcher: heute und mit Modell A
@@ -187,8 +190,8 @@ Es gilt immer: **Münzen werden nie abgezogen, Gekauftes bleibt.**
 | # | Frage | Mein Vorschlag |
 |---|---|---|
 | M1 | Welches Modell? | **A** „Lernen zählt“ |
-| M2 | Wie viele **neue** Pakete bekommt ein Kind im Schuljahr ungefähr? (bestimmt den Preisfaktor) | Ihre Schätzung. Bei „1 Paket + 1 Hausaufgabe pro Woche, immer neu“ wäre es Faktor 3. Bei vielen Wiederholungen eher 1,5 bis 2. |
-| M3 | Wochenbonus 20 Münzen für eine Woche mit mindestens einem Paket? | ja, als freundliche Geste (kein Bonus für Dauerspielen, nur einmal pro Woche) |
+| M2 | Wie viele **neue** Pakete bekommt ein Kind im Schuljahr ungefähr? | **entschieden (Jazz 2026-11-18): eins pro Woche → Faktor 2** |
+| M3 | Wochenbonus 20 Münzen für eine Woche mit mindestens einem Paket? | **entschieden (Jazz 2026-11-18): nein, kein Wochenbonus** |
 | M4 | Soll die Lehrkraft Faktoren pro Klasse einstellen können? | **nein, vorerst nicht** (eine Zahl mehr, die man verstehen muss; erst Erfahrungen sammeln) |
 | M5 | Samen bleiben so billig wie heute? | ja (ein Kind soll nach einer Übung etwas pflanzen können) |
 | M6 | Obstbäume alle 14 Tage statt jede Woche? | ja |

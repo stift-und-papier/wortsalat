@@ -991,9 +991,10 @@ a.ranke__text:focus-visible { outline: 3px solid var(--color-aktion); outline-of
 .farm-rahmen .farm-landschaft { position: absolute; margin: 0; }
 .farm-rahmen .farm-landschaft canvas { clip-path: none; }
 .farm-rahmen .farm-meldung { max-width: calc(100% - 100px); }
-/* Im Hochformat (iPad) nur ein Hinweis statt der Farm */
+/* Im Hochformat (iPad) nur ein Hinweis statt der Farm. any-pointer (Jazz 2026-11-18): auch mit Tastatur-Hülle samt Trackpad;
+   die Farm-Meldung oben wäre im Hochformat eine schmale hohe Spalte, darum weg */
 .farm-drehen { display: none; }
-@media (orientation: portrait) and (pointer: coarse) {
+@media (orientation: portrait) and (any-pointer: coarse) {
   .farm-drehen { display: block; margin: var(--space-2xl) auto; text-align: center; font-size: 1.4rem; font-weight: 800; }
-  .farm-rahmen { display: none; }
+  .farm-rahmen, .kopf-mitte .farm-meldung { display: none; }
 }

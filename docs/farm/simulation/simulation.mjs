@@ -28,13 +28,13 @@ const FELD = [40, 0], HUHN = [220, 200], KUH = [450, 1200]
 // ganz: Anteil Übungen, die (irgendwann) ganz richtig sind (Freundschaft), farmTage: Tage pro Woche mit der Farm,
 // wdh: Wiederholungen alter Übungen pro Farm-Tag nur zum Gießen, handel: füttert immer mit dem besten Futter und verkauft alles
 const KINDER = [
-  { name: 'regelmäßig', pakete: 2, richtig: 0.8, ganz: 0.6, farmTage: 3, wdh: 0, handel: false },
-  { name: 'durchschnittlich', pakete: 1.5, richtig: 0.7, ganz: 0.4, farmTage: 2, wdh: 0, handel: false },
-  { name: 'sporadisch', pakete: 0.5, richtig: 0.6, ganz: 0.3, farmTage: 1, wdh: 0, handel: false },
-  { name: 'Vielspieler', pakete: 2, richtig: 0.8, ganz: 0.6, farmTage: 7, wdh: 0, handel: true },
-  // Empfindlichkeit: übt so viel wie „regelmäßig“, aber es gibt nur 20 neue Pakete im Jahr (Rest Wiederholungen ohne neue Münzen)
-  { name: 'regelmäßig, nur 20 neue Pakete', pakete: 20 / 38, richtig: 0.8, ganz: 0.6, farmTage: 3, wdh: 3, handel: false },
-  { name: 'Schlupflöcher', pakete: 1, richtig: 0.7, ganz: 0.4, farmTage: 7, wdh: 3, handel: true },
+  { name: 'regelmäßig', pakete: 1, richtig: 0.8, ganz: 0.6, farmTage: 3, wdh: 2, handel: false }, // Jazz 2026-11-18: ein neues Paket pro Woche, dazu Wiederholung
+  { name: 'durchschnittlich', pakete: 0.75, richtig: 0.7, ganz: 0.4, farmTage: 2, wdh: 1, handel: false },
+  { name: 'sporadisch', pakete: 0.25, richtig: 0.6, ganz: 0.3, farmTage: 1, wdh: 0, handel: false },
+  { name: 'Vielspieler', pakete: 1, richtig: 0.8, ganz: 0.6, farmTage: 7, wdh: 2, handel: true },
+  // Empfindlichkeit: wie „regelmäßig“, aber zwei neue Pakete pro Woche (so war es im ersten Vorschlag angenommen)
+  { name: 'regelmäßig, 2 neue Pakete pro Woche', pakete: 2, richtig: 0.8, ganz: 0.6, farmTage: 3, wdh: 0, handel: false },
+  { name: 'Schlupflöcher', pakete: 0.5, richtig: 0.7, ganz: 0.4, farmTage: 7, wdh: 3, handel: true },
 ]
 const WOCHEN = 38, UEBUNGEN_JE_PAKET = 6, RUNDEN = 6
 
@@ -44,14 +44,14 @@ const HEUTE = { name: 'heute', preis: 1, verkaufFaktor: 1, tierPlus: null, verka
 const MODELLE = [
   HEUTE,
   // A: Lernen zählt. Verkauf zählt nicht als „verdient“, kleine Gewinnspannen (Ernte = Samenpreis + 5, Ei = Futter + 5, Milch = Futter + 10),
-  //    Obstbäume alle 14 Tage, Dauerhaftes (Felder, Tiere, Bäume, Deko) ×2,5 passend zur Zieldauer, Samen wie heute. Üben gießt weiter (auch Wiederholen ist Üben).
-  { ...HEUTE, name: 'A Lernen zählt', preis: 2.5, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, obstAlle: 14 },
+  //    Obstbäume alle 14 Tage, Dauerhaftes (Felder, Tiere, Bäume, Deko) ×2 (Jazz: ein neues Paket pro Woche) passend zur Zieldauer, Samen wie heute. Üben gießt weiter (auch Wiederholen ist Üben).
+  { ...HEUTE, name: 'A Lernen zählt', preis: 2, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, obstAlle: 14 },
   // A2: wie A, aber Gießen nur durch Übungen, die neue Münzen bringen (schließt Wiederholen nur zum Gießen)
-  { ...HEUTE, name: 'A2 wie A, Gießen nur bei neuen Münzen', preis: 2.5, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, giessenNurNeu: true, obstAlle: 14 },
-  // B: wie heute, aber höchstens 150 Münzen Verkauf pro Tag und Dauerhaftes ×2,5
-  { ...HEUTE, name: 'B Tagesdeckel', preis: 2.5, verkaufDeckel: 150 },
+  { ...HEUTE, name: 'A2 wie A, Gießen nur bei neuen Münzen', preis: 2, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, giessenNurNeu: true, obstAlle: 14 },
+  // B: wie heute, aber höchstens 150 Münzen Verkauf pro Tag und Dauerhaftes ×2
+  { ...HEUTE, name: 'B Tagesdeckel', preis: 2, verkaufDeckel: 150 },
   // C: wie A, dazu 20 Münzen Wochenbonus für regelmäßiges Üben (mindestens ein Paket in der Woche, nicht für Dauerspielen)
-  { ...HEUTE, name: 'C wie A + Wochenbonus', preis: 2.5, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, obstAlle: 14, wochenBonus: 20 },
+  { ...HEUTE, name: 'C wie A + Wochenbonus', preis: 2, verkaufFaktor: 0, tierPlus: [5, 10], verkaufZaehlt: false, obstAlle: 14, wochenBonus: 20 },
 ]
 
 const rund = (x) => Math.round(x / 5) * 5
