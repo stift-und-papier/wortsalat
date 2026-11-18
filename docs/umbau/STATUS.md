@@ -749,4 +749,46 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   `src/lib/hausaufgaben.ts` + Test, `src/schueler/SchuelerBereich.tsx`, `src/schueler/UebungSpiel.tsx`, `src/schueler/einstein.md`,
   `src/design/bausteine.css`.
 - Offene Fragen: keine.
-- Nächster Schritt: Teilaufgabe 5 (Gesamttest mit Testklassen und Protokoll).
+- 2026-11-18 (Jazz, Rückfragen TA 5): Gesamttest in der Klasse „Test“; Testdaten **bleiben stehen** (zum Ansehen am iPad);
+  kleine Fehler sofort beheben, bei größeren Umbauten oder Datenbankänderungen erst fragen; Protokoll nur hier in STATUS.md.
+- **Teilaufgabe 5 erledigt (2026-11-18): Gesamttest, Protokoll.** Browser, Klasse „Test“, Lehrkraft 1024 × 768 hell, Klassenliste
+  zuletzt 1180 × 820 dunkel. Nachfragen (window.confirm) automatisch bestätigt; lange Übungen per Testskript mit falschen Antworten
+  durchgeklickt (gleiche Knöpfe wie beim Antippen). ✓ = wie erwartet.
+  1. ✓ Anlegen „Testpaket Diktat“ (Abschreiben, Merkdiktat, Fallende Wörter, 2 Formate ohne Monster), Fr 20.11. 08:00, 1 Versuch;
+     danach steht es nicht mehr in der Auswahl. Archivierte Pakete („Sprachgebrauch 7/8: leicht“, „Test: Gemischt“) werden nicht
+     angeboten (so gewollt, sie stehen auch nicht in „Meine Übungen“).
+  2. ✓ Anlegen „Das Plusquamperfekt“ (Erklärseite + 2 Übungen), Mo 23.11. 08:00, beliebig oft. „Laufend“: früheste Frist oben.
+  3. ✓ Pfau-99: Einstein nennt beide Hausaufgaben („Du hast einen Versuch.“ / „Du kannst es beliebig oft versuchen.“), „Meine Übungen“
+     beide oben mit Fristzeile, darunter „Testpaket Formate“.
+  4. ✓ Abschreiben fehlerfrei (+45), danach „Du hast alle Versuche gemacht.“ und nicht antippbar. Fallende Wörter (ohne Zeitdruck)
+     geschafft (+45). „Zur nächsten Übung“ führt zur nächsten offenen Übung. „Zwei Formate ohne Monster“ halb falsch: Abschluss
+     „Das war dein letzter Versuch für diese Übung.“ (+15). Nach ganz geschafft steht kein Satz zu den Versuchen (so gebaut).
+  5. ✓ Erklärseite in der Hausaufgabe: „Verstanden“ +5 Münzen, danach „Erklärung gelesen“.
+  6. ✓ Beliebig oft: Abschluss-Übung zweimal am selben Tag, jeweils „Du kannst es gleich noch einmal versuchen!“, kein „Morgen wieder“.
+     Der erste Durchgang war schon vor der Hausaufgabe angefangen und zählt deshalb nicht als Versuch (Regel aus TA 1, Frage 8).
+  7. ✓ Lehrkraft-Klassenliste mit den echten Versuchen: ++ / ++ / - je „1 Versuch · noch 0“, „wann?“. „Versuche neu geben“ für Pfau-99
+     → „noch 1“, alte Versuche bleiben; Schülerseite wieder „Noch ein Versuch“.
+  8. ✓ Eigene Frist für Specht-01 (Mi 25.11.). Klassenfrist per Datenbank auf „vor einer Stunde“: Pfau-99 ohne Diktat-Hausaufgabe;
+     Specht-01 sieht sie weiter „bis Mittwoch, 25.11.“ (nach der Plusquamperfekt-Hausaufgabe, weil spätere Frist). Klassenliste:
+     „vorbei: …“ bei allen außer Specht-01, Hausaufgabe bleibt unter „Laufend“.
+  9. ✓ Freigeben für Pfau-99: „freigegeben“; Schülerseite zeigt das Paket als normale Aufgabe mit „Morgen wieder“.
+  10. ✓ Neues Kind Reh-56 (über „Pseudonyme erzeugen“): Klassenliste „ohne Frist“, Schülerseite alle Pakete ohne Hausaufgabe;
+      eigene Frist Di 24.11. → Einstein-Nachricht und Fristzeile erscheinen.
+  11. ✓ Kater-73 aus „Das Plusquamperfekt“ herausgenommen: „ganze Klasse außer Kater-73“, fehlt in der Klassenliste, sieht weder
+      diese noch die abgelaufene Diktat-Hausaufgabe.
+  12. ✓ `npm test` 163/163, Lint ohne Fehler (nur Warnungen in `docs/farm/farm-mockup.js`, nicht aus diesem Auftrag), `tsc`, Build.
+      Keine Migration, darum kein neuer DB-Test (zuletzt 191 bestanden).
+- Dabei behoben: (a) Die Schülerseite lud ihre Daten nur beim Öffnen und nach einer Übung; ein iPad, das über die Frist offen bleibt,
+  zeigte die Hausaufgabe weiter an (Starten sperrte der Server trotzdem). Jetzt lädt sie neu, sobald die Seite wieder sichtbar wird
+  (`visibilitychange`, geprüft: Paket verschwindet ohne Neuladen). (b) Reiter „Aufgaben“ zeigte bei vorbeigegangener Klassenfrist
+  keinen Hinweis, obwohl einzelne Kinder noch eine eigene Frist haben: jetzt „Hausaufgabe läuft noch für einzelne“.
+- Aufgefallen, nicht geändert: In „Laufend“ steht bei der Diktat-Hausaufgabe die vergangene Klassenfrist („bis Mi, 18.11., 10:43 Uhr“),
+  weil nur noch Specht-01 sie hat. Die Optionsfelder „beliebig oft“/„begrenzt auf“ haben für Vorlesehilfen keinen Namen („on“).
+- Testdaten bleiben stehen (Wunsch Jazz): Klasse „Test“ mit neuem Kind **Reh-56**; Hausaufgabe „Testpaket Diktat“ (Klassenfrist am
+  18.11. abgelaufen, Specht-01 bis 25.11., Pfau-99 freigegeben), „Das Plusquamperfekt“ bis 23.11. (Reh-56 bis 24.11., Kater-73
+  herausgenommen); Durchgänge und Münzen von Pfau-99 (+110).
+- Nicht getestet: echtes iPad (nur Browser-Fenstergröße), Merkdiktat als Hausaufgabe, „Frist und Versuche ändern“ und „für alle
+  freigeben“/„Versuche für alle neu geben“ im Browser (DB-Tests aus TA 3), eine Frist, die wirklich von selbst abläuft (nur per
+  Datenbank vorgestellt), Schülerseite im dunklen Modus in diesem Schritt (in TA 4 geprüft).
+- Geänderte Dateien TA 5: `src/schueler/SchuelerBereich.tsx`, `src/lehrkraft/KlassenAufgaben.tsx`, `docs/umbau/STATUS.md`.
+- Offene Fragen: keine. **Auftrag Klassen-Aufgaben fertig** (Branch `klassen-aufgaben`, nicht gepusht, nicht gemergt).

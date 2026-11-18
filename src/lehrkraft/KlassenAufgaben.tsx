@@ -22,7 +22,7 @@ type Zuteilung = {
   hausaufgabe_ab: string | null
   frist: string | null
   freigegeben_am: string | null
-  zuweisung_einzeln: { schueler_id: string; entfernt_am: string | null }[]
+  zuweisung_einzeln: { schueler_id: string; entfernt_am: string | null; frist: string | null; freigegeben_am: string | null }[]
 }
 
 const SORTIERUNGEN = [
@@ -60,7 +60,7 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
         .order('erstellt_am', { ascending: false }),
       supabase
         .from('zuweisungen')
-        .select('id, paket_id, klasse_id, schueler_id, erstellt_am, hausaufgabe_ab, frist, freigegeben_am, zuweisung_einzeln(schueler_id, entfernt_am)')
+        .select('id, paket_id, klasse_id, schueler_id, erstellt_am, hausaufgabe_ab, frist, freigegeben_am, zuweisung_einzeln(schueler_id, entfernt_am, frist, freigegeben_am)')
         .is('entfernt_am', null)
         .or(wer),
     ])
@@ -85,7 +85,9 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
     const seit = eigene.map((z) => z.erstellt_am).sort()[0]
     // laufende Hausaufgabe (Einzelheiten in der Ansicht Hausaufgaben)
     const ha = eigene.find((z) => z.hausaufgabe_ab && !z.freigegeben_am && z.frist && Date.parse(z.frist) > Date.now())
-    return [{ paket: p, ganz: !!ganz, haben, seit, bis: ha?.frist ?? null }]
+    // Klassenfrist vorbei, aber einzelne haben noch eine eigene Frist
+    const einzelne = !ha && eigene.some((z) => z.hausaufgabe_ab && !z.freigegeben_am && z.zuweisung_einzeln.some((e) => !e.entfernt_am && !e.freigegeben_am && e.frist && Date.parse(e.frist) > Date.now()))
+    return [{ paket: p, ganz: !!ganz, haben, seit, bis: ha?.frist ?? null, einzelne }]
   })
   const schonZugeteilt = new Set(zugeteilt.map((z) => z.paket.id))
 
@@ -206,7 +208,7 @@ export function KlassenAufgaben({ klasse, schueler }: { klasse: Klasse; schueler
 }
 
 /** Eine zugeteilte Aufgabe mit „Herausnehmen“ (ganze Klasse oder einzelne Pseudonyme antippen) */
-function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; seit: string; bis: string | null; schueler: Kind[]; herausnehmen: (kinder: string[] | null) => void }) {
+function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; seit: string; bis: string | null; einzelne: boolean; schueler: Kind[]; herausnehmen: (kinder: string[] | null) => void }) {
   const { paket, ganz, haben, seit, schueler } = props
   const [offen, setOffen] = useState(false)
   const [wahl, setWahl] = useState<Set<string>>(new Set())
@@ -229,7 +231,7 @@ function ZugeteiltZeile(props: { paket: Paket; ganz: boolean; haben: string[]; s
         <br />
         <span className="lk-leise">
           {wer} · seit {datum(seit)}
-          {props.bis && ` · Hausaufgabe bis ${fristText(props.bis)}`}
+          {props.bis ? ` · Hausaufgabe bis ${fristText(props.bis)}` : props.einzelne && ' · Hausaufgabe läuft noch für einzelne'}
         </span>
       </span>
       <button type="button" className="lk-knopf" aria-expanded={offen} onClick={() => setOffen(!offen)}>

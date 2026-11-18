@@ -92,8 +92,14 @@ export function SchuelerBereich({ token, pfad }: Props) {
     void warteschlangeSenden()
     const beiOnline = () => void warteschlangeSenden()
     window.addEventListener('online', beiOnline)
+    // iPad bleibt oft tagelang offen: beim Zurückkehren neu laden (neue Hausaufgaben, Frist vorbei)
+    const beiSichtbar = () => {
+      if (document.visibilityState === 'visible') void laden()
+    }
+    document.addEventListener('visibilitychange', beiSichtbar)
     const timer = window.setInterval(() => void warteschlangeSenden(), 20000)
     return () => {
+      document.removeEventListener('visibilitychange', beiSichtbar)
       window.removeEventListener('online', beiOnline)
       window.clearInterval(timer)
     }
