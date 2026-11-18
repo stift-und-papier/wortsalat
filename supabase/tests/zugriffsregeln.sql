@@ -1945,6 +1945,116 @@ begin
     n := n + 1;
   end;
 
+  -- ---------- Block 23: Zuteilen und Herausnehmen auf der Klassenseite (Jazz 2026-11-18) ----------
+  declare
+    v_p uuid;
+    v_u uuid;
+    v_fuchs uuid := (select id from public.schueler where pseudonym = 'Fuchs-01');
+    v_eule uuid := (select id from public.schueler where pseudonym = 'Eule-02');
+    t_fuchs text := (select token from public.schueler where pseudonym = 'Fuchs-01');
+    t_eule text := (select token from public.schueler where pseudonym = 'Eule-02');
+    t_neu text;
+    v_zahl integer;
+  begin
+    insert into public.aufgaben (owner, typ, titel, stufe, loesung)
+    values (c_lk_a, 'lueckentext', 'Z23', 1, '{"runden":[{"teile":[{"t":"luecke","id":0,"loesungen":["a"]}]}]}') returning id into v_u;
+    insert into public.pakete (owner, titel) values (c_lk_a, 'P-23') returning id into v_p;
+    insert into public.paket_aufgaben (paket_id, aufgabe_id, position) values (v_p, v_u, 1);
+
+    -- 23.1 ganze Klasse: alle sehen das Paket
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.zuteilen(array[v_p], c_kl_a, null);
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_fuchs) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1 then
+      raise exception 'Block 23.1: Klassen-Zuteilung nicht sichtbar';
+    end if;
+    n := n + 1;
+
+    -- 23.2 ein Kind herausnehmen: es sieht nichts mehr und kann nicht starten, die Klasse behält das Paket
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.herausnehmen(v_p, c_kl_a, array[v_fuchs]);
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_fuchs) -> 'pakete') x where x ->> 'id' = v_p::text) <> 0
+       or (select count(*) from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1 then
+      raise exception 'Block 23.2: Herausnehmen für ein Kind wirkt falsch';
+    end if;
+    reset role;
+    begin
+      perform public.zugewiesene_aufgabe((select s from public.schueler s where s.id = v_fuchs), v_p, v_u);
+      raise exception 'Block 23.2: herausgenommenes Kind darf starten';
+    exception when sqlstate 'P0002' then null;
+    end;
+    n := n + 1;
+
+    -- 23.3 alle angetippt = ganze Klasse, ersetzt die alte Zuteilung; ein neues Kind bekommt sie mit
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.zuteilen(array[v_p], c_kl_a, (select array_agg(id) from public.schueler where klasse_id = c_kl_a));
+    insert into public.schueler (klasse_id, pseudonym) values (c_kl_a, 'Neu-23') returning token into t_neu;
+    select count(*) into v_zahl from public.zuweisungen where paket_id = v_p and entfernt_am is null;
+    if v_zahl <> 1 or not exists (select 1 from public.zuweisungen where paket_id = v_p and entfernt_am is null and klasse_id = c_kl_a) then
+      raise exception 'Block 23.3: nicht genau eine Klassen-Zuteilung (%)', v_zahl;
+    end if;
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_fuchs) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1
+       or (select count(*) from jsonb_array_elements(public.schueler_start(t_neu) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1 then
+      raise exception 'Block 23.3: Fuchs oder neues Kind sieht das Paket nicht';
+    end if;
+    n := n + 1;
+
+    -- 23.4 nur ein Kind angetippt: Einzel-Zuteilung, das Kind sieht das Paket genau einmal
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.zuteilen(array[v_p], c_kl_a, array[v_fuchs]);
+    if not exists (select 1 from public.zuweisungen where paket_id = v_p and entfernt_am is null and schueler_id = v_fuchs)
+       or not exists (select 1 from public.zuweisungen where paket_id = v_p and entfernt_am is null and klasse_id = c_kl_a) then
+      raise exception 'Block 23.4: Einzel- oder Klassen-Zuteilung fehlt';
+    end if;
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_fuchs) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1
+       or (select count(*) from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text) <> 1 then
+      raise exception 'Block 23.4: Paket doppelt oder fehlt';
+    end if;
+    n := n + 1;
+
+    -- 23.5 ganze Klasse herausnehmen: niemand sieht es, der Verlauf bleibt (nichts gelöscht)
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    perform public.herausnehmen(v_p, c_kl_a, null);
+    if exists (select 1 from public.zuweisungen where paket_id = v_p and entfernt_am is null)
+       or (select count(*) from public.zuweisungen where paket_id = v_p) <> 3 then
+      raise exception 'Block 23.5: Herausnehmen löscht oder lässt etwas übrig';
+    end if;
+    set local role anon;
+    if (select count(*) from jsonb_array_elements(public.schueler_start(t_eule) -> 'pakete') x where x ->> 'id' = v_p::text) <> 0 then
+      raise exception 'Block 23.5: Paket nach Herausnehmen noch sichtbar';
+    end if;
+    n := n + 1;
+
+    -- 23.6 fremde Lehrkraft: kann nicht zuteilen, sieht keine Einzel-Angaben, Herausnehmen wirkt nicht
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_b, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    begin
+      perform public.zuteilen(array[v_p], c_kl_a, null);
+      raise exception 'Block 23.6: fremde Klasse zugeteilt';
+    exception when sqlstate 'P0002' then null;
+    end;
+    if exists (select 1 from public.zuweisung_einzeln) or public.herausnehmen(v_p, c_kl_a, null) <> 0 then
+      raise exception 'Block 23.6: fremde Lehrkraft sieht oder ändert Zuteilungen';
+    end if;
+    -- 23.7 ohne Anmeldung kein Zuteilen
+    set local role anon;
+    begin
+      perform public.zuteilen(array[v_p], c_kl_a, null);
+      raise exception 'Block 23.7: anon darf zuteilen';
+    exception when insufficient_privilege then null;
+    end;
+    reset role;
+    n := n + 2;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;

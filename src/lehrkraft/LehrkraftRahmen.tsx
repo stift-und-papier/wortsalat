@@ -34,7 +34,7 @@ function Inhalt({ pfad }: { pfad: string[] }) {
   if (bereich === 'schueler' && id) return <SchuelerLernstand key={id} schuelerId={id} />
   if (bereich === 'einstellungen') return <Einstellungen />
   if (bereich === 'klassen' && id && unterseite === 'links') return <Linkliste klasseId={id} />
-  if (bereich === 'klassen' && id) return <KlasseDetail klasseId={id} />
+  if (bereich === 'klassen' && id) return <KlasseDetail key={id} klasseId={id} reiter={unterseite === 'aufgaben' ? 'aufgaben' : 'schueler'} />
   if (bereich === 'klassen') return <KlassenListe />
   if (bereich === 'kompetenzen') return <Kompetenzen />
   if (bereich === 'aufgaben' && id === 'neu') return <FormatWahl />

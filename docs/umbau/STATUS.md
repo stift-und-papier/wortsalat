@@ -666,6 +666,28 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
 - 2026-11-18 (Jazz): alle 11 Vorschläge angenommen, außer 5 und 6: Verlängern und Freigeben für einzelne Kinder oder die ganze
   Klasse; neue Kinder bekommen alle Klassen-Zuteilungen, Hausaufgaben für sie offen ohne Frist (Frist einzeln neu setzen).
 - Branch vom Hauptstand `main` (c6f21be); alle früheren Branches sind darin enthalten.
-- Geänderte Dateien: `docs/umbau/konzept-klassen-aufgaben.md` (neu), `docs/umbau/STATUS.md`.
-- Offene Fragen: keine (beantwortet 2026-11-18).
-- Nächster Schritt: Teilaufgabe 2 (Reiter „Aufgaben“, Zuteilen, Herausnehmen).
+- Geänderte Dateien TA 1: `docs/umbau/konzept-klassen-aufgaben.md` (neu), `docs/umbau/STATUS.md`.
+- **Teilaufgabe 2 erledigt (2026-11-18):** Migration `20261118170000_klassen_aufgaben` (eingespielt): neue Spalten in `zuweisungen`
+  (Hausaufgaben-Spalten schon angelegt, noch ungenutzt), Tabelle `zuweisung_einzeln` (RLS über `owner`), eindeutige Indizes nur noch
+  für nicht ausgeblendete Zuteilungen, Hilfsfunktion `zuweisungen_fuer(schueler)` (wirksame Zuteilungen eines Kindes), Funktionen
+  `zuteilen(pakete, klasse, schueler|null)` und `herausnehmen(paket, klasse, schueler|null)`. `schueler_start`, `zugewiesene_aufgabe`
+  und `erklaerung_zugewiesen` zählen nur noch wirksame Zuteilungen (sonst unverändert).
+  Regeln: alle Kinder angetippt = Klassen-Zuteilung (neue Kinder bekommen sie mit), sonst je Kind eine Einzel-Zuteilung; eine neue
+  Zuteilung ersetzt die alte desselben Pakets für dieselben Kinder (alte wird ausgeblendet, nichts gelöscht).
+- Oberfläche: Klassenseite mit Reitern „Schüler:innen“ (alles wie bisher) und „Aufgaben“ (`#/lehrkraft/klassen/<id>/aufgaben`,
+  `src/lehrkraft/KlassenAufgaben.tsx`). Umschalter Aufgaben/Hausaufgaben (Hausaufgaben noch Platzhalter). „Zugeteilt an diese Klasse“
+  mit „ganze Klasse“, „ganze Klasse außer …“ oder „N Schüler:innen: …“, Herausnehmen für alle (mit Nachfrage) oder Pseudonyme antippen.
+  Paketliste mit Suche, Filtern (wie Seite „Pakete“), Sortierung, Kästchen, „schon zugeteilt“; Fenster „Zuteilen“ mit Klasse
+  (nur eigene), Pseudonymen (Standard alle, „alle auswählen“), Esc schließt. Paketseite: Zuweisen über `zuteilen`, „Zuweisung
+  entfernen“ blendet nur aus, zeigt „alle außer …“. Paketliste zählt ausgeblendete Zuteilungen nicht.
+- Getestet: DB-Tests Block 23 (Zuteilen, einzeln/alle herausnehmen, neues Kind, Ersetzen, fremde Lehrkraft, anon) →
+  ALLE TESTS BESTANDEN (178); `npm test` 157/157; Build. Browser (Klasse „Test“, 1024×768 und 1180×820): Zuteilen an Pfau-99 und
+  Specht-01, Herausnehmen nur für Specht-01 (Schülersicht per `schueler_start` geprüft), für alle herausnehmen, Klassenwechsel im Fenster,
+  Esc, Reiterwechsel und Zurück im Browser, Paketseite zuweisen/entfernen. Klasse „Test“ hat danach wieder ihre drei Pakete
+  (Plusquamperfekt und Testpaket Diktat jetzt „seit 18.11.“).
+- Geänderte Dateien TA 2: Migration (neu), `supabase/tests/zugriffsregeln.sql`, `src/lehrkraft/KlassenAufgaben.tsx` (neu),
+  `KlasseDetail.tsx`, `LehrkraftRahmen.tsx`, `PaketDetail.tsx`, `PaketListe.tsx`, `src/design/lehrkraft.css`.
+- Aufgefallen, nicht geändert: `.lk-auswahl` steht in `lehrkraft.css` zweimal; die spätere Regel macht die Pseudonym-Knöpfe in
+  „Versuch früher freigeben“ untereinander statt nebeneinander. In Klasse „AES“ heißt ein Kind „Eva“ (sieht aus wie ein Klarname).
+- Offene Fragen: keine.
+- Nächster Schritt: Teilaufgabe 3 (Hausaufgaben-Ansicht: anlegen, Frist, Versuche, Klassenliste, verlängern, freigeben, Reset).

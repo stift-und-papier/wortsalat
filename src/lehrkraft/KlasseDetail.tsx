@@ -6,10 +6,11 @@ import { gehe, schuelerLink } from '../lib/router'
 import { supabase } from '../lib/supabase'
 import type { Klasse, Schueler } from '../lib/typen'
 import { FreigebenKlasse } from './Freigeben'
+import { KlassenAufgaben } from './KlassenAufgaben'
 
 // alt (Übungswiese), gekürzt: Klasse umbenennen, KC wählen, Pseudonyme anlegen/umbenennen/löschen, (feste Sterne-Stufe entfällt seit 2026-11-17: alle sehen alle Übungen)
 // Dazu Lernstand (Phase 7) und „Ergebnisse zurücksetzen“ (alt).
-export function KlasseDetail({ klasseId }: { klasseId: string }) {
+export function KlasseDetail({ klasseId, reiter = 'schueler' }: { klasseId: string; reiter?: 'schueler' | 'aufgaben' }) {
   const [klasse, setKlasse] = useState<Klasse | null>(null)
   const [schueler, setSchueler] = useState<Schueler[]>([])
   const [fehler, setFehler] = useState<string | null>(null)
@@ -129,10 +130,32 @@ export function KlasseDetail({ klasseId }: { klasseId: string }) {
   if (!klasse) return fehler ? <p className="lk-hinweis" role="alert">{fehler}</p> : <p className="lk-leise" role="status">Lädt …</p>
   const vorhanden = schueler.map((s) => s.pseudonym)
 
-  return (
+  // Klassen-Aufgaben (Jazz 2026-11-18): Reiter „Schüler:innen“ (bisheriger Inhalt) und „Aufgaben“, je mit eigener Adresse
+  const kopf = (
     <>
       <a className="lk-zurueck" href="#/lehrkraft/klassen">← Alle Klassen</a>
       <h1>Klasse {klasse.name}</h1>
+      <div className="lk-reiter" role="group" aria-label="Bereich der Klasse">
+        <button type="button" className="lk-knopf" aria-pressed={reiter === 'schueler'} onClick={() => gehe(`/lehrkraft/klassen/${klasseId}`)}>
+          Schüler:innen
+        </button>
+        <button type="button" className="lk-knopf" aria-pressed={reiter === 'aufgaben'} onClick={() => gehe(`/lehrkraft/klassen/${klasseId}/aufgaben`)}>
+          Aufgaben
+        </button>
+      </div>
+    </>
+  )
+  if (reiter === 'aufgaben')
+    return (
+      <>
+        {kopf}
+        <KlassenAufgaben klasse={klasse} schueler={schueler} />
+      </>
+    )
+
+  return (
+    <>
+      {kopf}
       {fehler && <p className="lk-hinweis" role="alert">{fehler}</p>}
       {meldung && <p className="lk-erfolg" role="status">{meldung}</p>}
 

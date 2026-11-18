@@ -346,3 +346,24 @@ fieldset.lk-teil { grid-template-columns: minmax(0, 1fr); }
 .lk-teil--spalte > .lk-knopf { justify-self: end; }
 /* Multiple Choice im Editor: Haken, Antwort, Entfernen in einer Zeile (Jazz 2026-11-16) */
 .lk-mc-antwort { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-xs); align-items: center; }
+
+/* Klassen-Aufgaben (Teilaufgabe 2): Zeilen mit Kästchen, aufgeklappter Bereich über die ganze Breite, Fenster „Zuteilen“ */
+.lk-wahlzeile { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-xs) var(--space-sm); cursor: pointer; font-weight: 800; }
+.lk-wahlzeile input[type='checkbox'] { width: 24px; height: 24px; margin: 0; flex: none; }
+.lk-eintrag.lk-wahlzeile { flex-wrap: nowrap; }
+.lk-wahltext { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-sm); }
+.lk-ganz { flex-basis: 100%; display: grid; gap: var(--space-sm); }
+.lk-ganz p { margin: 0; }
+.lk-chips { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.lk-chips .lk-knopf[aria-pressed='true'] { background: var(--color-lk-aktion); border-color: var(--color-lk-aktion); color: var(--color-lk-aktion-text); }
+.lk-dialog-hinter {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: var(--space-md);
+  background: rgb(0 0 0 / 0.45);
+}
+.lk-dialog {
+  display: grid; gap: var(--space-sm); width: 100%; max-width: 40rem; max-height: calc(100vh - 2 * var(--space-md)); overflow: auto;
+  padding: var(--space-md) var(--space-lg); border-radius: var(--radius-lk);
+  background: var(--color-lk-papier); color: var(--color-lk-tinte); box-shadow: 0 8px 32px rgb(0 0 0 / 0.3);
+}
+.lk-dialog h2 { margin: 0; }
+.lk-dialog > label:not(.lk-wahlzeile) { display: grid; gap: var(--space-2xs); font-weight: 800; }

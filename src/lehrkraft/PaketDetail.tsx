@@ -18,7 +18,7 @@ export type PaketAufgabe = Aufgabe & { inhalt: LueckentextInhaltSchueler }
 type Daten = {
   paket: Paket
   inhalt: { aufgabe_id: string; position: number; aufgabe: PaketAufgabe }[]
-  zuweisungen: Zuweisung[]
+  zuweisungen: (Zuweisung & { zuweisung_einzeln: { schueler_id: string; entfernt_am: string | null }[] })[]
   klassen: Klasse[]
   schueler: Pick<Schueler, 'id' | 'klasse_id' | 'pseudonym'>[]
 }
@@ -75,7 +75,7 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
     const [p, pa, z, k, s] = await Promise.all([
       supabase.from('pakete').select('*').eq('id', paketId).eq('archiviert', false).maybeSingle(),
       supabase.from('paket_aufgaben').select('aufgabe_id, position, aufgabe:aufgaben(*)').eq('paket_id', paketId).order('position'),
-      supabase.from('zuweisungen').select('*').eq('paket_id', paketId).order('erstellt_am'),
+      supabase.from('zuweisungen').select('*, zuweisung_einzeln(schueler_id, entfernt_am)').eq('paket_id', paketId).is('entfernt_am', null).order('erstellt_am'),
       supabase.from('klassen').select('id, name, kerncurriculum').order('name'),
       supabase.from('schueler').select('id, klasse_id, pseudonym').order('pseudonym'),
     ])
@@ -85,7 +85,7 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
     setDaten({
       paket: p.data as Paket,
       inhalt: pa.data as unknown as Daten['inhalt'],
-      zuweisungen: z.data as Zuweisung[],
+      zuweisungen: z.data as Daten['zuweisungen'],
       klassen: k.data as Klasse[],
       schueler: s.data as Daten['schueler'],
     })
@@ -192,7 +192,12 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
                   <span>
                     {z.klasse_id ? (
                       <>
-                        Klasse <strong>{klassenName(z.klasse_id)}</strong> (alle)
+                        Klasse <strong>{klassenName(z.klasse_id)}</strong> (
+                        {(() => {
+                          const raus = z.zuweisung_einzeln.filter((e) => e.entfernt_am).map((e) => schueler.find((x) => x.id === e.schueler_id)?.pseudonym)
+                          return raus.length ? `alle außer ${raus.join(', ')}` : 'alle'
+                        })()}
+                        )
                       </>
                     ) : (
                       <>
@@ -200,7 +205,7 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
                       </>
                     )}
                   </span>
-                  <button type="button" className="lk-knopf" onClick={() => void ausfuehren(supabase.from('zuweisungen').delete().eq('id', z.id))}>
+                  <button type="button" className="lk-knopf" onClick={() => void ausfuehren(supabase.from('zuweisungen').update({ entfernt_am: new Date().toISOString() }).eq('id', z.id))}>
                     Zuweisung entfernen
                   </button>
                 </li>
@@ -215,7 +220,9 @@ export function PaketDetail({ paketId, vorschau }: { paketId: string; vorschau: 
             const wert = new FormData(e.currentTarget).get('ziel') as string
             if (!wert) return
             const [art, id] = wert.split(':')
-            void ausfuehren(supabase.from('zuweisungen').insert(art === 'k' ? { paket_id: paket.id, klasse_id: id } : { paket_id: paket.id, schueler_id: id }))
+            // Klassen-Aufgaben (Jazz 2026-11-18): über zuteilen, damit eine neue Zuteilung die alte ersetzt; Entfernen blendet nur aus
+            const klasse = art === 'k' ? id : (schueler.find((s) => s.id === id)?.klasse_id ?? '')
+            void ausfuehren(supabase.rpc('zuteilen', { p_pakete: [paket.id], p_klasse: klasse, p_schueler: art === 'k' ? null : [id] }))
           }}
         >
           <label>
