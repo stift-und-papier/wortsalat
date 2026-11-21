@@ -11,6 +11,7 @@ import { KlassenListe } from './KlassenListe'
 import { Kompetenzen } from './Kompetenzen'
 import { Einstellungen } from './Einstellungen'
 import { KlassenLernstand, SchuelerLernstand } from './Lernstand'
+import { Jahresloeschung } from './Jahresloeschung'
 import { Linkliste } from './Linkliste'
 import { PaketDetail } from './PaketDetail'
 import { NeuesPaket, PaketListe } from './PaketListe'
@@ -101,6 +102,7 @@ export function LehrkraftRahmen({ bereich, email, children }: { bereich: string;
         </div>
       </nav>
       <main className="lk-inhalt">
+        {email && <Jahresloeschung />}
         <div className="lk-karte">{children}</div>
       </main>
     </div>

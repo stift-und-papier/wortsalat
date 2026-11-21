@@ -7,7 +7,7 @@ So ist sie aufgebaut:
   - Text             → Aufzählungspunkt
   **Wort**           → fett
 Alles vor der ersten „#“-Zeile (also auch dieser Kasten) erscheint nicht in der App.
-Abschnitt „Für Eltern und Schüler:innen“ wird in Aufgabe 43 mit DATENSCHUTZ.md abgeglichen – bei Änderungen bitte beide Stellen gleich halten.
+Abschnitt „Für Eltern und Schüler:innen“ steht genauso in DATENSCHUTZ.md (Teil B): bei Änderungen bitte beide Stellen gleich halten.
 Der letzte Abschnitt nennt die Grafiken – er muss bleiben (Lizenz).
 -->
 
@@ -23,7 +23,7 @@ Die Sterne zeigen, wie viel eine Aufgabe von dir verlangt: ein Stern, zwei Stern
 
 ## Warum bekomme ich andere Aufgaben als meine Mitschüler:innen?
 
-Deine Lehrkraft gibt Übungspakete an die ganze Klasse oder nur an einzelne Kinder. Außerdem siehst du in einem Paket die Aufgaben, die zu deinen Sternen passen. So übt jede und jeder genau an der Stelle, die gerade dran ist.
+Deine Lehrkraft gibt Übungspakete an die ganze Klasse oder nur an einzelne Kinder. So übt jede und jeder genau an der Stelle, die gerade dran ist. Manche Pakete sind **Hausaufgaben**: Dann steht dabei, bis wann du sie machen kannst.
 
 ## Warum sehe ich keine Noten oder Punktzahlen?
 
@@ -31,11 +31,11 @@ Wortsalat ist zum Üben da, nicht zum Bewerten. Darum gibt es hier keine Noten u
 
 ## Was passiert, wenn ich einen Fehler mache?
 
-Nach dem Prüfen zeigt dir ein ↻, wo du noch einmal hinschauen kannst. Dann probierst du es einfach noch einmal. Bei manchen Aufgaben hat Einstein einen **Tipp** für dich. Nach zwei Versuchen kannst du dir auch die Lösung ansehen. Dann zählt diese Aufgabe aber nicht mehr für deine Entwicklung.
+Jede Runde prüfst du einmal. Ist sie richtig, fliegt ein Herz zum Monster. Ist etwas falsch, verfehlt das Herz, und du siehst die richtige Lösung. Schau sie dir gut an, dann klappt es beim nächsten Mal. Bei manchen Aufgaben hat Einstein einen **Tipp** für dich. Ist die ganze Übung richtig, wird das Monster dein Freund. Sonst kannst du es morgen noch einmal versuchen.
 
 ## Kann ich Aufgaben wiederholen?
 
-Ja. Geschaffte Aufgaben kannst du jederzeit noch einmal üben, und Erklärungen kannst du noch einmal lesen. Tippe dafür unter **Übungen** auf das Paket und dann auf die Aufgabe.
+Ja. Jede Übung kannst du einmal am Tag machen. Am nächsten Tag kannst du sie wiederholen und dich verbessern. Erklärungen kannst du jederzeit noch einmal lesen. Tippe dafür unter **Übungen** auf das Paket und dann auf die Übung.
 
 ## Wie komme ich wieder auf meine Seite?
 
@@ -49,7 +49,7 @@ Steht da, dass eine Antwort auf Internet wartet? Dann ist sie sicher gespeichert
 
 ## Wie bekomme ich Münzen?
 
-Für jede Aufgabe, die du richtig löst, bekommst du Münzen. Beim ersten Versuch gibt es am meisten, beim zweiten die Hälfte. Schwierigere Aufgaben mit mehr Sternen bringen mehr Münzen. Für dieselbe Aufgabe gibt es einmal am Tag Münzen. Wenn du dir die Lösung angesehen hast, gibt es für diese Aufgabe keine Münzen mehr. Für jede Erklärung bekommst du einmal Münzen, wenn du auf **Verstanden** tippst.
+Für jede Übung bekommst du Münzen. Je mehr Runden richtig sind, desto mehr Münzen gibt es. Schwierigere Übungen mit mehr Sternen bringen mehr Münzen. Wirst du Freund des Monsters, gibt es einmal Extra-Münzen. Wiederholst du eine Übung, bekommst du Münzen, wenn du besser bist als vorher. Für jede Erklärung bekommst du einmal Münzen, wenn du auf **Verstanden** tippst.
 
 ## Wofür sind die Münzen?
 
@@ -65,7 +65,7 @@ Jede Aufgabe, für die du Münzen bekommst, gießt alle deine Felder. Ein kleine
 
 ## Wie ernte ich?
 
-Ist eine Pflanze reif, sagt deine Figur Bescheid. Tippe das Feld an, dann liegt die Ernte daneben. Tippe die Ernte an, dann sammelt deine Figur sie ein. Danach ist sie in deinem **Vorrat** unter der Farm.
+Ist eine Pflanze reif, sagt deine Figur Bescheid. Tippe das Feld an, dann liegt die Ernte daneben. Tippe die Ernte an, dann sammelt deine Figur sie ein. Danach ist sie in deinem **Vorrat**. Den öffnest du mit dem Knopf mit der Truhe.
 
 ## Wie stelle ich Deko auf?
 
@@ -83,6 +83,10 @@ Du kannst damit Tiere füttern oder alles im **Shop** verkaufen. Dann bekommst d
 
 Manche Pflanzen auf deiner Farm wachsen, wenn du dazulernst. Dazu gehören der Kirschbaum, die Eiche, die Sonnenblumen, das Lagerfeuer, der Beerenbusch, die Seerosen und das Vogelhaus. Sie werden nie kleiner.
 
+## Wie kommt ein Monster auf meine Farm?
+
+Wenn du mit demselben Monster viermal Freundschaft geschlossen hast, zieht es auf deine Farm. Es wohnt in einer Hütte und schenkt dir montags und donnerstags einen Samen. Der liegt dann neben ihm, und du sammelst ihn ein. Es wohnt immer nur ein Monster auf deiner Farm.
+
 ## Was bedeuten die Pflanzen in „Mein Lernweg“?
 
 Sie zeigen, wie es in einem Thema bei dir vorangeht. 🌱 heißt: Du hast angefangen. 🌿 heißt: Bleib dran. 🪴 heißt: Du wirst besser. 🌷 heißt: Du bist deutlich besser geworden. Wenn du besser wirst, bekommst du manchmal auch ein Geschenk für deine Farm.
@@ -93,13 +97,14 @@ Sie zeigen, wie es in einem Thema bei dir vorangeht. 🌱 heißt: Du hast angefa
 
 - Deinen **Fantasienamen** (zum Beispiel „Fuchs-07“). Deinen richtigen Namen kennt die App nicht.
 - Deine **Antworten** zu den Übungen und wann du sie gemacht hast.
-- Ob du dir eine **Lösung** angesehen hast.
-- Daraus rechnet die App aus, welche Aufgaben gut zu dir passen und wie du dich entwickelst.
+- Deine **Farm**: Münzen, was du gekauft, gepflanzt und geerntet hast, deine Tiere und Monster.
+- Welche Spielfigur du gewählt hast und ob die Leseschrift an ist.
+- Daraus rechnet die App aus, wie du dich entwickelst.
 
 ## Wer sieht das?
 
-- **Deine Lehrkraft** sieht deine Antworten und deinen Lernstand. So kann sie dir helfen.
-- **Du** siehst deine eigenen Übungen und deine Rückmeldungen. Noten oder Punkte siehst du nicht. Die gibt es in der App nicht.
+- **Deine Lehrkraft** sieht deine Antworten, deinen Lernstand und deine Münzen. So kann sie dir helfen.
+- **Du** siehst deine eigenen Übungen, deine Rückmeldungen und deine Farm. Noten oder Punkte siehst du nicht. Die gibt es in der App nicht.
 - **Andere Schüler:innen** sehen nichts von dir.
 
 ## Wo liegen die Daten?
@@ -112,7 +117,7 @@ Dein Link ist wie ein Schlüssel. Gib ihn nicht weiter. Wer ihn hat, kann in dei
 
 ## Werden die Daten gelöscht?
 
-Ja. Deine Lehrkraft kann deine Ergebnisse jederzeit löschen, zum Beispiel am Ende des Schuljahres. Wenn du das möchtest, sprich deine Lehrkraft an.
+Ja. Am Ende jedes Schuljahres, spätestens am 1. September, werden deine Daten gelöscht: Fantasiename, Link, Antworten, Münzen und Farm. Unterrichtet dich deine Lehrkraft im neuen Schuljahr weiter, kann sie deine Farm behalten. Dann werden nur deine Antworten gelöscht. Deine Lehrkraft kann deine Daten auch früher löschen. Sprich sie an, wenn du das möchtest.
 
 ## Gibt es Werbung oder Tracking?
 

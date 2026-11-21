@@ -792,3 +792,25 @@ Sechs Teilaufgaben (1 Analyse, 2 Layout leer, 3 Layout voll, 4 Dekorationen, 5 M
   Datenbank vorgestellt), Schülerseite im dunklen Modus in diesem Schritt (in TA 4 geprüft).
 - Geänderte Dateien TA 5: `src/schueler/SchuelerBereich.tsx`, `src/lehrkraft/KlassenAufgaben.tsx`, `docs/umbau/STATUS.md`.
 - Offene Fragen: keine. **Auftrag Klassen-Aufgaben fertig** (Branch `klassen-aufgaben`, nicht gepusht, nicht gemergt).
+
+## Aufgabe 43 – Datenschutz und Texte (2026-11-21, Branch `jahresloeschung`)
+- Rückfragen beantwortet (alle Vorschläge angenommen): Schüler:innen löschen, Klassen/Übungen/Pakete bleiben; Knopf ab 1. August, sonst
+  automatisch ab 1. September; Klassen weiterführen (Farm bleibt, Lernergebnisse weg); Hinweis ab 1. August bei jedem Öffnen bis gelöscht.
+- Migration `20261121100000_jahresloeschung.sql`: pg_cron eingeschaltet, `einstellungen.loeschung_jahr`/`loeschung_automatisch`,
+  `klassen.weiter_im_jahr`, Funktionen `jahresloeschung_fuer` (intern), `jahresloeschung` (Knopf, nur eigene Daten, ab 1. August, einmal im Jahr),
+  `jahresloeschung_automatisch` (Zeitplan `wortsalat-jahresloeschung`, stündlich). Bestehende Lehrkräfte stehen auf 2026: erste Löschung 2027.
+  Gelöscht wird nur, wer vor dem 1. August angelegt wurde (neue Klassen im August sind sicher).
+- Lehrkraft-Ansicht: `src/lehrkraft/Jahresloeschung.tsx` über der Karte (Hinweis Pfirsich, Häkchen je Klasse, roter Knopf mit Nachfrage);
+  im September nach automatischer Löschung ein kurzer Satz.
+- Texte: `DATENSCHUTZ.md` neu (Wortsalat statt Übungswiese: Farm, Münzen, Diktat, Fallende Wörter, Hausaufgaben, Monster, Löschung),
+  Hilfe (`src/schueler/hilfe.md`): veraltete Sätze zu Sternen/Versuchen/Lösung ansehen/Münzen/Vorrat ersetzt, neu „Wie kommt ein Monster auf
+  meine Farm?“, Teil „Für Eltern und Schüler:innen“ gleich mit DATENSCHUTZ.md Teil B. README: „Supabase wieder starten“ und Verweis auf Datenschutz.
+- Geprüft: DB-Test Block 26 (26.1 Rechte, 26.2 Löschung mit weitergeführter Klasse und Kind von nach dem 1. August, 26.3 automatisch erst ab
+  September und nur, wer noch nicht gelöscht hat); lint, tsc, `npm test` (163). Browser 1180 × 820 mit `?heute=`: 5. August Hinweis „noch 27 Tage“,
+  31. August „heute ist der letzte Tag“, 31. Juli und heute (21.11.) kein Hinweis; Häkchen „Test weiterführen“ bleibt nach Neuladen (danach wieder entfernt).
+- **Alter Fehler gefunden, nicht behoben:** `npm run test:datenbank` scheitert schon vor diesem Schritt an Block 11.4/11.7: Seit der Migration
+  `muenzen_lernen_zaehlt` (18.11.) zählt `verdient()` Verkäufe nicht mehr, und `kontostand()` nutzt `verdient()`. Verkaufen bringt dadurch keine
+  Münzen aufs Konto. Block 26 wurde mit einer Kopie geprüft, in der nur 11.4 und 11.7 ausgeschaltet waren: „ALLE TESTS BESTANDEN (194)“.
+- Nicht getestet: Knopf „Jetzt löschen“ im Browser (würde echte Testdaten löschen; der Server lässt ihn heute ohnehin erst ab 1. August zu),
+  der September-Satz nach automatischer Löschung, ein echter Lauf des Zeitplans am 1. September.
+- Offen: Lehrkraft liest `DATENSCHUTZ.md`, Hilfe-Texte und README gegen. Nicht gepusht, nicht gemergt.

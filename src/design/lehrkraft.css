@@ -100,6 +100,12 @@
   background: var(--color-nochmal-flaeche); color: var(--color-nochmal-tinte);
 }
 
+/* Hinweis zum Schuljahresende (Aufgabe 43), über der Karte */
+.lk-jahresende { display: grid; gap: var(--space-sm); margin-bottom: var(--space-md); }
+.lk-jahresende h2, .lk-jahresende p { margin: 0; }
+.lk-jahresende__klassen { border: 0; padding: 0; margin: 0; }
+.lk-jahresende__klassen legend { padding: 0; margin-bottom: var(--space-xs); }
+
 /* ---------- Klassen, Kompetenzen, Linkliste (Phase 3) ---------- */
 .lk-erfolg { padding: var(--space-sm); border-radius: var(--radius-lk); background: var(--color-richtig-flaeche); color: var(--color-richtig-tinte); }
 .lk-zurueck { color: var(--color-lk-tinte); font-weight: 800; min-height: 44px; display: inline-flex; align-items: center; }

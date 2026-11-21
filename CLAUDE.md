@@ -311,3 +311,9 @@
   übrigen ein. Farm: Boot in der Bucht oben. Testfarm Pfau-99 und Lernstand-Testdaten (markiert) für die Testklassen.
 - 2026-11-17 (Jazz): **Alle Schüler:innen sehen alle Sterne-Aufgaben.** Keine automatische Zuordnung oder Steigerung mehr; die Lehrkraft entscheidet
   über die Pakete. Sterne zeigen nur die Schwierigkeit.
+- 2026-11-21 (Jazz, Aufgabe 43): Der Datenschutz der Schule hat zugestimmt, Bedingung: **jährliche Löschung der Schülerdaten** zum Schuljahresende.
+  Ab 1. August Hinweis oben in der Lehrkraft-Ansicht (`src/lehrkraft/Jahresloeschung.tsx`) mit Knopf „Jetzt löschen“; ohne Knopf löscht der Server
+  ab 1. September (Europe/Berlin) automatisch (pg_cron stündlich, holt nach, wenn das Projekt geschlafen hat; Migration `jahresloeschung`).
+  Gelöscht werden Schüler:innen, die vor dem 1. August angelegt wurden (Pseudonym, Link, Ergebnisse, Münzen, Farm). Klassen, Übungen, Pakete bleiben.
+  Klassen „weiterführen“ (`klassen.weiter_im_jahr`): dort bleiben Pseudonyme, Links, Münzen und Farm, nur die Lernergebnisse von vor dem 1. August gehen.
+  `DATENSCHUTZ.md` neu für Wortsalat; Teil B steht gleich in der Hilfe („Für Eltern und Schüler:innen“). Datum testen: `?heute=2027-08-05` (nur `npm run dev`).

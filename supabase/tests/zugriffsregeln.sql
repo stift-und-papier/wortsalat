@@ -2273,6 +2273,84 @@ begin
     n := n + 1;
   end;
 
+  -- ---------- 26 Jahreslöschung zum Schuljahresende (Aufgabe 43) ----------
+  declare
+    v_weg uuid; v_weiter uuid; v_neu uuid; v_kl_weiter uuid; v_aufg uuid;
+  begin
+    -- 26.1 nur Server und Zeitplan dürfen die Kernfunktionen aufrufen, anon nicht einmal den Knopf
+    set local role anon;
+    begin
+      perform public.jahresloeschung();
+      raise exception 'Block 26.1: anon darf jahresloeschung aufrufen';
+    exception when insufficient_privilege then null;
+    end;
+    reset role;
+    perform set_config('request.jwt.claims', json_build_object('sub', c_lk_a, 'role', 'authenticated')::text, true);
+    set local role authenticated;
+    begin
+      perform public.jahresloeschung_fuer(c_lk_b, 2027::smallint, false);
+      raise exception 'Block 26.1: Lehrkraft darf jahresloeschung_fuer aufrufen';
+    exception when insufficient_privilege then null;
+    end;
+    begin
+      perform public.jahresloeschung_automatisch('2027-09-01');
+      raise exception 'Block 26.1: Lehrkraft darf jahresloeschung_automatisch aufrufen';
+    exception when insufficient_privilege then null;
+    end;
+    reset role;
+    n := n + 1;
+
+    -- Testdaten: Klasse A (wird geleert), Klasse „weiter“ (wird weitergeführt), ein Kind von nach dem 1. August
+    insert into public.klassen (owner, name, kerncurriculum, weiter_im_jahr) values (c_lk_a, 'Test weiter', 'Realschule', 2027)
+      returning id into v_kl_weiter;
+    insert into public.schueler (owner, klasse_id, pseudonym) values (c_lk_a, c_kl_a, 'Weg-26') returning id into v_weg;
+    insert into public.schueler (owner, klasse_id, pseudonym) values (c_lk_a, v_kl_weiter, 'Weiter-26') returning id into v_weiter;
+    insert into public.schueler (owner, klasse_id, pseudonym, erstellt_am) values (c_lk_a, c_kl_a, 'Neu-26', '2027-08-05 10:00+02')
+      returning id into v_neu;
+    v_aufg := (select id from public.aufgaben where owner = c_lk_a limit 1);
+    if v_aufg is null then raise exception 'Block 26.2: Testaufgabe von Lehrkraft A fehlt'; end if;
+    insert into public.loesung_angesehen (schueler_id, aufgabe_id) values (v_weg, v_aufg), (v_weiter, v_aufg);
+    insert into public.muenz_ereignisse (schueler_id, grund, schluessel, muenzen) values
+      (v_weg, 'lehrkraft', 'test-26', 10), (v_weiter, 'lehrkraft', 'test-26', 10);
+    update public.einstellungen set loeschung_jahr = 2026 where owner in (c_lk_a, c_lk_b);
+
+    -- 26.2 Löschung 2027 für Lehrkraft A
+    if public.jahresloeschung_fuer(c_lk_a, 2027::smallint, false) < 3 then
+      raise exception 'Block 26.2: zu wenige Schüler:innen gelöscht';
+    end if;
+    if exists (select 1 from public.schueler where id = v_weg) or exists (select 1 from public.muenz_ereignisse where schueler_id = v_weg)
+       or exists (select 1 from public.schueler where owner = c_lk_a and klasse_id = c_kl_a and id <> v_neu) then
+      raise exception 'Block 26.2: Kind aus nicht weitergeführter Klasse nicht ganz gelöscht';
+    end if;
+    if not exists (select 1 from public.schueler where id = v_neu) then
+      raise exception 'Block 26.2: Kind von nach dem 1. August wurde gelöscht';
+    end if;
+    if not exists (select 1 from public.schueler where id = v_weiter)
+       or not exists (select 1 from public.muenz_ereignisse where schueler_id = v_weiter)
+       or exists (select 1 from public.loesung_angesehen where schueler_id = v_weiter) then
+      raise exception 'Block 26.2: weitergeführte Klasse falsch (Kind und Münzen bleiben, Ergebnisse weg)';
+    end if;
+    if not exists (select 1 from public.klassen where id = c_kl_a) or not exists (select 1 from public.aufgaben where id = v_aufg)
+       or (select loeschung_jahr from public.einstellungen where owner = c_lk_a) <> 2027
+       or (select count(*) from public.schueler where owner = c_lk_b) = 0 then
+      raise exception 'Block 26.2: Klasse, Übung, Vermerk oder Daten von Lehrkraft B falsch';
+    end if;
+    n := n + 1;
+
+    -- 26.3 automatisch: im August nichts, ab 1. September nur, wer noch nicht gelöscht hat (hier B, nicht A)
+    if public.jahresloeschung_automatisch('2027-08-31') <> 0 then
+      raise exception 'Block 26.3: automatische Löschung schon im August';
+    end if;
+    perform public.jahresloeschung_automatisch('2027-09-01');
+    if exists (select 1 from public.schueler where owner = c_lk_b)
+       or not (select loeschung_automatisch from public.einstellungen where owner = c_lk_b)
+       or (select loeschung_automatisch from public.einstellungen where owner = c_lk_a)
+       or not exists (select 1 from public.schueler where id = v_neu) then
+      raise exception 'Block 26.3: automatische Löschung falsch';
+    end if;
+    n := n + 1;
+  end;
+
   raise exception 'ALLE TESTS BESTANDEN (%)', n;
 end
 $test$;
